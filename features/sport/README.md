@@ -1,0 +1,22 @@
+# Personalised workout plan
+
+**Owner:** Member 6
+
+## Scope
+
+- **Screens:** My sport, Session detail
+- **Routes:** `/sport`, `/sport/sessions/[id]`
+- **API:** `GET/POST /api/sport-plans`, `PUT/DELETE /api/sport-plans/[id]`, `POST /api/workout-sessions`, `PUT /api/workout-sessions/[id]`
+- **Models:** `SportPlan`, `WorkoutSession` (embedded exercises)
+- **Shared UI to deliver (via reviewed PR into `components/ui`):** `ProgressBar`
+
+Rule-based generator from the profile (goal, level, days, duration, equipment), e.g. 3 beginner days = Full body A / B / C. Week strip, sessions progress, warm-up / exercises / cool-down, "Mark as done", "not medical advice" note on each screen, session available offline.
+
+## Folder layout
+
+- `components/`: React components used only by this module
+- `services/`: data access, server actions and business rules (server side)
+- `types.ts`: types shared between this module's server and client code
+
+Pages live in `app/(app)/...` and stay thin: they render components from this folder.
+All UI text goes through next-intl keys in `messages/en.json`.

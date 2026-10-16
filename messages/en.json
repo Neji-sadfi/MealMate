@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "MealMate",
+    "tagline": "Eat well. At your own pace.",
+    "description": "Plan your meals, shopping, budget and workouts in one place."
+  },
+  "common": {
+    "back": "Back",
+    "notifications": "Notifications",
+    "profile": "My profile",
+    "comingSoon": "This screen is coming soon.",
+    "ownedBy": "Module owner: {owner}",
+    "signOut": "Sign out"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "home": "Home",
+    "meals": "Meals",
+    "shopping": "Shopping",
+    "sport": "Sport",
+    "community": "Community"
+  },
+  "auth": {
+    "fields": {
+      "name": "First and last name",
+      "email": "Email address",
+      "password": "Password",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "login": {
+      "headline": "The right balance, every day.",
+      "intro": "Your meals, your budget and your goals.",
+      "title": "Welcome back!",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "newHere": "New to MealMate?",
+      "createAccount": "Create an account",
+      "privacy": "Your habits belong to you.",
+      "terms": "By continuing, you accept our terms of use and our privacy policy."
+    },
+    "register": {
+      "title": "Create your account",
+      "intro": "A few seconds, then we tailor MealMate to you.",
+      "submit": "Create my account",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "intro": "Enter your email and we will send you a reset link.",
+      "backToLogin": "Back to sign in"
+    },
+    "errors": {
+      "invalidInput": "Please check the highlighted fields.",
+      "invalidCredentials": "Incorrect email or password.",
+      "emailTaken": "An account already exists with this email.",
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Hello {name}",
+      "subtitle": "A little organisation, a lot of well-being."
+    },
+    "profile": {
+      "title": "My profile",
+      "subtitle": "It all starts with you."
+    },
+    "recipes": {
+      "title": "Recipes",
+      "subtitle": "Inspiration on the menu."
+    },
+    "recipeDetail": {
+      "title": "Recipe",
+      "subtitle": "Recipe #{id}"
+    },
+    "mealPlan": {
+      "title": "My meal plan",
+      "subtitle": "A week to savour."
+    },
+    "shopping": {
+      "title": "Shopping list",
+      "subtitle": "What you need, nothing more."
+    },
+    "inventory": {
+      "title": "My inventory",
+      "subtitle": "Already in your cupboards."
+    },
+    "community": {
+      "title": "The MealMate forum",
+      "subtitle": "We move forward together."
+    },
+    "tracking": {
+      "title": "Nutrition & budget",
+      "subtitle": "Your efforts are taking shape."
+    },
+    "sport": {
+      "title": "My sport",
+      "subtitle": "Your rhythm, your progress."
+    },
+    "workoutSession": {
+      "title": "Workout session",
+      "subtitle": "Session #{id}"
+    }
+  },
+  "offline": {
+    "title": "You are offline",
+    "description": "This page is not available offline yet. Check your connection and try again."
+  }
+}
