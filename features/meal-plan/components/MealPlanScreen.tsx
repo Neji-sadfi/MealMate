@@ -6,6 +6,7 @@ import { Copy, Plus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { WeekStrip } from "@/components/ui/WeekStrip";
 import {
   MAIN_MEAL_TYPES,
   timeForType,
@@ -37,7 +38,6 @@ import {
 } from "../services/week";
 import { PlanTabs } from "./PlanTabs";
 import { WeekNavigator } from "./WeekNavigator";
-import { WeekStrip } from "./WeekStrip";
 import { GenerateCriteriaCard } from "./GenerateCriteriaCard";
 import { MealCard } from "./MealCard";
 import {
@@ -170,13 +170,17 @@ export function MealPlanScreen({
   const stripDays = useMemo(
     () =>
       plan
-        ? weekDates(weekStart).map((date) => ({
-            date,
-            weekday: weekdayOf(date),
-            hasMeals: mealsOnDate(plan, date).length > 0,
-          }))
+        ? weekDates(weekStart).map((date) => {
+            const weekday = weekdayOf(date);
+            return {
+              date,
+              label: t(`weekdays.${weekday}`),
+              fullLabel: t(`weekdayLabels.${weekday}`),
+              hasContent: mealsOnDate(plan, date).length > 0,
+            };
+          })
         : [],
-    [weekStart, plan],
+    [weekStart, plan, t],
   );
 
   function goWeek(delta: number) {
@@ -341,7 +345,12 @@ export function MealPlanScreen({
         onPrevious={() => goWeek(-1)}
         onNext={() => goWeek(1)}
       />
-      <WeekStrip days={stripDays} selectedDate={selectedDate} onSelect={setSelectedDate} />
+      <WeekStrip
+        days={stripDays}
+        selectedDate={selectedDate}
+        onSelect={setSelectedDate}
+        label={t("weekStrip")}
+      />
 
       {(offlinePlan || pendingCount > 0) && (
         <Card tone="warning" className="flex flex-col gap-1">
