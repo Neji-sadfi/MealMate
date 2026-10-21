@@ -1,24 +1,54 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
-import { getTranslations } from "next-intl/server";
-import { PagePlaceholder } from "@/components/PagePlaceholder";
+"use client";
 
-// TODO(Member 1): reset-password form calling POST /api/auth/forgot-password.
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("auth.forgotPassword");
-  return { title: t("title") };
-}
+import Link from "next/link";
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("auth.forgotPassword");
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
 
   return (
     <div className="flex flex-col gap-6">
-      <PagePlaceholder title={t("title")} subtitle={t("intro")} owner="Member 1" />
-      <Link href="/login" className="text-center text-sm font-semibold text-primary">
-        {t("backToLogin")}
-      </Link>
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-black">{t("title")}</h1>
+        <p className="text-sm text-muted">{t("intro")}</p>
+      </div>
+
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={async (event) => {
+          event.preventDefault();
+          setPending(true);
+          setError("");
+          const email = new FormData(event.currentTarget).get("email");
+          const response = await fetch("/api/auth/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          if (!response.ok) {
+            const result = (await response.json().catch(() => null)) as { error?: string } | null;
+            setError(result?.error ?? "Could not request a password reset.");
+          } else {
+            setSubmitted(true);
+          }
+          setPending(false);
+        }}
+      >
+        <Input name="email" type="email" label={t("email")} required />
+        <Button type="submit" fullWidth>
+          {pending ? t("sending") : t("submit")}
+        </Button>
+      </form>
+
+      {submitted && <p role="status" className="rounded-input bg-success-bg px-4 py-3 text-sm text-success">{t("sent")}</p>}
+      {error && <p role="alert" className="rounded-input bg-warning-bg px-4 py-3 text-sm">{error}</p>}
+      <Link href="/login" className="text-center text-sm font-semibold text-primary">{t("backToLogin")}</Link>
     </div>
   );
 }

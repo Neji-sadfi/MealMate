@@ -167,7 +167,7 @@ async function main() {
     name: "Ahmed Benali",
     email: "ahmed.benali@mail.com",
     passwordHash: await bcrypt.hash("password123", 10),
-    role: "USER",
+    role: "ADMIN",
     age: 24,
     heightCm: 178,
     weightKg: 70,

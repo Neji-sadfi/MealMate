@@ -6,11 +6,11 @@
 
 - **Screens:** Recipes, Recipe detail
 - **Routes:** `/recipes`, `/recipes/[id]`
-- **API:** `GET/POST /api/recipes`, `GET/PUT/DELETE /api/recipes/[id]` (writes ADMIN only), `GET/POST /api/ingredients`, `PUT/DELETE /api/ingredients/[id]`, `GET/POST /api/favorites`, `DELETE /api/favorites/[recipeId]`
+- **API:** `GET/POST /api/recipes`, `GET/PUT/DELETE /api/recipes/[id]` (create by any signed-in user; update/delete by owner or ADMIN), `GET/POST /api/ingredients`, `PUT/DELETE /api/ingredients/[id]`, `GET/POST /api/favorites`, `DELETE /api/favorites/[recipeId]`
 - **Models:** `Recipe` (embedded ingredients and steps), `Ingredient` (shared), `Favorite`
 - **Shared UI to deliver (via reviewed PR into `components/ui`):** `Chip`, `FilterChip`, `SegmentedTabs`, `RecipeCard`, `MealRow`
 
-Filters in the URL (`searchParams`): diet, calories, protein, cost, difficulty, time; "Relevance" sort; favorites. Detail: cost, macros, ingredients in stock / to buy, servings +/-, steps, "Add to meal plan". Extend `scripts/seed.ts` to ~20 recipes.
+Recipe creation supports an optional photo URL, diet tags, ingredients, steps and per-serving nutrition/cost. Catalogue search filters by text, diet, calories, protein, cost, difficulty and preparation time. Signed-in users can favorite recipes; owners can edit or delete their recipes, and ADMIN can manage any recipe. Detail pages show nutrition, ingredients and steps.
 
 ## Folder layout
 

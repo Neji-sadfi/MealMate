@@ -25,6 +25,11 @@
       "name": "First and last name",
       "email": "Email address",
       "password": "Password",
+      "heightCm": "Height (cm)",
+      "weightKg": "Weight (kg)",
+      "diet": "Diet",
+      "allergies": "Allergies",
+      "weeklyBudget": "Weekly food budget (TND)",
       "showPassword": "Show password",
       "hidePassword": "Hide password"
     },
@@ -42,6 +47,9 @@
     "register": {
       "title": "Create your account",
       "intro": "A few seconds, then we tailor MealMate to you.",
+      "profileTitle": "Your health and food preferences",
+      "allergiesPlaceholder": "e.g. peanuts, shellfish — or None",
+      "allergiesHelp": "Separate multiple allergies with commas. Enter None if you have no allergies.",
       "submit": "Create my account",
       "haveAccount": "Already have an account?",
       "signIn": "Sign in"
@@ -49,6 +57,10 @@
     "forgotPassword": {
       "title": "Forgot password",
       "intro": "Enter your email and we will send you a reset link.",
+      "email": "Email address",
+      "submit": "Send reset link",
+      "sending": "Sending...",
+      "sent": "If an account exists for this email, reset instructions will be sent.",
       "backToLogin": "Back to sign in"
     },
     "errors": {

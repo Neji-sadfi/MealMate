@@ -5,5 +5,17 @@ export type AuthErrorKey = "invalidInput" | "invalidCredentials" | "emailTaken" 
 
 export type AuthFormState = {
   error?: AuthErrorKey;
-  fieldErrors?: Partial<Record<"name" | "email" | "password", true>>;
+  fieldErrors?: Partial<
+    Record<
+      | "name"
+      | "email"
+      | "password"
+      | "heightCm"
+      | "weightKg"
+      | "diet"
+      | "allergies"
+      | "weeklyBudget",
+      true
+    >
+  >;
 };

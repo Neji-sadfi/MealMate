@@ -14,6 +14,17 @@ export async function registerUser(input: RegisterInput): Promise<RegisterResult
   }
 
   const passwordHash = await bcrypt.hash(input.password, 10);
-  const user = await User.create({ name: input.name, email: input.email, passwordHash });
+  const user = await User.create({
+    name: input.name,
+    email: input.email,
+    passwordHash,
+    heightCm: input.heightCm,
+    weightKg: input.weightKg,
+    preferences: {
+      diet: input.diet,
+      allergies: input.allergies,
+      weeklyBudget: input.weeklyBudget,
+    },
+  });
   return { ok: true, userId: user._id.toString() };
 }

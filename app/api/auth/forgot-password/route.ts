@@ -1,6 +1,15 @@
-import { notImplemented } from "@/lib/api/notImplemented";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 
-// TODO(Member 1): implement POST /api/auth/forgot-password
-export async function POST() {
-  return notImplemented("Member 1", "POST /api/auth/forgot-password");
+export async function POST(request: Request) {
+  const body: unknown = await request.json().catch(() => null);
+  const parsed = z.object({ email: z.email().trim().toLowerCase() }).safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
+  }
+
+  return NextResponse.json(
+    { error: "Password reset email is not configured for this app yet." },
+    { status: 503 },
+  );
 }

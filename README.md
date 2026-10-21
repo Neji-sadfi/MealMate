@@ -2,7 +2,7 @@
 
 MealMate is a mobile-first **Progressive Web App** for planning meals, managing shopping lists and inventory, tracking nutrition and budget, following a personalised workout plan and sharing progress in a community forum.
 
-Student team project · Next.js · TypeScript · MongoDB Atlas · English UI
+Student team project · Next.js · TypeScript · MongoDB · English UI
 
 ---
 
@@ -10,14 +10,14 @@ Student team project · Next.js · TypeScript · MongoDB Atlas · English UI
 
 Each member works **only on their own module**: their routes, their `features/<module>` folder, their Mongoose models and their API routes. Anything outside your module changes only through a Pull Request reviewed by its owner.
 
-| Member | Module | Routes | Folder |
-| --- | --- | --- | --- |
-| Youssef | User: authentication + profile | `/login`, `/register`, `/forgot-password`, `/profile` | `features/auth` |
-| Neji | Recipes + ingredients | `/recipes`, `/recipes/[id]` | `features/recipes` |
-| Nada | Meal planning + Home dashboard | `/meal-plan`, `/` | `features/meal-plan` |
-| Hamza | Shopping list + inventory | `/shopping`, `/shopping/inventory` | `features/shopping` |
-| Fekri | Forum + nutrition & budget tracking | `/community`, `/tracking` | `features/community` |
-| Ala (project lead) | Workout plan + sessions | `/sport`, `/sport/sessions/[id]` | `features/sport` |
+| Member             | Module                              | Routes                                                | Folder               |
+| ------------------ | ----------------------------------- | ----------------------------------------------------- | -------------------- |
+| Youssef            | User: authentication + profile      | `/login`, `/register`, `/forgot-password`, `/profile` | `features/auth`      |
+| Neji               | Recipes + ingredients               | `/recipes`, `/recipes/[id]`                           | `features/recipes`   |
+| Nada               | Meal planning + Home dashboard      | `/meal-plan`, `/`                                     | `features/meal-plan` |
+| Hamza              | Shopping list + inventory           | `/shopping`, `/shopping/inventory`                    | `features/shopping`  |
+| Fekri              | Forum + nutrition & budget tracking | `/community`, `/tracking`                             | `features/community` |
+| Ala (project lead) | Workout plan + sessions             | `/sport`, `/sport/sessions/[id]`                      | `features/sport`     |
 
 ---
 
@@ -25,12 +25,12 @@ Each member works **only on their own module**: their routes, their `features/<m
 
 Install these once on your computer:
 
-| Tool | Version | Download | Check it works |
-| --- | --- | --- | --- |
-| Node.js | 20 or newer (LTS) | https://nodejs.org | `node -v` |
-| Git | any recent version | https://git-scm.com | `git --version` |
-| VS Code | latest | https://code.visualstudio.com | — |
-| GitHub account | — | https://github.com | Accept the repo invitation sent by Ala |
+| Tool           | Version            | Download                      | Check it works                         |
+| -------------- | ------------------ | ----------------------------- | -------------------------------------- |
+| Node.js        | 20 or newer (LTS)  | https://nodejs.org            | `node -v`                              |
+| Git            | any recent version | https://git-scm.com           | `git --version`                        |
+| VS Code        | latest             | https://code.visualstudio.com | —                                      |
+| GitHub account | —                  | https://github.com            | Accept the repo invitation sent by Ala |
 
 You also need access to the team's **MongoDB Atlas** database (see step 3). Nothing to install for the database: it runs online, for free.
 
@@ -72,11 +72,32 @@ code .
 
 ---
 
-## 3. Database (MongoDB Atlas)
+## 3. Database (MongoDB)
+
+Choose **one** database setup: local MongoDB for development, or the shared Atlas cluster.
+
+### 3.1 Local MongoDB (Windows)
+
+Install MongoDB Community Server and make sure the `MongoDB` Windows service is running:
+
+```powershell
+Get-Service MongoDB
+Start-Service MongoDB  # only if it is stopped; may require an Administrator terminal
+```
+
+In `.env`, use a local connection string:
+
+```
+MONGODB_URI="mongodb://127.0.0.1:27017/mealmate_local"
+```
+
+The app reads and writes recipes, meal plans, shopping items, inventory, posts, workouts, budgets and accounts in this database. Data remains after the app is restarted.
+
+### 3.2 MongoDB Atlas
 
 The team shares **one free Atlas cluster**. Each member uses **their own database name** inside it, so nobody overwrites anyone else's data.
 
-### 3.1 Get your database user
+#### Get your database user
 
 Ask **Ala** to create your database user in Atlas (**Database & Network Access → Database Users → Add New Database User**). Ala sends you privately:
 
@@ -85,9 +106,9 @@ Ask **Ala** to create your database user in Atlas (**Database & Network Access �
 
 Never share these in the GitHub repo, issues or group chats.
 
-> **Ala only (already done once):** the cluster's **IP Access List** contains `0.0.0.0/0` (*Allow access from anywhere*) so every member can connect from home or university Wi-Fi.
+> **Ala only (already done once):** the cluster's **IP Access List** contains `0.0.0.0/0` (_Allow access from anywhere_) so every member can connect from home or university Wi-Fi.
 
-### 3.2 Build your connection string
+#### Build your connection string
 
 Use this template and replace the 4 parts (no `< >` left anywhere):
 
@@ -103,7 +124,7 @@ mongodb+srv://neji:S3cretPass@cluster0.xxxxx.mongodb.net/mealmate_neji?retryWrit
 
 If your password contains special characters (`@ : / ? # %`), replace them: `@` → `%40`, `:` → `%3A`, `/` → `%2F`, `#` → `%23`, `%` → `%25`. Easiest: choose a password with only letters and numbers.
 
-### 3.3 Optional: your own free cluster instead
+#### Optional: your own free cluster instead
 
 You can also create your own free cluster on https://www.mongodb.com/atlas → **Create** → **Free** card → AWS / Frankfurt → create a database user → **Network Access → Allow access from anywhere** → **Connect → Drivers** → copy the link.
 
@@ -111,17 +132,7 @@ You can also create your own free cluster on https://www.mongodb.com/atlas → *
 
 ## 4. Environment variables (`.env`)
 
-Copy the example file (do **not** edit `.env.example` itself: it is pushed to GitHub):
-
-```bash
-# macOS / Linux / Git Bash
-cp .env.example .env
-
-# Windows PowerShell or Command Prompt
-copy .env.example .env
-```
-
-Open **`.env`** and fill in both values:
+Create a local **`.env`** file in the project folder and fill in both values. For local MongoDB, set `MONGODB_URI` to `mongodb://127.0.0.1:27017/mealmate_local`; for Atlas, use the connection string format below.
 
 ```
 MONGODB_URI="mongodb+srv://USERNAME:PASSWORD@CLUSTER_HOST/mealmate_FIRSTNAME?retryWrites=true&w=majority"
@@ -141,9 +152,11 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ## 5. Run the project
 
 ```bash
-npm run db:seed     # fills YOUR database with demo data (run once, or to reset)
+npm run db:seed     # clears YOUR database and inserts demo data
 npm run dev         # starts the app
 ```
+
+**Warning:** `npm run db:seed` deletes the collections in the database named by `MONGODB_URI` before inserting sample data. Only run it on a database you are happy to reset.
 
 Open **http://localhost:3000** and sign in with the demo account:
 
@@ -152,20 +165,22 @@ Open **http://localhost:3000** and sign in with the demo account:
 
 Or create your own account on `/register`.
 
+The local demo account is also an administrator. After signing in, use the **Admin** button in the header or open `/admin` to manage the recipe catalogue and review reported community posts. If the account was already signed in when its role changed, sign out and sign in again to refresh the role in the session.
+
 Tip: press **F12**, then **Ctrl + Shift + M** to see the app in phone size (the app is mobile-first).
 
 Stop the app with **Ctrl + C** in the terminal. After changing `.env`, always restart `npm run dev`.
 
 ### Useful scripts
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Start the app in development mode |
-| `npm run db:seed` | Reset your database with the demo data |
-| `npm run lint` | Check code style |
-| `npm run typecheck` | Check TypeScript types |
-| `npm run build` | Production build (run before opening a PR) |
-| `npm run format` | Format the code with Prettier |
+| Command             | What it does                               |
+| ------------------- | ------------------------------------------ |
+| `npm run dev`       | Start the app in development mode          |
+| `npm run db:seed`   | Reset your database with the demo data     |
+| `npm run lint`      | Check code style                           |
+| `npm run typecheck` | Check TypeScript types                     |
+| `npm run build`     | Production build (run before opening a PR) |
+| `npm run format`    | Format the code with Prettier              |
 
 ---
 
@@ -236,15 +251,15 @@ mealmate/
 
 ## 8. Troubleshooting
 
-| Problem | Fix |
-| --- | --- |
-| `npm : ... scripts is disabled on this system` | Run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` in PowerShell (see section 1). |
-| `MissingSecret: Please define a secret` | `AUTH_SECRET` is missing in `.env`. Generate one (section 4) and restart `npm run dev`. |
-| `MongooseServerSelectionError` / cannot connect | Check the `MONGODB_URI` in `.env`: no `< >`, correct password, correct cluster host. Ask Ala to check that `0.0.0.0/0` is in the Atlas IP Access List. |
-| `bad auth : authentication failed` | Wrong username or password in `MONGODB_URI`. Ask Ala to reset your database user's password. |
-| Login says "invalid credentials" with the demo account | Run `npm run db:seed`, then try again. |
-| `EPERM` / very slow on Windows | Move the project out of OneDrive (section 1). |
-| Port 3000 already in use | Stop the other `npm run dev` (Ctrl + C) or run `npm run dev -- -p 3001`. |
+| Problem                                                | Fix                                                                                                                                                    |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm : ... scripts is disabled on this system`         | Run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` in PowerShell (see section 1).                                              |
+| `MissingSecret: Please define a secret`                | `AUTH_SECRET` is missing in `.env`. Generate one (section 4) and restart `npm run dev`.                                                                |
+| `MongooseServerSelectionError` / cannot connect        | Check the `MONGODB_URI` in `.env`: no `< >`, correct password, correct cluster host. Ask Ala to check that `0.0.0.0/0` is in the Atlas IP Access List. |
+| `bad auth : authentication failed`                     | Wrong username or password in `MONGODB_URI`. Ask Ala to reset your database user's password.                                                           |
+| Login says "invalid credentials" with the demo account | Run `npm run db:seed`, then try again.                                                                                                                 |
+| `EPERM` / very slow on Windows                         | Move the project out of OneDrive (section 1).                                                                                                          |
+| Port 3000 already in use                               | Stop the other `npm run dev` (Ctrl + C) or run `npm run dev -- -p 3001`.                                                                               |
 
 ---
 

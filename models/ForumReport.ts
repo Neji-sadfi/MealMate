@@ -30,7 +30,7 @@ const forumReportSchema = new Schema<IForumReport>(
 );
 
 forumReportSchema.index({ status: 1, createdAt: -1 });
-forumReportSchema.index({ post: 1, reporter: 1 });
+forumReportSchema.index({ post: 1, reporter: 1, comment: 1 }, { unique: true });
 
 export const ForumReport: Model<IForumReport> =
   (models.ForumReport as Model<IForumReport>) ??

@@ -12,6 +12,8 @@
 
 Login, register and logout already work (`components/LoginForm.tsx`, `components/RegisterForm.tsx`, `services/actions.ts`). Still to do: forgot password, the profile form (Personal information, Diet, Your workout rhythm), login attempt limiting, ADMIN-only routes in `lib/auth.config.ts`.
 
+Registration collects height, weight, diet, allergies, and weekly food budget along with name, email, and password. The values are saved to the user's profile and preferences in MongoDB.
+
 ## Folder layout
 
 - `components/`: React components used only by this module

@@ -19,7 +19,10 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-background">
-      <AppHeader initials={initialsOf(session?.user?.name)} />
+      <AppHeader
+        initials={initialsOf(session?.user?.name)}
+        isAdmin={session?.user?.role === "ADMIN"}
+      />
       <main className="flex-1 px-4 pt-2 pb-24">{children}</main>
       <BottomNav />
     </div>

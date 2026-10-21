@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Bell, ChevronLeft, Leaf } from "lucide-react";
+import { Bell, ChevronLeft, Leaf, ShieldCheck } from "lucide-react";
 
 /** Screens that show "Back" instead of the logo (from the mockup), and where it leads. */
 const backRoutes: { pattern: RegExp; href: string }[] = [
@@ -17,11 +17,17 @@ type AppHeaderProps = {
   backHref?: string;
   /** Initials shown in the avatar, e.g. "AB". */
   initials?: string;
+  isAdmin?: boolean;
   /** Hide the bell and avatar (auth screens). */
   minimal?: boolean;
 };
 
-export function AppHeader({ backHref, initials, minimal = false }: AppHeaderProps) {
+export function AppHeader({
+  backHref,
+  initials,
+  isAdmin = false,
+  minimal = false,
+}: AppHeaderProps) {
   const t = useTranslations();
   const pathname = usePathname();
   const back = backHref ?? backRoutes.find((route) => route.pattern.test(pathname))?.href;
@@ -42,6 +48,17 @@ export function AppHeader({ backHref, initials, minimal = false }: AppHeaderProp
 
       {!minimal && (
         <div className="flex items-center gap-2">
+          {isAdmin && (
+            <Link
+              href="/admin"
+              aria-label="Administration"
+              title="Administration"
+              className="flex size-10 items-center justify-center gap-1 rounded-full bg-tint px-2 text-xs font-semibold text-primary"
+            >
+              <ShieldCheck aria-hidden className="size-4" />
+              Admin
+            </Link>
+          )}
           {!back && (
             <button
               type="button"

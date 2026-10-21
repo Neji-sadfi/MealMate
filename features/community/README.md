@@ -6,11 +6,11 @@
 
 - **Screens:** Community forum, Nutrition & budget
 - **Routes:** `/community`, `/tracking`
-- **API:** `GET/POST /api/forum/posts`, `PUT/DELETE /api/forum/posts/[id]`, `POST /api/forum/posts/[id]/comments`, `POST /api/forum/posts/[id]/reports`, `POST /api/forum/posts/[id]/likes`, `GET /api/stats/nutrition`, `GET/POST /api/budget`
+- **API:** `GET/POST /api/forum/posts`, `PUT/DELETE /api/forum/posts/[id]`, `GET/POST /api/forum/posts/[id]/comments`, `POST /api/forum/posts/[id]/reports`, `POST /api/forum/posts/[id]/likes`, `DELETE /api/admin/comments/[id]`, `PATCH /api/admin/reports/[id]`, `GET /api/stats/nutrition`, `GET/POST /api/budget`
 - **Models:** `ForumPost`, `ForumComment`, `ForumLike`, `ForumReport`, `Notification`
 - **Shared UI to deliver (via reviewed PR into `components/ui`):** `Card`, `StatCard`, `InfoBanner`
 
-Forum categories: nutrition, weight_loss, muscle_gain, training, motivation. ADMIN moderation (hide reported posts). Tracking: This week / This month, kcal per day chart (recharts), macro bars, budget spent / left by category, add an expense. Notifications (meal reminder, budget almost reached, expiry).
+Members can create posts, like and report once per post, comment, and edit/delete their own posts. ADMIN can hide reported posts and delete any post or comment. Tracking shows current-week or current-month calories/macros from planned meals and expenses grouped by their dates.
 
 ## Folder layout
 
