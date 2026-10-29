@@ -20,8 +20,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
+        const normalizedEmail = parsed.data.email.toLowerCase();
         await connectToDatabase();
-        const user = await User.findOne({ email: parsed.data.email }).select("+passwordHash");
+        const user = await User.findOne({ email: normalizedEmail }).select("+passwordHash");
         if (!user) return null;
 
         const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);

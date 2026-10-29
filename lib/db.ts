@@ -15,12 +15,18 @@ const cache: MongooseCache = (globalForMongoose.mongooseCache ??= { conn: null, 
 export async function connectToDatabase(): Promise<typeof mongoose> {
   if (cache.conn) return cache.conn;
 
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017/mealmate_local";
   if (!uri) {
     throw new Error("MONGODB_URI is not set. Copy .env.example to .env and add your Atlas URI.");
   }
 
-  cache.promise ??= mongoose.connect(uri, { bufferCommands: false });
+  // serverSelectionTimeoutMS: fail after 8 s instead of the default 30 s when Atlas is unreachable.
+  cache.promise ??= mongoose
+    .connect(uri, { bufferCommands: false, serverSelectionTimeoutMS: 8000 })
+    .catch((error) => {
+      cache.promise = null;
+      throw error;
+    });
 
   try {
     cache.conn = await cache.promise;
