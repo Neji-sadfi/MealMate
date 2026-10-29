@@ -66,12 +66,53 @@
       "submit": "Send reset link",
       "sending": "Sending...",
       "sent": "If an account exists for this email, reset instructions will be sent.",
-      "backToLogin": "Back to sign in"
+      "backToLogin": "Back to sign in",
+      "errors": {
+        "invalidEmail": "Enter a valid email address.",
+        "rateLimit": "Too many requests. Please wait a while before trying again.",
+        "unknown": "Could not send the reset link. Please try again."
+      }
+    },
+    "resetPassword": {
+      "title": "Choose a new password",
+      "intro": "Pick a new password for your MealMate account.",
+      "invalidIntro": "This reset link is invalid or has expired. Links are valid for 1 hour and can be used once.",
+      "newPassword": "New password",
+      "passwordHelp": "At least 8 characters.",
+      "confirmPassword": "Confirm new password",
+      "submit": "Save new password",
+      "saving": "Saving...",
+      "requestNew": "Request a new link",
+      "backToLogin": "Back to sign in",
+      "done": "Your password has been changed. You can sign in with your new password."
+    },
+    "verifyEmail": {
+      "title": "Email verification",
+      "successTitle": "Email confirmed!",
+      "successText": "Thanks, your email address is now verified.",
+      "errorTitle": "Link invalid or expired",
+      "errorText": "This verification link no longer works. Sign in and send a new one from your profile.",
+      "toProfile": "Go to my profile",
+      "toLogin": "Go to sign in",
+      "banner": {
+        "title": "Confirm your email",
+        "text": "We sent a confirmation link to {email}. Click it to verify your address.",
+        "resend": "Resend the email",
+        "sending": "Sending...",
+        "status": {
+          "sent": "A new link has been sent. Check your inbox and spam folder.",
+          "alreadyVerified": "Your email is already verified. Refresh the page.",
+          "rateLimit": "Too many emails sent. Please try again later.",
+          "error": "Could not send the email. Please try again."
+        }
+      }
     },
     "errors": {
       "invalidInput": "Please check the highlighted fields.",
       "invalidCredentials": "Incorrect email or password.",
       "emailTaken": "An account already exists with this email.",
+      "passwordMismatch": "The two passwords do not match.",
+      "invalidResetLink": "This reset link is invalid or has expired.",
       "unknown": "Something went wrong. Please try again."
     }
   },
@@ -125,7 +166,116 @@
     },
     "profile": {
       "title": "My profile",
-      "subtitle": "It all starts with you."
+      "subtitle": "It all starts with you.",
+      "notSet": "Not set",
+      "loadError": "Your profile could not be loaded.",
+      "avatar": {
+        "alt": "Your profile photo",
+        "add": "Add a profile photo",
+        "change": "Change profile photo",
+        "remove": "Remove profile photo",
+        "removeShort": "Remove",
+        "removeConfirm": "Remove your profile photo?",
+        "error": "Photo not saved. Try another image."
+      },
+      "deleteAccount": {
+        "open": "Delete my account",
+        "title": "Delete your account",
+        "warning": "This permanently deletes your account, your profile, your photo and your chats with Mia. This cannot be undone.",
+        "passwordLabel": "Enter your password to confirm",
+        "confirm": "Delete my account forever",
+        "deleting": "Deleting...",
+        "cancel": "Cancel",
+        "done": "Your account and your data have been deleted.",
+        "errors": {
+          "invalidPassword": "Incorrect password.",
+          "unknown": "The account could not be deleted. Please try again."
+        }
+      },
+      "sections": {
+        "health": "Health",
+        "food": "Food",
+        "budget": "Budget",
+        "sport": "Sport"
+      },
+      "fields": {
+        "height": "Height",
+        "weight": "Weight",
+        "bmi": "BMI",
+        "diet": "Diet",
+        "goal": "Nutrition goal",
+        "allergies": "Allergies",
+        "intolerances": "Intolerances",
+        "weeklyBudget": "Weekly food budget",
+        "activityLevel": "Activity level",
+        "sportGoal": "Sport goal",
+        "level": "Level",
+        "sessionDuration": "Session length",
+        "equipment": "Equipment",
+        "availableDays": "Available days"
+      },
+      "units": {
+        "cm": "cm",
+        "kg": "kg",
+        "minutes": "min"
+      },
+      "none": "None",
+      "bmiNote": "Indicative only, it does not replace medical advice.",
+      "bmiCategory": {
+        "underweight": "Underweight",
+        "normal": "Normal",
+        "overweight": "Overweight",
+        "obese": "Obesity"
+      },
+      "enums": {
+        "diet": {
+          "none": "No specific diet",
+          "vegetarian": "Vegetarian",
+          "vegan": "Vegan",
+          "gluten_free": "Gluten-free",
+          "lactose_free": "Lactose-free",
+          "low_carb": "Low-carb"
+        },
+        "goal": {
+          "maintenance": "Maintenance",
+          "weight_loss": "Weight loss",
+          "muscle_gain": "Muscle gain",
+          "balanced": "Balanced"
+        },
+        "activityLevel": {
+          "sedentary": "Sedentary",
+          "light": "Lightly active",
+          "moderate": "Moderately active",
+          "active": "Active",
+          "very_active": "Very active"
+        },
+        "sportGoal": {
+          "muscle_gain": "Muscle gain",
+          "weight_loss": "Weight loss",
+          "endurance": "Endurance",
+          "fitness": "Fitness",
+          "maintenance": "Maintenance"
+        },
+        "level": {
+          "beginner": "Beginner",
+          "intermediate": "Intermediate",
+          "advanced": "Advanced"
+        },
+        "equipment": {
+          "none": "No equipment",
+          "home": "Home equipment",
+          "gym": "Gym"
+        },
+        "weekday": {
+          "mon": "Mon",
+          "tue": "Tue",
+          "wed": "Wed",
+          "thu": "Thu",
+          "fri": "Fri",
+          "sat": "Sat",
+          "sun": "Sun"
+        }
+      }
     },
     "recipes": {
       "title": "Recipes",
@@ -262,5 +412,31 @@
   "offline": {
     "title": "You are offline",
     "description": "This page is not available offline yet. Check your connection and try again."
+  },
+  "coach": {
+    "title": "Mia, your coach",
+    "subtitle": "Nutrition, budget and workout ideas, tailored to you.",
+    "greeting": "Hi! I'm Mia. I know your diet, allergies and budget, so ask me anything about meals, shopping or workouts.",
+    "placeholder": "Ask Mia a question...",
+    "send": "Send",
+    "thinking": "Mia is thinking...",
+    "newConversation": "New conversation",
+    "newConversationConfirm": "Start a new conversation? Your current chat with Mia will be deleted.",
+    "disclaimer": "Mia is an AI coach, not a doctor. Check important health decisions with a professional.",
+    "suggestions": {
+      "s1": "Dinner idea within my budget",
+      "s2": "A 30-minute workout for today",
+      "s3": "Healthy snacks I can prepare"
+    },
+    "errors": {
+      "rateLimit": "Too many messages. Wait a minute and try again.",
+      "notConfigured": "The coach is not set up yet. Ask the admin to add the API key.",
+      "busy": "Mia is very busy right now. Please try again in a moment.",
+      "unknown": "Mia could not answer. Please try again."
+    },
+    "cta": {
+      "title": "Talk to Mia",
+      "description": "Your virtual coach for meals, budget and workouts."
+    }
   }
 }

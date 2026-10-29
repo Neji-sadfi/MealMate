@@ -4,7 +4,15 @@ import type { Role } from "@/models/enums";
 // Lightweight Auth.js config shared by proxy.ts and lib/auth.ts.
 // It must NOT import Mongoose, bcrypt or any model: proxy.ts only reads the JWT.
 
-const publicRoutes = ["/login", "/register", "/forgot-password", "/~offline"];
+// /reset-password and /verify-email open from email links, signed in or not.
+const publicRoutes = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
+  "/~offline",
+];
 const authRoutes = ["/login", "/register", "/forgot-password"];
 const adminPrefix = "/admin";
 

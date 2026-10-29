@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import { connectToDatabase } from "@/lib/db";
 import { User } from "@/models/User";
 import type { RegisterInput } from "../schemas";
+import { sendVerificationEmail } from "./emails";
+import { createAuthToken } from "./tokens";
 
 export type RegisterResult = { ok: true; userId: string } | { ok: false; error: "emailTaken" };
 
@@ -26,5 +28,13 @@ export async function registerUser(input: RegisterInput): Promise<RegisterResult
       weeklyBudget: input.weeklyBudget,
     },
   });
+
+  // The account works right away; a failed email must not block the sign-up.
+  try {
+    const token = await createAuthToken(user._id, "email_verification");
+    await sendVerificationEmail(user, token);
+  } catch (error) {
+    console.error("verification email failed", error);
+  }
   return { ok: true, userId: user._id.toString() };
 }

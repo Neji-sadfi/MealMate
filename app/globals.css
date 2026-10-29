@@ -12,6 +12,8 @@
   --muted: #6b7570;
   --border: #e3e0d6;
   --danger: #b3261e;
+  --success: #1e6b3f;
+  --success-bg: #dff0e3;
 }
 
 @theme inline {
@@ -25,6 +27,8 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
 
   --radius-input: 0.75rem; /* 12px */
   --radius-card: 1rem; /* 16px */
