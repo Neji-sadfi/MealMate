@@ -12,6 +12,11 @@
     "ownedBy": "Module owner: {owner}",
     "signOut": "Sign out"
   },
+  "errors": {
+    "title": "Something went wrong",
+    "body": "We could not load this screen. Check your connection and try again.",
+    "retry": "Try again"
+  },
   "nav": {
     "label": "Main navigation",
     "home": "Home",
@@ -73,7 +78,50 @@
   "pages": {
     "home": {
       "title": "Hello {name}",
-      "subtitle": "A little organisation, a lot of well-being."
+      "subtitle": "A little organisation, a lot of well-being.",
+      "kicker": "Your week at a glance",
+      "trackingLink": "Nutrition & budget tracking",
+      "budget": {
+        "title": "Weekly budget",
+        "remaining": "{amount} DT left",
+        "used": "{amount} DT used",
+        "total": "Total {amount} DT",
+        "progressLabel": "{percent}% of your weekly budget used",
+        "noBudget": "No weekly budget set yet. Add one to follow your spending."
+      },
+      "stats": {
+        "avgKcal": "{kcal} kcal/day",
+        "kcalTarget": "Target {kcal} kcal/day",
+        "avgProtein": "{protein} g/day",
+        "proteinTarget": "Target {protein} g/day"
+      },
+      "shortcuts": {
+        "label": "Quick links",
+        "meals": "Meals",
+        "shopping": "Shopping",
+        "sport": "Sport",
+        "community": "Community"
+      },
+      "today": {
+        "title": "Today's menu",
+        "cta": "Open my meal plan",
+        "empty": "Nothing planned for today yet."
+      },
+      "shopping": {
+        "title": "Shopping list",
+        "items": "{count, plural, one {# item to buy} other {# items to buy}}",
+        "estimated": "About {amount} DT",
+        "empty": "Nothing to buy right now.",
+        "cta": "Open the shopping list"
+      },
+      "expiry": {
+        "title": "Coming out of date",
+        "expiresIn": "{name} · {quantity} {unit} {days, plural, =0 {expires today} one {expires tomorrow} other {expires in # days}}"
+      },
+      "workout": {
+        "title": "Next workout",
+        "line": "{name} - {duration} min"
+      }
     },
     "profile": {
       "title": "My profile",
@@ -89,7 +137,102 @@
     },
     "mealPlan": {
       "title": "My meal plan",
-      "subtitle": "A week to savour."
+      "subtitle": "A week to savour.",
+      "kicker": "My plan",
+      "tabs": {
+        "label": "Plan sections",
+        "plan": "Plan",
+        "recipes": "Recipes",
+        "favourites": "Favourites"
+      },
+      "weekStrip": "Days of the week",
+      "week": {
+        "previous": "Previous week",
+        "next": "Next week"
+      },
+      "weekdays": {
+        "mon": "M",
+        "tue": "T",
+        "wed": "W",
+        "thu": "T",
+        "fri": "F",
+        "sat": "S",
+        "sun": "S"
+      },
+      "weekdayLabels": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      },
+      "criteria": {
+        "title": "{days} days, your budget, your tastes.",
+        "summary": "From {from} to {to} · {people}. Use your {pantry}.",
+        "people": "{count, plural, one {# person} other {# people}}",
+        "daysLabel": "Days",
+        "mealsPerDayLabel": "Meals per day",
+        "peopleLabel": "People",
+        "extraBudgetLabel": "Extra budget (DT)",
+        "extraBudget": "{amount} DT extra",
+        "mealsCount": "{count} meals",
+        "generate": "Generate from my criteria"
+      },
+      "offline": {
+        "cached": "You are offline: this is the last version of your plan saved on your device.",
+        "pending": "{count, plural, one {# change is waiting to be sent.} other {# changes are waiting to be sent.}}"
+      },
+      "deleteWeek": "Delete this week",
+      "duplicateDay": "Duplicate day",
+      "duplicateWeek": "Duplicate week",
+      "addMeal": "Add a meal",
+      "types": {
+        "breakfast": "Breakfast",
+        "lunch": "Lunch",
+        "dinner": "Dinner",
+        "snack": "Snack"
+      },
+      "kcalProtein": "{kcal} kcal · {protein} g protein",
+      "portion": "{count, plural, one {# portion} other {# portions}}",
+      "edit": "Edit",
+      "move": "Move",
+      "remove": "Remove",
+      "snacksLine": "Planned snacks: {kcal} kcal · {protein} g protein. Daily total: {totalKcal} kcal · {totalProtein} g protein.",
+      "shoppingCta": "View my shopping list · {count} items",
+      "emptyDay": "No meals planned for this day.",
+      "emptyWeek": "This week is empty. Generate a plan from your criteria below.",
+      "loadError": "We could not load this week's plan.",
+      "retry": "Try again",
+      "actionError": "Something went wrong: your change was not saved.",
+      "warnings": {
+        "noValidRecipes": "No recipe matches your diet and allergies. Check your profile preferences.",
+        "overBudget": "Even the cheapest plan costs {cost} DT against your {budget} DT budget.",
+        "kcalTarget": "Planned meals total {kcal} kcal against your {target} kcal target.",
+        "reused": "Some recipes repeat more than twice this week: not enough recipes match your criteria."
+      },
+      "dialog": {
+        "close": "Close",
+        "cancel": "Cancel",
+        "save": "Save",
+        "editTitle": "Edit meal",
+        "moveTitle": "Move meal",
+        "addTitle": "Add a meal",
+        "removeTitle": "Remove this meal?",
+        "removeBody": "It will disappear from this day's plan.",
+        "removeConfirm": "Remove",
+        "pickRecipe": "Recipe",
+        "pickDay": "Day",
+        "pickType": "Meal type",
+        "duplicateDayTitle": "Duplicate this day",
+        "pickTargetDay": "Copy to",
+        "targetHasMeals": "The day you picked already has meals: they will be replaced.",
+        "duplicateDayConfirm": "Duplicate",
+        "deleteWeekTitle": "Delete this week?",
+        "deleteWeekBody": "Every meal planned for this week will be removed.",
+        "deleteWeekConfirm": "Delete"
+      }
     },
     "shopping": {
       "title": "Shopping list",

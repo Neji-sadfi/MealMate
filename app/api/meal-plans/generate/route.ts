@@ -1,48 +1,89 @@
 import { NextResponse } from "next/server";
-import { getCurrentUserId } from "@/lib/current-user";
-import { Meal } from "@/models/Meal";
-import { MealPlan } from "@/models/MealPlan";
+import { auth } from "@/lib/auth";
+import { connectToDatabase } from "@/lib/db";
 import { Recipe } from "@/models/Recipe";
+import { User } from "@/models/User";
+import { generatePlanSchema } from "@/features/meal-plan/schemas";
+import { generatePlan, type GeneratorRecipe } from "@/features/meal-plan/services/generator";
+import {
+  mealPlanErrorResponse,
+  replacePlanMeals,
+} from "@/features/meal-plan/services/meal-plan-service";
+import { listPantryNames } from "@/features/meal-plan/services/server-providers";
 
-function currentWeek() {
-  const start = new Date();
-  start.setUTCDate(start.getUTCDate() - ((start.getUTCDay() + 6) % 7));
-  start.setUTCHours(0, 0, 0, 0);
-  const end = new Date(start);
-  end.setUTCDate(end.getUTCDate() + 6);
-  return { start, end };
-}
+// POST /api/meal-plans/generate
+// { weekStart, days?, mealsPerDay?, extraBudget?, people? } -> replaces that
+// week's meals, saves the criteria on the plan, sets generated: true and
+// returns { plan, warnings }.
+export async function POST(request: Request) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-export async function POST() {
-  const userId = await getCurrentUserId();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const recipes = await Recipe.find().select("_id").sort({ createdAt: 1 }).limit(50).lean();
-  if (recipes.length === 0) return NextResponse.json({ error: "Create at least one recipe first" }, { status: 409 });
+  const body = await request.json().catch(() => null);
+  const parsed = generatePlanSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid generate payload." }, { status: 400 });
+  }
 
-  const week = currentWeek();
-  const plan = await MealPlan.findOneAndUpdate(
-    { user: userId, weekStart: week.start },
-    { $set: { weekEnd: week.end, generated: true }, $setOnInsert: { people: 1 } },
-    { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
-  );
-  await Meal.deleteMany({ mealPlan: plan._id });
+  try {
+    await connectToDatabase();
+    const userId = session.user.id;
+    const user = await User.findById(userId).lean();
+    const recipes = await Recipe.find({}).lean();
+    const inventoryNames = await listPantryNames(userId); // Member 4 data, try/catch inside
 
-  const types = ["breakfast", "lunch", "dinner"] as const;
-  const meals = Array.from({ length: 7 }, (_, dayIndex) =>
-    types.map((type, mealIndex) => {
-      const date = new Date(week.start);
-      date.setUTCDate(date.getUTCDate() + dayIndex);
-      return {
-        mealPlan: plan._id,
-        user: userId,
-        recipe: recipes[(dayIndex * types.length + mealIndex) % recipes.length]!._id,
-        date,
-        type,
-        servings: plan.people,
-      };
-    }),
-  ).flat();
-  await Meal.insertMany(meals);
-  const generated = await Meal.find({ mealPlan: plan._id }).populate("recipe", "title").sort({ date: 1, type: 1 }).lean();
-  return NextResponse.json({ plan, meals: generated }, { status: 201 });
+    const { meals, warnings } = generatePlan({
+      weekStart: parsed.data.weekStart,
+      recipes: recipes.map(
+        (recipe): GeneratorRecipe => ({
+          id: recipe._id.toString(),
+          title: recipe.title,
+          imageUrl: recipe.imageUrl ?? undefined,
+          calories: recipe.nutrition.calories,
+          protein: recipe.nutrition.protein,
+          cost: recipe.costPerServing,
+          diets: [...recipe.diets],
+          ingredientNames: recipe.ingredients.map((ingredient) => ingredient.name),
+        }),
+      ),
+      preferences: {
+        diet: user?.preferences?.diet ?? "none",
+        allergies: user?.preferences?.allergies ?? [],
+        kcalTarget: user?.preferences?.dailyCaloriesTarget ?? 2000,
+        proteinTarget: user?.preferences?.dailyProteinTarget ?? 130,
+        weeklyBudget: user?.preferences?.weeklyBudget ?? 0,
+      },
+      extraBudget: parsed.data.extraBudget,
+      inventoryNames,
+      days: parsed.data.days,
+      mealsPerDay: parsed.data.mealsPerDay,
+      people: parsed.data.people,
+    });
+
+    const plan = await replacePlanMeals(
+      userId,
+      parsed.data.weekStart,
+      meals.map((meal) => ({
+        date: meal.date,
+        type: meal.type,
+        time: meal.time,
+        servings: meal.servings,
+        recipeId: meal.recipe.id,
+      })),
+      true,
+      // The criteria that produced this plan are kept on the plan, so the
+      // screen shows the same numbers the next time it is opened.
+      {
+        people: parsed.data.people,
+        days: parsed.data.days,
+        mealsPerDay: parsed.data.mealsPerDay,
+        extraBudget: parsed.data.extraBudget,
+      },
+    );
+    return NextResponse.json({ plan, warnings });
+  } catch (error) {
+    return mealPlanErrorResponse(error);
+  }
 }
