@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Copy, Plus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { PhotoHero } from "@/components/ui/PhotoHero";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { WeekStrip } from "@/components/ui/WeekStrip";
@@ -333,10 +334,12 @@ export function MealPlanScreen({
 
   return (
     <div className="flex flex-col gap-4">
-      <section className="flex flex-col gap-1">
-        <p className="text-xs font-semibold tracking-wide text-muted uppercase">{t("kicker")}</p>
-        <h1 className="text-2xl leading-tight font-extrabold">{t("subtitle")}</h1>
-      </section>
+      <PhotoHero
+        image="meals"
+        kicker={t("kicker")}
+        title={t("subtitle")}
+        subtitle={t("heroSubtitle")}
+      />
 
       <PlanTabs />
       <WeekNavigator
@@ -355,7 +358,9 @@ export function MealPlanScreen({
       {(offlinePlan || pendingCount > 0) && (
         <Card tone="warning" className="flex flex-col gap-1">
           {offlinePlan && <p className="text-sm">{t("offline.cached")}</p>}
-          {pendingCount > 0 && <p className="text-sm">{t("offline.pending", { count: pendingCount })}</p>}
+          {pendingCount > 0 && (
+            <p className="text-sm">{t("offline.pending", { count: pendingCount })}</p>
+          )}
         </Card>
       )}
 

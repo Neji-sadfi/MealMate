@@ -37,7 +37,10 @@
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(ellipse at 50% -24rem, rgb(207 224 199 / 35%), transparent 52rem),
+    var(--background);
   color: var(--foreground);
   font-size: 14px;
+  min-height: 100dvh;
 }

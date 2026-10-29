@@ -30,7 +30,7 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
 
   if (!recipe) {
     return (
-      <div className="flex flex-col gap-4">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
         <h1 className="text-2xl font-black">{t("title")}</h1>
         <p className="text-sm text-muted">Recipe not found.</p>
         <Link href="/recipes" className="text-sm font-semibold text-primary">
@@ -64,14 +64,19 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <Link href="/recipes" className="text-sm font-semibold text-primary">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-5">
+      <Link
+        href="/recipes"
+        className="w-fit text-sm font-semibold text-primary transition-colors hover:text-primary/70"
+      >
         ← Back
       </Link>
-      <section className="flex flex-col gap-2">
-        <p className="text-xs tracking-wide text-muted uppercase">{recipe.difficulty}</p>
-        <h1 className="text-3xl font-black">{recipe.title}</h1>
-        <p className="text-sm text-muted">{recipe.tagline}</p>
+      <section className="rounded-card border border-border/70 bg-surface p-5 shadow-sm sm:p-7">
+        <p className="text-xs font-bold tracking-[0.16em] text-primary uppercase">
+          {recipe.difficulty}
+        </p>
+        <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{recipe.title}</h1>
+        <p className="mt-2 text-sm text-muted sm:text-base">{recipe.tagline}</p>
       </section>
       {recipe.imageUrl && (
         <Image
@@ -80,36 +85,36 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
           width={1200}
           height={800}
           unoptimized
-          className="max-h-72 w-full rounded-card object-cover"
+          className="max-h-[32rem] w-full rounded-card object-cover shadow-sm"
         />
       )}
-      <Card>
-        <p className="text-sm">{recipe.description}</p>
+      <Card className="border border-border/70 shadow-sm">
+        <p className="text-sm leading-relaxed">{recipe.description}</p>
       </Card>
-      <Card className="grid grid-cols-2 gap-3 text-sm">
-        <p>
+      <Card className="grid grid-cols-2 gap-3 border border-border/70 text-sm shadow-sm sm:grid-cols-3 lg:grid-cols-4">
+        <p className="rounded-xl bg-background p-3">
           Servings: <strong>{recipe.servings}</strong>
         </p>
-        <p>
+        <p className="rounded-xl bg-background p-3">
           Preparation: <strong>{recipe.prepTimeMinutes} min</strong>
         </p>
-        <p>
+        <p className="rounded-xl bg-background p-3">
           Calories: <strong>{recipe.nutrition.calories} kcal</strong>
         </p>
-        <p>
+        <p className="rounded-xl bg-background p-3">
           Protein: <strong>{recipe.nutrition.protein} g</strong>
         </p>
-        <p>
+        <p className="rounded-xl bg-background p-3">
           Carbs: <strong>{recipe.nutrition.carbs} g</strong>
         </p>
-        <p>
+        <p className="rounded-xl bg-background p-3">
           Fat: <strong>{recipe.nutrition.fat} g</strong>
         </p>
-        <p>
+        <p className="rounded-xl bg-background p-3 sm:col-span-3 lg:col-span-1">
           Cost / serving: <strong>{recipe.costPerServing}</strong>
         </p>
       </Card>
-      <Card>
+      <Card className="border border-border/70 shadow-sm">
         <h2 className="mb-3 text-lg font-bold">Ingredients</h2>
         <ul className="space-y-2 text-sm">
           {recipe.ingredients.map((ingredient, index) => (
@@ -125,11 +130,11 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
           ))}
         </ul>
       </Card>
-      <Card>
+      <Card className="border border-border/70 shadow-sm">
         <h2 className="mb-3 text-lg font-bold">Steps</h2>
         <ol className="space-y-3 text-sm">
           {recipe.steps.map((step) => (
-            <li key={step.order} className="rounded-xl bg-surface p-3">
+            <li key={step.order} className="rounded-xl bg-background p-4">
               <p className="font-semibold">{step.title}</p>
               <p className="mt-1 text-muted">{step.description}</p>
             </li>

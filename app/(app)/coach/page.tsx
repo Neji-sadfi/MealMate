@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { CoachChat } from "@/features/coach/components/CoachChat";
 import { loadCoachHistory } from "@/features/coach/services/history";
 import { getCurrentUserId } from "@/lib/current-user";
+import { PhotoHero } from "@/components/ui/PhotoHero";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("coach");
@@ -13,6 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CoachPage() {
   const t = await getTranslations("common");
+  const tCoach = await getTranslations("coach");
   const userId = await getCurrentUserId();
   const history = userId ? await loadCoachHistory(userId).catch(() => []) : [];
 
@@ -22,6 +24,7 @@ export default async function CoachPage() {
         <ChevronLeft aria-hidden className="size-5" />
         {t("back")}
       </Link>
+      <PhotoHero image="community" title={tCoach("title")} subtitle={tCoach("subtitle")} />
       <CoachChat initialMessages={history} />
     </div>
   );

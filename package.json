@@ -13,8 +13,9 @@
     "db:seed": "tsx --env-file=.env scripts/seed.ts"
   },
   "dependencies": {
-    "@google/genai": "^2.32.0",
+    "@ai-sdk/google": "^4.0.108",
     "@serwist/turbopack": "^9.5.13",
+    "ai": "^7.0.157",
     "bcryptjs": "^3.0.3",
     "dexie": "^4.4.6",
     "lucide-react": "^1.57.0",

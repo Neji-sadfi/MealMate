@@ -11,6 +11,7 @@ import { getCurrentUserId } from "@/lib/current-user";
 import { DeleteAccountSection } from "@/features/auth/components/DeleteAccountSection";
 import { Avatar } from "@/models/Avatar";
 import { User } from "@/models/User";
+import { PhotoHero } from "@/components/ui/PhotoHero";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.profile");
@@ -32,10 +33,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <section className="flex flex-col gap-1">
-        <h1 className="text-2xl font-black">{t("title")}</h1>
-        <p className="text-sm text-muted">{t("subtitle")}</p>
-      </section>
+      <PhotoHero image="community" title={t("title")} subtitle={t("subtitle")} />
 
       {user && !user.emailVerifiedAt && <VerifyEmailBanner email={user.email} />}
 

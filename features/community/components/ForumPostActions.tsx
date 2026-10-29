@@ -2,7 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Heart, Lightbulb, MessageCircle, Pencil, ThumbsUp, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import type { ForumReactionType } from "@/models/ForumLike";
 
 type Comment = {
   _id: string;
@@ -14,22 +17,23 @@ export function ForumPostActions({
   postId,
   title,
   content,
-  likesCount,
-  isLiked,
+  reactionCounts,
+  userReaction,
   canManage,
   isAdmin,
 }: {
   postId: string;
   title: string;
   content: string;
-  likesCount: number;
-  isLiked: boolean;
+  reactionCounts: Record<ForumReactionType, number>;
+  userReaction?: ForumReactionType;
   canManage: boolean;
   isAdmin: boolean;
 }) {
   const router = useRouter();
-  const [liked, setLiked] = useState(isLiked);
-  const [likes, setLikes] = useState(likesCount);
+  const t = useTranslations("pages.community.actions");
+  const [selectedReaction, setSelectedReaction] = useState(userReaction);
+  const [counts, setCounts] = useState(reactionCounts);
   const [comments, setComments] = useState<Comment[]>([]);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -45,16 +49,12 @@ export function ForumPostActions({
       const response = await fetch(`/api/forum/posts/${postId}/comments`);
       const result = (await response.json()) as Comment[] | { error?: string };
       if (!response.ok || !Array.isArray(result)) {
-        setError(
-          !Array.isArray(result)
-            ? (result.error ?? "Could not load comments.")
-            : "Could not load comments.",
-        );
+        setError(t("loadCommentsError"));
         return;
       }
       setComments(result);
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     }
   }
 
@@ -64,20 +64,31 @@ export function ForumPostActions({
     if (next) await loadComments();
   }
 
-  async function likePost() {
+  async function react(reaction: ForumReactionType) {
     setPending(true);
     setError("");
     try {
-      const response = await fetch(`/api/forum/posts/${postId}/likes`, { method: "POST" });
-      const result = (await response.json()) as { liked?: boolean; error?: string };
-      if (!response.ok || typeof result.liked !== "boolean") {
-        setError(result.error ?? "Could not update your like.");
+      const response = await fetch(`/api/forum/posts/${postId}/reactions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reaction }),
+      });
+      const result = (await response.json()) as { reaction?: ForumReactionType | null };
+      if (!response.ok || !("reaction" in result)) {
+        setError(t("reactionError"));
         return;
       }
-      setLiked(result.liked);
-      setLikes((count) => count + (result.liked ? 1 : -1));
+      const nextReaction = result.reaction ?? undefined;
+      setCounts((current) => ({
+        ...current,
+        ...(selectedReaction
+          ? { [selectedReaction]: Math.max(0, current[selectedReaction] - 1) }
+          : {}),
+        ...(nextReaction ? { [nextReaction]: current[nextReaction] + 1 } : {}),
+      }));
+      setSelectedReaction(nextReaction);
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
@@ -95,18 +106,14 @@ export function ForumPostActions({
       });
       const result = (await response.json()) as Comment | { error?: string };
       if (!response.ok || !("_id" in result)) {
-        setError(
-          "error" in result
-            ? (result.error ?? "Could not add your comment.")
-            : "Could not add your comment.",
-        );
+        setError(t("addCommentError"));
         return;
       }
       setComments((current) => [...current, result]);
       setCommentText("");
       router.refresh();
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
@@ -121,14 +128,13 @@ export function ForumPostActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason: "other" }),
       });
-      const result = (await response.json()) as { error?: string };
       if (!response.ok) {
-        setError(result.error ?? "Could not report this post.");
+        setError(t("reportError"));
         return;
       }
-      setError("Post reported to the moderators.");
+      setError(t("reported"));
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
@@ -144,34 +150,32 @@ export function ForumPostActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: editTitle, content: editContent }),
       });
-      const result = (await response.json()) as { error?: string };
       if (!response.ok) {
-        setError(result.error ?? "Could not update this post.");
+        setError(t("updateError"));
         return;
       }
       setEditing(false);
       router.refresh();
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
   }
 
   async function deletePost() {
-    if (!window.confirm("Delete this post and its comments?")) return;
+    if (!window.confirm(t("deleteConfirm"))) return;
     setPending(true);
     setError("");
     try {
       const response = await fetch(`/api/forum/posts/${postId}`, { method: "DELETE" });
-      const result = (await response.json()) as { error?: string };
       if (!response.ok) {
-        setError(result.error ?? "Could not delete this post.");
+        setError(t("deleteError"));
         return;
       }
       router.refresh();
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
@@ -182,15 +186,14 @@ export function ForumPostActions({
     setError("");
     try {
       const response = await fetch(`/api/admin/comments/${commentId}`, { method: "DELETE" });
-      const result = (await response.json()) as { error?: string };
       if (!response.ok) {
-        setError(result.error ?? "Could not delete this comment.");
+        setError(t("deleteCommentError"));
         return;
       }
       setComments((current) => current.filter((comment) => comment._id !== commentId));
       router.refresh();
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
@@ -199,23 +202,48 @@ export function ForumPostActions({
   return (
     <div className="flex flex-col gap-3 border-t border-border pt-3">
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" disabled={pending} onClick={likePost}>
-          {liked ? "Unlike" : "Like"} · {likes}
-        </Button>
+        {(
+          [
+            { type: "like", label: t("reactions.like"), Icon: Heart },
+            { type: "helpful", label: t("reactions.helpful"), Icon: ThumbsUp },
+            { type: "inspiring", label: t("reactions.inspiring"), Icon: Lightbulb },
+          ] as const
+        ).map(({ type, label, Icon }) => (
+          <Button
+            key={type}
+            type="button"
+            variant={selectedReaction === type ? "primary" : "secondary"}
+            aria-pressed={selectedReaction === type}
+            disabled={pending}
+            onClick={() => void react(type)}
+            className="min-h-10"
+          >
+            <Icon aria-hidden className="size-4" />
+            {label} · {counts[type]}
+          </Button>
+        ))}
         <Button variant="secondary" disabled={pending} onClick={toggleComments}>
-          {showComments ? "Hide comments" : "Comments"}
+          <MessageCircle aria-hidden className="size-4" />
+          {showComments ? t("hideComments") : t("comments")}
         </Button>
         <Button variant="ghost" disabled={pending} onClick={reportPost}>
-          Report
+          {t("report")}
         </Button>
         {canManage && (
-          <Button variant="ghost" disabled={pending} onClick={() => setEditing((value) => !value)}>
-            Edit
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={pending}
+            onClick={() => setEditing((value) => !value)}
+          >
+            <Pencil aria-hidden className="size-4" />
+            {t("edit")}
           </Button>
         )}
         {(canManage || isAdmin) && (
-          <Button variant="ghost" disabled={pending} onClick={deletePost}>
-            Delete
+          <Button type="button" variant="ghost" disabled={pending} onClick={deletePost}>
+            <Trash2 aria-hidden className="size-4" />
+            {t("delete")}
           </Button>
         )}
       </div>
@@ -237,7 +265,7 @@ export function ForumPostActions({
             rows={3}
             className="rounded-input border border-border bg-background p-2"
           />
-          <Button disabled={pending}>Save changes</Button>
+          <Button disabled={pending}>{t("saveChanges")}</Button>
         </form>
       )}
       {showComments && (
@@ -256,7 +284,7 @@ export function ForumPostActions({
                   disabled={pending}
                   onClick={() => deleteComment(comment._id)}
                 >
-                  Delete
+                  {t("delete")}
                 </Button>
               )}
             </div>
@@ -268,10 +296,10 @@ export function ForumPostActions({
               maxLength={2000}
               required
               rows={2}
-              placeholder="Write a comment..."
+              placeholder={t("commentPlaceholder")}
               className="rounded-input border border-border bg-background p-3"
             />
-            <Button disabled={pending}>Add comment</Button>
+            <Button disabled={pending}>{t("addComment")}</Button>
           </form>
         </div>
       )}

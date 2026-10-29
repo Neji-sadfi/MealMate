@@ -12,7 +12,7 @@ export interface IForumPost {
   category: ForumCategory;
   title: string;
   content: string;
-  /** Counters kept in sync by the API to avoid counting on every list. */
+  /** Total reactions, stored in the legacy likesCount field for compatibility. */
   likesCount: number;
   commentsCount: number;
   reportsCount: number;

@@ -4,23 +4,35 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 /** Local tabs. Swap for shared SegmentedTabs when Member 2 adds it to components/ui. */
-export function PlanTabs() {
+export function PlanTabs({ active = "plan" }: { active?: "plan" | "recipes" | "favourites" }) {
   const t = useTranslations("pages.mealPlan.tabs");
+  const tabClass = (tab: typeof active) =>
+    `flex-1 border-b-2 pb-2 text-center text-sm font-semibold transition-colors ${
+      active === tab
+        ? "border-primary font-bold text-primary"
+        : "border-transparent text-muted hover:text-foreground"
+    }`;
 
   return (
     <nav aria-label={t("label")} className="flex border-b border-border">
-      <span className="flex-1 border-b-2 border-primary pb-2 text-center text-sm font-bold text-primary">
+      <Link
+        href="/meal-plan"
+        aria-current={active === "plan" ? "page" : undefined}
+        className={tabClass("plan")}
+      >
         {t("plan")}
-      </span>
+      </Link>
       <Link
         href="/recipes"
-        className="flex-1 pb-2 text-center text-sm font-semibold text-muted hover:text-foreground"
+        aria-current={active === "recipes" ? "page" : undefined}
+        className={tabClass("recipes")}
       >
         {t("recipes")}
       </Link>
       <Link
-        href="/recipes"
-        className="flex-1 pb-2 text-center text-sm font-semibold text-muted hover:text-foreground"
+        href="/recipes?view=favourites"
+        aria-current={active === "favourites" ? "page" : undefined}
+        className={tabClass("favourites")}
       >
         {t("favourites")}
       </Link>

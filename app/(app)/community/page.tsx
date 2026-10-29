@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/Card";
 import { ForumPostForm } from "@/features/community/components/ForumPostForm";
 import { ForumPostActions } from "@/features/community/components/ForumPostActions";
 import { getCurrentAdminId } from "@/lib/admin";
 import { getCurrentUserId } from "@/lib/current-user";
-import { ForumLike } from "@/models/ForumLike";
+import { ForumLike, type ForumReactionType } from "@/models/ForumLike";
 import { ForumPost } from "@/models/ForumPost";
 import { Types } from "mongoose";
+import { PhotoHero } from "@/components/ui/PhotoHero";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.community");
@@ -16,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CommunityPage() {
   const t = await getTranslations("pages.community");
+  const locale = await getLocale();
   const userId = await getCurrentUserId();
   const adminId = userId ? await getCurrentAdminId() : null;
   const posts = userId
@@ -25,52 +27,104 @@ export default async function CommunityPage() {
         .limit(50)
         .lean()
     : [];
-  const likedIds =
-    userId && posts.length > 0
-      ? new Set(
-          (
-            await ForumLike.find({
-              user: userId,
-              post: { $in: posts.map((post) => post._id) },
-            }).distinct("post")
-          ).map(String),
-        )
-      : new Set<string>();
+  const postIds = posts.map((post) => post._id);
+  const [reactionTotals, userReactions] =
+    userId && postIds.length > 0
+      ? await Promise.all([
+          ForumLike.aggregate<{
+            _id: { post: Types.ObjectId; reaction: ForumReactionType };
+            count: number;
+          }>([
+            { $match: { post: { $in: postIds } } },
+            {
+              $group: {
+                _id: {
+                  post: "$post",
+                  reaction: { $ifNull: ["$reaction", "like"] },
+                },
+                count: { $sum: 1 },
+              },
+            },
+          ]),
+          ForumLike.find({ user: userId, post: { $in: postIds } })
+            .select("post reaction")
+            .lean(),
+        ])
+      : [[], []];
+  const reactionCounts = new Map<string, Record<ForumReactionType, number>>();
+  for (const total of reactionTotals) {
+    const postId = total._id.post.toString();
+    const counts = reactionCounts.get(postId) ?? { like: 0, helpful: 0, inspiring: 0 };
+    counts[total._id.reaction] = total.count;
+    reactionCounts.set(postId, counts);
+  }
+  const reactionByPost = new Map(
+    userReactions.map((reaction) => [reaction.post.toString(), reaction.reaction ?? "like"]),
+  );
 
   return (
     <div className="flex flex-col gap-4">
-      <section className="flex flex-col gap-1">
-        <h1 className="text-2xl font-black">{t("title")}</h1>
-        <p className="text-sm text-muted">{t("subtitle")}</p>
-      </section>
+      <PhotoHero image="community" title={t("title")} subtitle={t("subtitle")} />
       <ForumPostForm />
       {posts.length === 0 ? (
         <Card>
-          <h2 className="font-bold">No discussions yet</h2>
-          <p className="mt-1 text-sm text-muted">
-            Community posts will appear here when members share them.
-          </p>
+          <h2 className="font-bold">{t("empty.title")}</h2>
+          <p className="mt-1 text-sm text-muted">{t("empty.body")}</p>
         </Card>
       ) : (
         posts.map((post) => {
           const author = post.author as unknown as { _id: Types.ObjectId; name: string };
           return (
-            <Card key={post._id.toString()} className="flex flex-col gap-3">
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-semibold">{author.name}</p>
-                <span className="text-xs text-muted">{post.likesCount} likes</span>
+            <Card
+              key={post._id.toString()}
+              className="flex flex-col gap-4 border border-border/70 shadow-sm transition-shadow hover:shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  aria-hidden
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-tint text-sm font-bold text-primary"
+                >
+                  {author.name
+                    .split(/\s+/)
+                    .slice(0, 2)
+                    .map((part) => part[0] ?? "")
+                    .join("")
+                    .toUpperCase()}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold">{author.name}</p>
+                  <p className="text-xs text-muted">
+                    {post.createdAt.toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US", {
+                      dateStyle: "medium",
+                    })}
+                  </p>
+                </div>
+                <span className="rounded-full bg-tint px-3 py-1 text-xs font-semibold text-primary">
+                  {t(`actions.categories.${post.category}`)}
+                </span>
               </div>
-              <h2 className="text-lg font-bold">{post.title}</h2>
-              <p className="text-sm">{post.content}</p>
-              <p className="text-xs text-muted capitalize">
-                {post.category.replaceAll("_", " ")} · {post.commentsCount} comments
-              </p>
+              <div>
+                <h2 className="text-lg font-bold tracking-tight">{post.title}</h2>
+                <p className="mt-2 text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
+                  {post.content}
+                </p>
+                <p className="mt-3 text-xs text-muted">
+                  {t("reactionTotal", { count: post.likesCount })} ·{" "}
+                  {t("comments", { count: post.commentsCount })}
+                </p>
+              </div>
               <ForumPostActions
                 postId={post._id.toString()}
                 title={post.title}
                 content={post.content}
-                likesCount={post.likesCount}
-                isLiked={likedIds.has(post._id.toString())}
+                reactionCounts={
+                  reactionCounts.get(post._id.toString()) ?? {
+                    like: 0,
+                    helpful: 0,
+                    inspiring: 0,
+                  }
+                }
+                userReaction={reactionByPost.get(post._id.toString())}
                 canManage={post.author._id.toString() === userId?.toString()}
                 isAdmin={Boolean(adminId)}
               />

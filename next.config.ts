@@ -5,6 +5,9 @@ import { withSerwist } from "@serwist/turbopack";
 const withNextIntl = createNextIntlPlugin("./lib/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
+  },
   // Mongoose must stay a server-only Node.js dependency.
   serverExternalPackages: ["mongoose"],
   turbopack: {

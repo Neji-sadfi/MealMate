@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
+import { PhotoHero } from "@/components/ui/PhotoHero";
 import { formatDayHeading } from "../services/format";
 import type { DashboardData } from "../types";
 import { ExpiryAlertBanner } from "./ExpiryAlertBanner";
 import { HomeBudgetCard } from "./HomeBudgetCard";
-import { HomeShortcuts } from "./HomeShortcuts";
 import { HomeStatCards } from "./HomeStatCards";
 import { NextWorkoutRow } from "./NextWorkoutRow";
 import { ShoppingPreviewCard } from "./ShoppingPreviewCard";
@@ -24,22 +24,28 @@ export function HomeScreen({ firstName, todayISO, data }: HomeScreenProps) {
   const locale = useLocale();
 
   return (
-    <div className="flex flex-col gap-4">
-      <section className="flex flex-col gap-1">
-        <p className="text-xs font-semibold tracking-wide text-muted uppercase">{t("kicker")}</p>
-        <h1 className="text-2xl leading-tight font-extrabold">{t("title", { name: firstName })}</h1>
-        <p className="text-sm text-muted">{formatDayHeading(todayISO, locale)}</p>
-        <p className="text-sm text-muted">{t("subtitle")}</p>
-      </section>
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+      <PhotoHero
+        image="home"
+        kicker={t("kicker")}
+        title={t("title", { name: firstName })}
+        subtitle={t("subtitle")}
+        meta={formatDayHeading(todayISO, locale)}
+      />
 
-      <HomeBudgetCard budget={data.budget} />
-      <HomeStatCards stats={data.stats} />
-      <TodayMenuCard meals={data.todayMeals} />
-      <ShoppingPreviewCard shopping={data.shopping} />
-      <ExpiryAlertBanner expiry={data.nearestExpiry} todayISO={todayISO} />
-      <NextWorkoutRow workout={data.nextWorkout} />
-      <HomeShortcuts />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <HomeBudgetCard budget={data.budget} />
+        <HomeStatCards stats={data.stats} />
+      </div>
 
+      <div className="grid gap-4 lg:grid-cols-2">
+        <TodayMenuCard meals={data.todayMeals} />
+        <div className="flex flex-col gap-4">
+          <ShoppingPreviewCard shopping={data.shopping} />
+          <ExpiryAlertBanner expiry={data.nearestExpiry} todayISO={todayISO} />
+          <NextWorkoutRow workout={data.nextWorkout} />
+        </div>
+      </div>
       <Link
         href="/tracking"
         className="inline-flex h-12 w-full items-center justify-center rounded-full border border-primary px-5 text-center font-semibold text-primary"

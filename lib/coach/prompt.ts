@@ -1,4 +1,5 @@
 import type { IUserPreferences } from "@/models/User";
+import type { Locale } from "@/lib/i18n/config";
 
 type CoachProfile = {
   heightCm?: number;
@@ -11,7 +12,7 @@ type CoachProfile = {
  * Privacy: only what the coach needs is sent. No name, email or city, because the
  * free Gemini tier may use submitted content to improve Google's products.
  */
-export function buildCoachSystemPrompt(profile: CoachProfile): string {
+export function buildCoachSystemPrompt(profile: CoachProfile, locale: Locale): string {
   const p = profile.preferences;
   const allergies = p.allergies.length ? p.allergies.join(", ") : "none declared";
   const intolerances = p.intolerances.length ? p.intolerances.join(", ") : "none declared";
@@ -19,7 +20,7 @@ export function buildCoachSystemPrompt(profile: CoachProfile): string {
   return `You are "Mia", the friendly virtual coach of MealMate, a meal planning, budget and workout app.
 You help with everyday nutrition, meal ideas, shopping on a budget, and simple workouts.
 
-Reply in the same language as the user's last message. Keep answers short (under 150 words),
+Reply in ${locale === "fr" ? "French" : "English"}. Keep answers short (under 150 words),
 warm and practical, with concrete suggestions. Use short lists only when they help.
 
 USER PROFILE (use it silently, do not recite it back):

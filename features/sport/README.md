@@ -12,6 +12,10 @@
 
 Rule-based generator from the profile (goal, level, days, duration, equipment), e.g. 3 beginner days = Full body A / B / C. Week strip, sessions progress, warm-up / exercises / cool-down, "Mark as done", "not medical advice" note on each screen, session available offline.
 
+The training studio generates a complete AI program using the existing Gemini configuration. The user reviews the warm-up, exercises, rest, form tips, and cool-down before confirming. The save endpoint writes the new plan and sessions for next week before deactivating the previous plan; existing sessions are retained.
+
+The preview uses `POST /api/sport-plans/generate`; confirmation submits the validated preview to `POST /api/sport-plans/save-generated`.
+
 ## Folder layout
 
 - `components/`: React components used only by this module

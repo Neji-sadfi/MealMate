@@ -13,7 +13,7 @@ export interface IIngredient {
   name: string;
   aisle: Aisle;
   defaultUnit: Unit;
-  /** Indicative price for one defaultUnit pack, in the user's currency (TND). */
+  /** Indicative TND price per kg, litre or item, depending on the ingredient. */
   estimatedPrice?: number;
   nutritionPer100?: INutritionPer100;
   createdAt: Date;
