@@ -25,8 +25,16 @@ export async function PUT(request: Request) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body: unknown = await request.json().catch(() => null);
   const parsed = profileUpdate.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid profile", issues: parsed.error.issues }, { status: 400 });
-  const user = await User.findByIdAndUpdate(userId, { $set: parsed.data }, { returnDocument: "after", runValidators: true }).select("-passwordHash");
+  if (!parsed.success)
+    return NextResponse.json(
+      { error: "Invalid profile", issues: parsed.error.issues },
+      { status: 400 },
+    );
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $set: parsed.data },
+    { returnDocument: "after", runValidators: true },
+  ).select("-passwordHash");
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
   return NextResponse.json(user);
 }

@@ -1,0 +1,818 @@
+{
+  "app": {
+    "name": "MealMate",
+    "tagline": "Bien manger, à votre rythme.",
+    "description": "Planifiez vos repas, vos courses, votre budget et vos entraînements au même endroit."
+  },
+  "common": {
+    "back": "Retour",
+    "language": "Langue",
+    "notifications": "Notifications",
+    "profile": "Mon profil",
+    "comingSoon": "Cette page arrive bientôt.",
+    "ownedBy": "Module responsable : {owner}",
+    "signOut": "Se déconnecter"
+  },
+  "errors": {
+    "title": "Une erreur est survenue",
+    "body": "Impossible de charger cette page. Vérifiez votre connexion et réessayez.",
+    "retry": "Réessayer"
+  },
+  "nav": {
+    "label": "Navigation principale",
+    "home": "Accueil",
+    "meals": "Repas",
+    "shopping": "Courses",
+    "sport": "Sport",
+    "community": "Communauté"
+  },
+  "auth": {
+    "fields": {
+      "name": "Prénom et nom",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "heightCm": "Taille (cm)",
+      "weightKg": "Poids (kg)",
+      "diet": "Régime alimentaire",
+      "allergies": "Allergies",
+      "weeklyBudget": "Budget alimentaire hebdomadaire (TND)",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe"
+    },
+    "login": {
+      "headline": "Le bon équilibre, chaque jour.",
+      "intro": "Vos repas, votre budget et vos objectifs.",
+      "title": "Bon retour !",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Se connecter",
+      "newHere": "Nouveau sur MealMate ?",
+      "createAccount": "Créer un compte",
+      "privacy": "Vos habitudes vous appartiennent.",
+      "terms": "En continuant, vous acceptez nos conditions d’utilisation et notre politique de confidentialité."
+    },
+    "register": {
+      "title": "Créer votre compte",
+      "intro": "Quelques secondes pour personnaliser MealMate.",
+      "profileTitle": "Vos préférences alimentaires et de santé",
+      "allergiesPlaceholder": "ex. cacahuètes, crustacés — ou aucune",
+      "allergiesHelp": "Séparez les allergies par des virgules. Saisissez « aucune » si vous n’en avez pas.",
+      "submit": "Créer mon compte",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter"
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "intro": "Saisissez votre adresse e-mail pour recevoir un lien de réinitialisation.",
+      "email": "Adresse e-mail",
+      "submit": "Envoyer le lien",
+      "sending": "Envoi en cours…",
+      "sent": "Si un compte existe pour cette adresse, les instructions seront envoyées.",
+      "backToLogin": "Retour à la connexion",
+      "errors": {
+        "invalidEmail": "Saisissez une adresse e-mail valide.",
+        "rateLimit": "Trop de demandes. Patientez avant de réessayer.",
+        "unknown": "Impossible d’envoyer le lien. Veuillez réessayer."
+      }
+    },
+    "resetPassword": {
+      "title": "Choisir un nouveau mot de passe",
+      "intro": "Choisissez un nouveau mot de passe pour votre compte MealMate.",
+      "invalidIntro": "Ce lien est invalide ou expiré. Il est valable une heure et ne peut être utilisé qu’une fois.",
+      "newPassword": "Nouveau mot de passe",
+      "passwordHelp": "8 caractères minimum.",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "submit": "Enregistrer le mot de passe",
+      "saving": "Enregistrement…",
+      "requestNew": "Demander un nouveau lien",
+      "backToLogin": "Retour à la connexion",
+      "done": "Votre mot de passe a été modifié. Vous pouvez vous connecter."
+    },
+    "verifyEmail": {
+      "title": "Vérification de l’adresse e-mail",
+      "successTitle": "Adresse confirmée !",
+      "successText": "Merci, votre adresse e-mail est vérifiée.",
+      "errorTitle": "Lien invalide ou expiré",
+      "errorText": "Ce lien ne fonctionne plus. Connectez-vous et demandez-en un nouveau depuis votre profil.",
+      "toProfile": "Accéder à mon profil",
+      "toLogin": "Se connecter",
+      "banner": {
+        "title": "Confirmez votre adresse e-mail",
+        "text": "Un lien de confirmation a été envoyé à {email}.",
+        "resend": "Renvoyer l’e-mail",
+        "sending": "Envoi…",
+        "status": {
+          "sent": "Un nouveau lien a été envoyé. Vérifiez votre boîte de réception et vos courriers indésirables.",
+          "alreadyVerified": "Votre adresse est déjà vérifiée. Actualisez la page.",
+          "rateLimit": "Trop d’e-mails envoyés. Réessayez plus tard.",
+          "error": "Impossible d’envoyer l’e-mail. Réessayez."
+        }
+      }
+    },
+    "errors": {
+      "invalidInput": "Vérifiez les champs signalés.",
+      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
+      "emailTaken": "Un compte utilise déjà cette adresse e-mail.",
+      "passwordMismatch": "Les deux mots de passe ne correspondent pas.",
+      "invalidResetLink": "Ce lien de réinitialisation est invalide ou expiré.",
+      "unknown": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Bonjour {name}",
+      "subtitle": "Un peu d’organisation, beaucoup de bien-être.",
+      "kicker": "Votre semaine en un coup d’œil",
+      "trackingLink": "Suivi nutrition et budget",
+      "budget": {
+        "title": "Budget hebdomadaire",
+        "remaining": "Il reste {amount} DT",
+        "used": "{amount} DT dépensés",
+        "total": "Total : {amount} DT",
+        "progressLabel": "{percent} % du budget hebdomadaire utilisé",
+        "noBudget": "Aucun budget hebdomadaire défini. Ajoutez-en un pour suivre vos dépenses."
+      },
+      "stats": {
+        "avgKcal": "{kcal} kcal/jour",
+        "kcalTarget": "Objectif : {kcal} kcal/jour",
+        "avgProtein": "{protein} g/jour",
+        "proteinTarget": "Objectif : {protein} g/jour"
+      },
+      "shortcuts": {
+        "label": "Accès rapides",
+        "meals": "Repas",
+        "shopping": "Courses",
+        "sport": "Sport",
+        "community": "Communauté"
+      },
+      "today": {
+        "title": "Menu du jour",
+        "cta": "Ouvrir mon planning",
+        "empty": "Aucun repas prévu aujourd’hui."
+      },
+      "shopping": {
+        "title": "Liste de courses",
+        "items": "{count, plural, one {# article à acheter} other {# articles à acheter}}",
+        "estimated": "Environ {amount} DT",
+        "empty": "Rien à acheter pour le moment.",
+        "cta": "Ouvrir la liste de courses"
+      },
+      "expiry": {
+        "title": "Dates de péremption proches",
+        "expiresIn": "{name} · {quantity} {unit} {days, plural, =0 {expire aujourd’hui} one {expire demain} other {expire dans # jours}}"
+      },
+      "workout": {
+        "title": "Prochain entraînement",
+        "line": "{name} - {duration} min"
+      }
+    },
+    "profile": {
+      "title": "Mon profil",
+      "subtitle": "Vos préférences et objectifs.",
+      "notSet": "Non renseigné",
+      "loadError": "Impossible de charger votre profil.",
+      "avatar": {
+        "alt": "Votre photo de profil",
+        "add": "Ajouter une photo de profil",
+        "change": "Modifier la photo de profil",
+        "remove": "Supprimer la photo de profil",
+        "removeShort": "Supprimer",
+        "removeConfirm": "Supprimer votre photo de profil ?",
+        "error": "Photo non enregistrée. Essayez une autre image."
+      },
+      "deleteAccount": {
+        "open": "Supprimer mon compte",
+        "title": "Supprimer votre compte",
+        "warning": "Cette action supprimera définitivement votre compte, votre profil, votre photo et vos conversations avec Mia. Elle est irréversible.",
+        "passwordLabel": "Saisissez votre mot de passe pour confirmer",
+        "confirm": "Supprimer définitivement mon compte",
+        "deleting": "Suppression…",
+        "cancel": "Annuler",
+        "done": "Votre compte et vos données ont été supprimés.",
+        "errors": {
+          "invalidPassword": "Mot de passe incorrect.",
+          "unknown": "Impossible de supprimer le compte. Veuillez réessayer."
+        }
+      },
+      "sections": {
+        "health": "Santé",
+        "food": "Alimentation",
+        "budget": "Budget",
+        "sport": "Sport"
+      },
+      "fields": {
+        "height": "Taille",
+        "weight": "Poids",
+        "bmi": "IMC",
+        "diet": "Régime alimentaire",
+        "goal": "Objectif nutritionnel",
+        "allergies": "Allergies",
+        "intolerances": "Intolérances",
+        "weeklyBudget": "Budget alimentaire hebdomadaire",
+        "activityLevel": "Niveau d’activité",
+        "sportGoal": "Objectif sportif",
+        "level": "Niveau",
+        "sessionDuration": "Durée de séance",
+        "equipment": "Équipement",
+        "availableDays": "Jours disponibles"
+      },
+      "units": {
+        "cm": "cm",
+        "kg": "kg",
+        "minutes": "min"
+      },
+      "none": "Aucun",
+      "bmiNote": "À titre indicatif uniquement, ne remplace pas un avis médical.",
+      "bmiCategory": {
+        "underweight": "Insuffisance pondérale",
+        "normal": "Corpulence normale",
+        "overweight": "Surpoids",
+        "obese": "Obésité"
+      },
+      "enums": {
+        "diet": {
+          "none": "Aucun régime particulier",
+          "vegetarian": "Végétarien",
+          "vegan": "Végétalien",
+          "gluten_free": "Sans gluten",
+          "lactose_free": "Sans lactose",
+          "low_carb": "Faible en glucides"
+        },
+        "goal": {
+          "maintenance": "Maintien",
+          "weight_loss": "Perte de poids",
+          "muscle_gain": "Prise de muscle",
+          "balanced": "Équilibre"
+        },
+        "activityLevel": {
+          "sedentary": "Sédentaire",
+          "light": "Légèrement actif",
+          "moderate": "Modérément actif",
+          "active": "Actif",
+          "very_active": "Très actif"
+        },
+        "sportGoal": {
+          "muscle_gain": "Prise de muscle",
+          "weight_loss": "Perte de poids",
+          "endurance": "Endurance",
+          "fitness": "Forme générale",
+          "maintenance": "Maintien"
+        },
+        "level": {
+          "beginner": "Débutant",
+          "intermediate": "Intermédiaire",
+          "advanced": "Avancé"
+        },
+        "equipment": {
+          "none": "Sans équipement",
+          "home": "Matériel à domicile",
+          "gym": "Salle de sport"
+        },
+        "weekday": {
+          "mon": "Lun",
+          "tue": "Mar",
+          "wed": "Mer",
+          "thu": "Jeu",
+          "fri": "Ven",
+          "sat": "Sam",
+          "sun": "Dim"
+        }
+      }
+    },
+    "recipes": {
+      "title": "Recettes",
+      "subtitle": "De l’inspiration au menu.",
+      "favouritesTitle": "Mes recettes favorites",
+      "favouritesEmptyTitle": "Aucune recette favorite pour le moment",
+      "favouritesEmptyBody": "Enregistrez une recette avec le bouton cœur pour la retrouver ici.",
+      "ai": {
+        "eyebrow": "Avec l’IA",
+        "title": "Studio de recettes",
+        "subtitle": "Créez un plat savoureux ou trouvez des idées pratiques.",
+        "modesLabel": "Mode de l’assistant recettes",
+        "generateTab": "Créer une recette",
+        "chatTab": "Poser une question",
+        "privacyNotice": "J’accepte l’envoi de ma demande et de mes préférences alimentaires enregistrées à Google Gemini pour générer une réponse. Les suggestions de l’IA sont générales et ne remplacent pas un avis médical. Vérifiez les étiquettes et les risques de contamination croisée.",
+        "ingredientsLabel": "Ingrédients à utiliser (facultatif)",
+        "ingredientsPlaceholder": "ex. pois chiches, épinards, tomates",
+        "goalLabel": "De quoi avez-vous envie ?",
+        "goalPlaceholder": "ex. un déjeuner rapide et riche en protéines",
+        "servingsLabel": "Nombre de portions",
+        "timeLabel": "Temps de préparation max. (minutes)",
+        "servings": "Portions",
+        "time": "Temps de préparation max. (minutes)",
+        "generateButton": "Générer ma recette",
+        "generating": "Création de la recette…",
+        "generatedLabel": "Une recette pour vous",
+        "servingUnit": "portion",
+        "protein": "protéines",
+        "ingredientsTitle": "Ingrédients",
+        "stepsTitle": "Préparation",
+        "estimateNote": "La nutrition et le coût sont des estimations de l’IA. Vérifiez les ingrédients, quantités et allergènes avant de cuisiner.",
+        "saveRecipe": "Enregistrer dans mes recettes",
+        "saving": "Enregistrement…",
+        "saveError": "Impossible d’enregistrer cette recette. Veuillez réessayer.",
+        "chatWelcome": "Que souhaitez-vous cuisiner aujourd’hui ?",
+        "chatSuggestion": "Demandez des idées de repas, des substitutions ou des conseils simples.",
+        "questionLabel": "Votre question culinaire",
+        "questionPlaceholder": "Posez une question sur les repas ou les ingrédients…",
+        "send": "Envoyer",
+        "thinking": "Réflexion…",
+        "notConfigured": "L’assistant IA n’est pas encore configuré. Ajoutez GEMINI_API_KEY dans les variables d’environnement du serveur.",
+        "keyInvalid": "La clé API Gemini est invalide. Vérifiez la configuration serveur.",
+        "rateLimited": "Le service IA est occupé ou sa limite a été atteinte. Réessayez plus tard.",
+        "timeout": "La réponse IA a pris trop de temps. Veuillez réessayer.",
+        "unavailable": "Le service IA est momentanément indisponible.",
+        "invalidResponse": "L’IA a renvoyé une réponse invalide.",
+        "invalidRecipe": "L’IA n’a pas pu créer une recette valide. Essayez d’autres ingrédients ou préférences.",
+        "invalidInput": "Vérifiez votre demande et réessayez.",
+        "unknownError": "Une erreur est survenue. Veuillez réessayer."
+      }
+    },
+    "recipeDetail": {
+      "title": "Recette",
+      "subtitle": "Recette n° {id}",
+      "actions": {
+        "addFavorite": "Enregistrer la recette",
+        "removeFavorite": "Enregistrée",
+        "share": "Partager la recette",
+        "delete": "Supprimer la recette",
+        "deleteConfirm": "Supprimer « {title} » ?",
+        "favoriteError": "Impossible de modifier les favoris.",
+        "deleteError": "Impossible de supprimer la recette.",
+        "networkError": "Serveur inaccessible. Veuillez réessayer.",
+        "shareError": "Impossible de partager la recette ou de copier son lien.",
+        "shared": "Recette partagée.",
+        "linkCopied": "Lien de la recette copié."
+      }
+    },
+    "mealPlan": {
+      "title": "Mon planning repas",
+      "subtitle": "Une semaine à savourer.",
+      "kicker": "Mon planning",
+      "heroSubtitle": "Planifiez vos repas, préparez vos courses et organisez votre semaine.",
+      "tabs": {
+        "label": "Sections du planning",
+        "plan": "Planning",
+        "recipes": "Recettes",
+        "favourites": "Favoris"
+      },
+      "weekStrip": "Jours de la semaine",
+      "week": {
+        "previous": "Semaine précédente",
+        "next": "Semaine suivante"
+      },
+      "weekdays": {
+        "mon": "L",
+        "tue": "M",
+        "wed": "M",
+        "thu": "J",
+        "fri": "V",
+        "sat": "S",
+        "sun": "D"
+      },
+      "weekdayLabels": {
+        "mon": "Lundi",
+        "tue": "Mardi",
+        "wed": "Mercredi",
+        "thu": "Jeudi",
+        "fri": "Vendredi",
+        "sat": "Samedi",
+        "sun": "Dimanche"
+      },
+      "criteria": {
+        "title": "{days} jours, votre budget, vos goûts.",
+        "summary": "Du {from} au {to} · {people}. Utilisez votre {pantry}.",
+        "people": "{count, plural, one {# personne} other {# personnes}}",
+        "daysLabel": "Jours",
+        "mealsPerDayLabel": "Repas par jour",
+        "peopleLabel": "Personnes",
+        "extraBudgetLabel": "Budget supplémentaire (DT)",
+        "extraBudget": "{amount} DT en plus",
+        "mealsCount": "{count} repas",
+        "generate": "Générer selon mes critères"
+      },
+      "offline": {
+        "cached": "Vous êtes hors ligne : voici la dernière version de votre planning enregistrée sur cet appareil.",
+        "pending": "{count, plural, one {# modification attend son envoi.} other {# modifications attendent leur envoi.}}"
+      },
+      "deleteWeek": "Supprimer cette semaine",
+      "duplicateDay": "Dupliquer la journée",
+      "duplicateWeek": "Dupliquer la semaine",
+      "addMeal": "Ajouter un repas",
+      "types": {
+        "breakfast": "Petit-déjeuner",
+        "lunch": "Déjeuner",
+        "dinner": "Dîner",
+        "snack": "Collation"
+      },
+      "kcalProtein": "{kcal} kcal · {protein} g de protéines",
+      "portion": "{count, plural, one {# portion} other {# portions}}",
+      "edit": "Modifier",
+      "move": "Déplacer",
+      "remove": "Retirer",
+      "snacksLine": "Collations prévues : {kcal} kcal · {protein} g de protéines. Total du jour : {totalKcal} kcal · {totalProtein} g de protéines.",
+      "shoppingCta": "Voir ma liste de courses · {count} articles",
+      "emptyDay": "Aucun repas prévu ce jour.",
+      "emptyWeek": "Cette semaine est vide. Générez un planning à l’aide des critères ci-dessous.",
+      "loadError": "Impossible de charger le planning de cette semaine.",
+      "retry": "Réessayer",
+      "actionError": "Une erreur est survenue : votre modification n’a pas été enregistrée.",
+      "warnings": {
+        "noValidRecipes": "Aucune recette ne correspond à votre régime et vos allergies. Vérifiez vos préférences de profil.",
+        "overBudget": "Le planning le moins cher coûte {cost} DT, au-dessus de votre budget de {budget} DT.",
+        "kcalTarget": "Les repas prévus totalisent {kcal} kcal, contre un objectif de {target} kcal.",
+        "reused": "Certaines recettes sont répétées plus de deux fois cette semaine."
+      },
+      "dialog": {
+        "close": "Fermer",
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "editTitle": "Modifier le repas",
+        "moveTitle": "Déplacer le repas",
+        "addTitle": "Ajouter un repas",
+        "removeTitle": "Retirer ce repas ?",
+        "removeBody": "Il sera supprimé du planning de cette journée.",
+        "removeConfirm": "Retirer",
+        "pickRecipe": "Recette",
+        "pickDay": "Jour",
+        "pickType": "Type de repas",
+        "duplicateDayTitle": "Dupliquer cette journée",
+        "pickTargetDay": "Copier vers",
+        "targetHasMeals": "La journée choisie contient déjà des repas : ils seront remplacés.",
+        "duplicateDayConfirm": "Dupliquer",
+        "deleteWeekTitle": "Supprimer cette semaine ?",
+        "deleteWeekBody": "Tous les repas prévus cette semaine seront supprimés.",
+        "deleteWeekConfirm": "Supprimer"
+      }
+    },
+    "shopping": {
+      "title": "Liste de courses",
+      "subtitle": "Le nécessaire, et rien de plus.",
+      "progress": {
+        "title": "Avancement des courses",
+        "items": "{checked} article(s) sur {total} récupéré(s)",
+        "remaining": "{count, plural, one {# article restant} other {# articles restants}}",
+        "complete": "Tout est dans votre panier"
+      },
+      "filters": {
+        "label": "Filtrer la liste de courses",
+        "all": "Tout",
+        "open": "À acheter",
+        "checked": "Récupérés",
+        "search": "Rechercher un article",
+        "searchPlaceholder": "Rechercher dans la liste",
+        "noResults": "Aucun article ne correspond à votre recherche.",
+        "aisle": "Rayon"
+      },
+      "itemActions": {
+        "increase": "Augmenter la quantité",
+        "decrease": "Réduire la quantité",
+        "remove": "Retirer l’article",
+        "confirmRemove": "Retirer {name} de votre liste de courses ?"
+      },
+      "aisles": {
+        "fruits_vegetables": "Fruits et légumes",
+        "fresh_protein": "Protéines fraîches",
+        "dairy": "Produits laitiers",
+        "grocery": "Épicerie",
+        "bakery": "Boulangerie",
+        "frozen": "Surgelés",
+        "drinks": "Boissons",
+        "other": "Autre"
+      },
+      "generate": "Générer depuis le planning et l’inventaire",
+      "generating": "Création de la liste…",
+      "estimate": {
+        "title": "Estimation de votre panier",
+        "description": "Choisissez une enseigne tunisienne et comparez les prix de référence aux produits du catalogue public.",
+        "total": "Total indicatif",
+        "noPrice": "Indisponible",
+        "storeLabel": "Supermarché",
+        "partialNote": "{count, plural, one {# article est exclu faute de prix de référence.} other {# articles sont exclus faute de prix de référence.}}",
+        "referenceNote": "{count, plural, one {Basé sur un prix de référence enregistré pour # article, pas sur le prix actuel de cette enseigne ; la date du prix enregistré n’est pas suivie.} other {Basé sur des prix de référence enregistrés pour # articles, pas sur les prix actuels de cette enseigne ; leur date n’est pas suivie.}}",
+        "missingPrices": "Aucun prix de référence n’est enregistré pour cette liste. Ajoutez des prix pour estimer le panier."
+      },
+      "catalog": {
+        "search": "Consulter le catalogue Carrefour",
+        "productPrice": "prix catalogue",
+        "searching": "Consultation du catalogue…",
+        "openStore": "Ouvrir le site officiel",
+        "noLink": "Aucun lien catalogue vérifié",
+        "unsupportedStore": "Aucun catalogue public exploitable n’est vérifié dans l’application pour cette enseigne : le total reste une estimation générique.",
+        "consent": "Envoyer les noms de 12 articles non cochés maximum au catalogue public en ligne de Carrefour Tunisie. MealMate n’enregistre pas ces termes de recherche.",
+        "completed": "Prix de référence du catalogue récupérés. Ils restent séparés de l’estimation du panier.",
+        "checkedAt": "Source : catalogue public en ligne Carrefour Tunisie · consulté le {date}.",
+        "matchingPrices": "{count, plural, one {Prix catalogue actuel pour # produit correspondant} other {Prix catalogue actuels pour # produits correspondants}}",
+        "limitNotice": "{count, plural, one {L’article restant n’est pas envoyé : une consultation est limitée à 12 articles.} other {Les # articles restants ne sont pas envoyés : une consultation est limitée à 12 articles.}}",
+        "partial": "{count, plural, one {Une recherche catalogue a échoué ; aucun prix n’a été inventé.} other {# recherches catalogue ont échoué ; aucun prix n’a été inventé.}}",
+        "noMatch": "Aucune correspondance fiable",
+        "packPriceNote": "Ce sous-total compte un paquet par article correspondant ; les quantités des recettes peuvent différer. Vérifiez le format et la disponibilité sur le site de l’enseigne."
+      },
+      "add": {
+        "title": "Ajouter un article",
+        "name": "Nom de l’article",
+        "price": "Prix de référence (DT)",
+        "quantity": "Quantité",
+        "unit": "Unité",
+        "priceHint": "Pour g/ml, indiquez le prix de référence au kg/litre ; pour les autres unités, le prix par article ou paquet.",
+        "submit": "Ajouter à la liste",
+        "saving": "Enregistrement…"
+      },
+      "units": {
+        "piece": "pièce",
+        "g": "g",
+        "kg": "kg",
+        "ml": "ml",
+        "l": "l",
+        "tbsp": "c. à soupe",
+        "tsp": "c. à café",
+        "bunch": "bouquet",
+        "pot": "pot",
+        "to_taste": "selon le goût"
+      },
+      "errors": {
+        "add": "Impossible d’ajouter cet article.",
+        "update": "Impossible de modifier cet article.",
+        "generate": "Impossible de générer la liste.",
+        "catalog": "Impossible de consulter le catalogue de l’enseigne.",
+        "network": "Serveur inaccessible. Veuillez réessayer."
+      },
+      "empty": {
+        "title": "Votre liste est vide",
+        "body": "Générez-la depuis le planning de la semaine ou ajoutez votre premier article.",
+        "filteredTitle": "Aucun article correspondant",
+        "filteredBody": "Essayez une autre recherche ou modifiez le filtre."
+      },
+      "inventoryLink": "Inventaire"
+    },
+    "inventory": {
+      "title": "Mon inventaire",
+      "subtitle": "Ce qu’il y a déjà dans vos placards.",
+      "empty": {
+        "title": "Votre inventaire est vide",
+        "body": "Ajoutez vos ingrédients et suivez les quantités ainsi que les dates de péremption."
+      },
+      "add": {
+        "title": "Ajouter à l’inventaire",
+        "ingredient": "Ingrédient",
+        "quantity": "Quantité",
+        "unit": "Unité",
+        "expiresAt": "Date de péremption",
+        "submit": "Enregistrer l’ingrédient",
+        "saving": "Enregistrement…"
+      },
+      "expires": {
+        "expired": "Périmé",
+        "today": "Expire aujourd’hui",
+        "soon": "À utiliser bientôt",
+        "date": "À consommer avant le {date}",
+        "none": "Aucune date indiquée"
+      },
+      "actions": {
+        "remove": "Retirer de l’inventaire",
+        "increase": "Augmenter la quantité",
+        "decrease": "Réduire la quantité",
+        "error": "Impossible de modifier l’inventaire. Réessayez."
+      },
+      "units": {
+        "piece": "pièce",
+        "g": "g",
+        "kg": "kg",
+        "ml": "ml",
+        "l": "l",
+        "tbsp": "c. à soupe",
+        "tsp": "c. à café",
+        "bunch": "botte",
+        "pot": "pot",
+        "to_taste": "selon le goût"
+      },
+      "aisles": {
+        "fruits_vegetables": "Fruits et légumes",
+        "fresh_protein": "Protéines fraîches",
+        "dairy": "Produits laitiers",
+        "grocery": "Épicerie",
+        "bakery": "Boulangerie",
+        "frozen": "Surgelés",
+        "drinks": "Boissons",
+        "other": "Autre"
+      }
+    },
+    "community": {
+      "title": "Le forum MealMate",
+      "subtitle": "Avançons ensemble.",
+      "empty": {
+        "title": "Aucune discussion pour le moment",
+        "body": "Les publications apparaîtront ici lorsque les membres partageront leurs idées."
+      },
+      "likes": "{count, plural, one {# j’aime} other {# j’aime}}",
+      "reactionTotal": "{count, plural, one {# réaction} other {# réactions}}",
+      "comments": "{count, plural, one {# commentaire} other {# commentaires}}",
+      "actions": {
+        "startDiscussion": "Lancer une discussion",
+        "sharePrompt": "Partagez un conseil, une question ou une petite victoire avec la communauté.",
+        "title": "Titre de la discussion",
+        "category": "Sujet",
+        "message": "Votre message",
+        "publishPost": "Publier la discussion",
+        "publishing": "Publication…",
+        "categories": {
+          "nutrition": "Nutrition",
+          "weight_loss": "Gestion du poids",
+          "muscle_gain": "Prise de muscle",
+          "training": "Entraînement",
+          "motivation": "Motivation"
+        },
+        "reactions": {
+          "like": "J’aime",
+          "helpful": "Utile",
+          "inspiring": "Inspirant"
+        },
+        "comments": "Commentaires",
+        "hideComments": "Masquer les commentaires",
+        "report": "Signaler",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "saveChanges": "Enregistrer",
+        "commentPlaceholder": "Écrivez un commentaire…",
+        "addComment": "Ajouter un commentaire",
+        "publishError": "Impossible de publier cette discussion.",
+        "reactionError": "Impossible d’enregistrer votre réaction.",
+        "loadCommentsError": "Impossible de charger les commentaires.",
+        "addCommentError": "Impossible d’ajouter votre commentaire.",
+        "reportError": "Impossible de signaler cette discussion.",
+        "reported": "Discussion signalée aux modérateurs.",
+        "updateError": "Impossible de modifier cette discussion.",
+        "deleteError": "Impossible de supprimer cette discussion.",
+        "deleteCommentError": "Impossible de supprimer ce commentaire.",
+        "deleteConfirm": "Supprimer cette discussion et ses commentaires ?",
+        "networkError": "Serveur inaccessible. Veuillez réessayer."
+      }
+    },
+    "tracking": {
+      "title": "Nutrition et budget",
+      "subtitle": "Vos efforts prennent forme.",
+      "period": {
+        "label": "Période du budget",
+        "week": "Semaine",
+        "month": "Mois",
+        "thisWeek": "Cette semaine",
+        "thisMonth": "Ce mois-ci"
+      },
+      "nutrition": {
+        "label": "Résumé nutritionnel",
+        "calories": "Calories",
+        "protein": "Protéines",
+        "carbs": "Glucides",
+        "fat": "Lipides",
+        "empty": "Les totaux nutritionnels s’actualisent à partir des repas de votre planning."
+      },
+      "budget": {
+        "title": "Suivi du budget",
+        "of": "sur",
+        "spent": "Dépensé",
+        "limit": "Budget",
+        "remaining": "Restant",
+        "overspent": "Dépassement",
+        "progress": "{percent} % du budget utilisé",
+        "expenses": "Dépenses enregistrées",
+        "noExpenses": "Aucune dépense enregistrée pour cette période.",
+        "update": "Modifier le budget hebdomadaire",
+        "limitField": "Limite hebdomadaire",
+        "expenseName": "Libellé de la dépense",
+        "amount": "Montant",
+        "category": "Catégorie",
+        "save": "Enregistrer le budget",
+        "saving": "Enregistrement…",
+        "expenseHint": "Saisissez un libellé et un montant pour enregistrer une dépense. Laissez le libellé vide pour modifier uniquement le budget.",
+        "expenseAmountRequired": "Saisissez un montant de dépense supérieur à zéro.",
+        "addExpense": "Ajouter une dépense",
+        "categories": {
+          "fresh_products": "Produits frais",
+          "grocery": "Épicerie",
+          "eating_out": "Repas à l’extérieur",
+          "other": "Autre"
+        },
+        "error": "Impossible d’enregistrer le budget."
+      }
+    },
+    "sport": {
+      "title": "Mon sport",
+      "subtitle": "Votre rythme, vos progrès.",
+      "generator": {
+        "title": "Votre studio d’entraînement IA",
+        "description": "Créez un programme hebdomadaire selon votre objectif, votre expérience, vos disponibilités et votre matériel.",
+        "goal": "Objectif sportif",
+        "level": "Niveau",
+        "duration": "Minutes par séance",
+        "equipment": "Équipement",
+        "days": "Jours d’entraînement",
+        "privacyNotice": "J’accepte d’envoyer mon objectif sportif, mon niveau, mes disponibilités et mon équipement à Google Gemini pour générer ce programme. Les entraînements de l’IA sont des suggestions générales, pas un avis médical.",
+        "generate": "Générer mon programme hebdomadaire",
+        "generating": "Création du programme…",
+        "previewTitle": "Aperçu de votre programme",
+        "previewNote": "Vérifiez chaque séance avant l’enregistrement. Votre programme actuel reste actif jusqu’à confirmation.",
+        "confirmReplace": "Enregistrer ce programme pour la semaine prochaine et remplacer le programme actuellement actif ? Les séances déjà existantes seront conservées.",
+        "save": "Confirmer et enregistrer",
+        "saving": "Enregistrement du programme…",
+        "saved": "Votre nouveau programme est enregistré pour la semaine prochaine.",
+        "minutes": "min",
+        "warmUp": "Échauffement",
+        "coolDown": "Retour au calme",
+        "rest": "Repos",
+        "tip": "Conseil de posture",
+        "goals": {
+          "muscle_gain": "Prise de muscle",
+          "weight_loss": "Perte de poids",
+          "endurance": "Endurance",
+          "fitness": "Forme générale",
+          "maintenance": "Maintien"
+        },
+        "levels": {
+          "beginner": "Débutant",
+          "intermediate": "Intermédiaire",
+          "advanced": "Avancé"
+        },
+        "equipmentOptions": {
+          "none": "Sans équipement",
+          "home": "Matériel à domicile",
+          "gym": "Salle de sport"
+        },
+        "weekdays": {
+          "mon": "Lun",
+          "tue": "Mar",
+          "wed": "Mer",
+          "thu": "Jeu",
+          "fri": "Ven",
+          "sat": "Sam",
+          "sun": "Dim"
+        },
+        "errors": {
+          "notConfigured": "Le générateur sportif n’est pas configuré. Demandez à l’administrateur de vérifier la clé API Gemini.",
+          "busy": "Le service IA est occupé ou la limite est atteinte. Réessayez bientôt.",
+          "generate": "Impossible de générer un programme complet. Veuillez réessayer.",
+          "save": "Impossible d’enregistrer le programme sportif.",
+          "network": "Serveur inaccessible. Veuillez réessayer."
+        }
+      }
+    },
+    "workoutSession": {
+      "title": "Séance d’entraînement",
+      "subtitle": "Séance n° {id}"
+    },
+    "admin": {
+      "title": "Administration",
+      "subtitle": "Gérez le catalogue de recettes et les signalements de la communauté.",
+      "overview": "Vue d’ensemble de l’administration",
+      "members": "Membres",
+      "recipes": "Recettes",
+      "reports": "Signalements à examiner",
+      "moderation": "Modération de la communauté",
+      "moderationSubtitle": "Examinez les signalements et masquez les publications qui enfreignent les règles.",
+      "noReports": "Aucun signalement en attente.",
+      "reportedBy": "Signalé par {name}",
+      "postAuthor": "Publié par {name}",
+      "unknownMember": "Membre inconnu",
+      "postUnavailable": "La publication signalée n’est plus disponible.",
+      "reportDetails": "Détails du signalement : {details}",
+      "catalogue": "Catalogue de recettes",
+      "catalogueSubtitle": "Ajoutez, modifiez et supprimez les recettes proposées aux membres.",
+      "noRecipes": "Aucune recette dans le catalogue pour le moment.",
+      "reasons": {
+        "spam": "Spam",
+        "offensive": "Contenu offensant",
+        "medical_misinformation": "Désinformation médicale",
+        "other": "Autre"
+      }
+    }
+  },
+  "offline": {
+    "title": "Vous êtes hors ligne",
+    "description": "Cette page n’est pas encore disponible hors ligne. Vérifiez votre connexion et réessayez."
+  },
+  "coach": {
+    "title": "Mia, votre coach",
+    "subtitle": "Des idées de repas, budget et entraînement adaptées à vos besoins.",
+    "greeting": "Bonjour ! Je suis Mia. Je connais votre régime, vos allergies et votre budget. Parlons repas, courses ou entraînement.",
+    "placeholder": "Posez une question à Mia…",
+    "send": "Envoyer",
+    "thinking": "Mia réfléchit…",
+    "newConversation": "Nouvelle conversation",
+    "newConversationConfirm": "Démarrer une nouvelle conversation ? L’échange actuel avec Mia sera supprimé.",
+    "disclaimer": "Mia est une coach IA, pas un médecin. Demandez conseil à un professionnel pour les décisions importantes concernant votre santé.",
+    "suggestions": {
+      "s1": "Une idée de dîner dans mon budget",
+      "s2": "Un entraînement de 30 minutes pour aujourd’hui",
+      "s3": "Des collations saines à préparer"
+    },
+    "errors": {
+      "rateLimit": "Trop de messages. Patientez une minute et réessayez.",
+      "notConfigured": "Le coach n’est pas encore configuré. Contactez l’administrateur.",
+      "busy": "Mia est très occupée. Réessayez dans un instant.",
+      "unknown": "Mia n’a pas pu répondre. Veuillez réessayer."
+    },
+    "cta": {
+      "title": "Parler à Mia",
+      "description": "Votre coach virtuel pour les repas, le budget et l’entraînement."
+    }
+  }
+}

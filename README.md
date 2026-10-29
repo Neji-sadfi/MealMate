@@ -2,7 +2,7 @@
 
 MealMate is a mobile-first **Progressive Web App** for planning meals, managing shopping lists and inventory, tracking nutrition and budget, following a personalised workout plan and sharing progress in a community forum.
 
-Student team project · Next.js · TypeScript · MongoDB · English UI
+Student team project · Next.js · TypeScript · MongoDB · English and French UI
 
 ---
 
@@ -132,11 +132,12 @@ You can also create your own free cluster on https://www.mongodb.com/atlas → *
 
 ## 4. Environment variables (`.env`)
 
-Create a local **`.env`** file in the project folder and fill in both values. For local MongoDB, set `MONGODB_URI` to `mongodb://127.0.0.1:27017/mealmate_local`; for Atlas, use the connection string format below.
+Create a local **`.env`** file in the project folder and fill in the required values. For local MongoDB, set `MONGODB_URI` to `mongodb://127.0.0.1:27017/mealmate_local`; for Atlas, use the connection string format below.
 
 ```
 MONGODB_URI="mongodb+srv://USERNAME:PASSWORD@CLUSTER_HOST/mealmate_FIRSTNAME?retryWrites=true&w=majority"
 AUTH_SECRET="paste-a-long-random-string-here"
+GEMINI_API_KEY="your-google-ai-studio-api-key"
 ```
 
 Generate your own `AUTH_SECRET`:
@@ -149,7 +150,23 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ---
 
-## 5. Run the project
+`GEMINI_API_KEY` enables the recipe assistant, diet coach and workout generator through the Google provider for Vercel AI SDK. Create a key in Google AI Studio. `GEMINI_MODEL` is optional and defaults to `gemini-2.5-flash`. These variables are server-only; never prefix them with `NEXT_PUBLIC_`.
+
+## 5. Deploy on Vercel
+
+1. Push the project to GitHub and import the repository in Vercel. Use the branch you intend to deploy; preview deployments can validate feature branches before merging.
+2. In **Project Settings → Environment Variables**, add:
+   - `MONGODB_URI` — a production MongoDB Atlas database/user, not a local `127.0.0.1` address.
+   - `AUTH_SECRET` — generate a separate, long random secret for production.
+   - `GEMINI_API_KEY` — the Google AI Studio key for the Vercel AI SDK features.
+   - `AUTH_URL` — the canonical HTTPS deployment URL, especially if password-reset or verification emails are enabled.
+3. If email delivery is needed, configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, and optionally `MAIL_FROM`.
+4. Ensure the production database can accept connections from the Vercel deployment. Prefer a restricted, production-appropriate Atlas network configuration; do not use a local MongoDB URI.
+5. Deploy, then test sign-in, database-backed pages, recipe generation, coaching, workout generation, and email links on the deployed URL. Redeploy after changing environment variables.
+
+Set variables separately for Preview and Production as appropriate. Never place secrets in source code or client-visible `NEXT_PUBLIC_*` variables. The AI endpoints allow up to 60 seconds for generation/streaming, so the selected Vercel plan must support that duration; see [Vercel Function duration](https://vercel.com/docs/functions/configuring-functions/duration). The AI endpoints require a configured Google API key; other app pages do not.
+
+## 6. Run the project
 
 ```bash
 npm run db:seed     # clears YOUR database and inserts demo data
@@ -184,7 +201,7 @@ Stop the app with **Ctrl + C** in the terminal. After changing `.env`, always re
 
 ---
 
-## 6. How we work with Git
+## 7. How we work with Git
 
 **Never push directly to `main`.** We work on `develop` and merge through Pull Requests.
 
@@ -217,13 +234,13 @@ Rules:
 - **Branches:** `feat/<module>-<topic>`, `fix/<module>-<topic>`.
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org): `feat:`, `fix:`, `chore:`, `docs:`.
 - **Your module only:** edit only your routes, `features/<module>`, your models in `models/` and your API routes. Need a change elsewhere? Open a PR and tag the owner.
-- **No hard-coded UI text:** use `next-intl` keys in `messages/en.json`. The app is in **English**.
+- **No hard-coded UI text:** use `next-intl` keys in `messages/en.json` and `messages/fr.json`. The app supports English and French.
 - **Never commit secrets:** no `.env`, no passwords, no connection strings.
 - Every day, update your branch: `git checkout develop && git pull && git checkout <your-branch> && git merge develop`.
 
 ---
 
-## 7. Project structure
+## 8. Project structure
 
 ```
 mealmate/
@@ -249,7 +266,7 @@ mealmate/
 
 ---
 
-## 8. Troubleshooting
+## 9. Troubleshooting
 
 | Problem                                                | Fix                                                                                                                                                    |
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -266,5 +283,5 @@ mealmate/
 ## Documentation
 
 - Team plan: modules, screens, roadmap and conventions: ask Ala for the shared plan link.
-- `docs/maquette.pdf`: the mockup (in French, the app is in English).
+- `docs/maquette.pdf`: the mockup (in French).
 - `docs/cahier-des-charges.docx`: the specification.

@@ -43,6 +43,8 @@ export interface IUser {
   /** bcrypt hash. Not returned by default: use .select("+passwordHash"). */
   passwordHash: string;
   role: Role;
+  /** Set when the user clicks the link of the verification email. */
+  emailVerifiedAt?: Date;
   age?: number;
   heightCm?: number;
   weightKg?: number;
@@ -79,6 +81,7 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true, select: false },
     role: { type: String, enum: ROLES, default: "USER" },
+    emailVerifiedAt: { type: Date },
     age: { type: Number, min: 10, max: 120 },
     heightCm: { type: Number, min: 50, max: 260 },
     weightKg: { type: Number, min: 20, max: 400 },

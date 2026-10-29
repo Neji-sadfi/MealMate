@@ -12,19 +12,21 @@ function initialsOf(name?: string | null) {
     .join("");
 }
 
-// Signed-in screens: mobile-width column centred on desktop, header + bottom nav.
+// Signed-in screens: responsive content width, header + adaptive navigation.
 // Access is enforced in proxy.ts; this layout only reads the session for the avatar.
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const session = await auth();
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-background">
+    <div className="flex min-h-dvh w-full flex-col bg-background">
       <AppHeader
         initials={initialsOf(session?.user?.name)}
         isAdmin={session?.user?.role === "ADMIN"}
       />
-      <main className="flex-1 px-4 pt-2 pb-24">{children}</main>
       <BottomNav />
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pt-6 pb-28 sm:px-6 sm:pt-8 md:pb-10 lg:px-8">
+        {children}
+      </main>
     </div>
   );
 }

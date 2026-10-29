@@ -10,8 +10,16 @@ export interface IShoppingItem {
   quantity?: number;
   unit: Unit;
   aisle: Aisle;
+  /** Indicative TND price per kg, litre or item; never a live retailer quote. */
   estimatedPrice?: number;
+  catalogPrice?: number;
+  catalogProductName?: string;
+  catalogSearchUrl?: string;
+  catalogStore?: string;
+  catalogCheckedAt?: Date;
   checked: boolean;
+  inventorySynced: boolean;
+  inventoryQuantity?: number;
   addedManually: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -26,7 +34,14 @@ const shoppingItemSchema = new Schema<IShoppingItem>(
     unit: { type: String, enum: UNITS, default: "piece" },
     aisle: { type: String, enum: AISLES, default: "other" },
     estimatedPrice: { type: Number, min: 0 },
+    catalogPrice: { type: Number, min: 0 },
+    catalogProductName: String,
+    catalogSearchUrl: String,
+    catalogStore: String,
+    catalogCheckedAt: Date,
     checked: { type: Boolean, default: false },
+    inventorySynced: { type: Boolean, default: false },
+    inventoryQuantity: { type: Number, min: 0 },
     addedManually: { type: Boolean, default: false },
   },
   { timestamps: true },

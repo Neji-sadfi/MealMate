@@ -23,8 +23,22 @@ async function getCurrentList(userId: NonNullable<Awaited<ReturnType<typeof getC
 const itemInput = z.object({
   name: z.string().trim().min(1).max(120),
   quantity: z.number().min(0).optional(),
-  unit: z.enum(["g", "kg", "ml", "l", "piece", "tbsp", "tsp", "bunch", "pot", "to_taste"]).default("piece"),
-  aisle: z.enum(["fruits_vegetables", "fresh_protein", "dairy", "grocery", "bakery", "frozen", "drinks", "other"]).default("other"),
+  unit: z
+    .enum(["g", "kg", "ml", "l", "piece", "tbsp", "tsp", "bunch", "pot", "to_taste"])
+    .default("piece"),
+  aisle: z
+    .enum([
+      "fruits_vegetables",
+      "fresh_protein",
+      "dairy",
+      "grocery",
+      "bakery",
+      "frozen",
+      "drinks",
+      "other",
+    ])
+    .default("other"),
+  estimatedPrice: z.number().min(0).optional(),
 });
 
 export async function GET() {
@@ -42,7 +56,10 @@ export async function POST(request: Request) {
   const body: unknown = await request.json().catch(() => null);
   const parsed = itemInput.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid shopping item", issues: parsed.error.issues }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid shopping item", issues: parsed.error.issues },
+      { status: 400 },
+    );
   }
 
   const list = await getCurrentList(userId);

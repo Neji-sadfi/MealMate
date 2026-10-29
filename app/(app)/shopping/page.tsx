@@ -7,6 +7,8 @@ import { ShoppingActions } from "@/features/shopping/components/ShoppingActions"
 import { getCurrentUserId } from "@/lib/current-user";
 import { ShoppingItem } from "@/models/ShoppingItem";
 import { ShoppingList } from "@/models/ShoppingList";
+import { PhotoHero } from "@/components/ui/PhotoHero";
+import { Ingredient } from "@/models/Ingredient";
 
 function currentWeekStart() {
   const date = new Date();
@@ -27,22 +29,66 @@ export default async function ShoppingPage() {
     ? await ShoppingList.findOne({ user: userId, weekStart: currentWeekStart() }).lean()
     : null;
   const items = list
-    ? await ShoppingItem.find({ list: list._id }).sort({ aisle: 1, createdAt: 1 }).lean()
+    ? await ShoppingItem.find({ list: list._id })
+        .populate<{ ingredient: { estimatedPrice?: number } | null }>(
+          "ingredient",
+          "estimatedPrice",
+        )
+        .sort({ aisle: 1, createdAt: 1 })
+        .lean()
     : [];
+  const unlinkedIngredients =
+    items.length > 0
+      ? await Ingredient.find({ name: { $in: items.map((item) => item.name) } })
+          .select("name estimatedPrice")
+          .lean()
+      : [];
+  const priceByName = new Map(
+    unlinkedIngredients.map((ingredient) => [
+      ingredient.name.trim().toLocaleLowerCase(),
+      ingredient.estimatedPrice,
+    ]),
+  );
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <div><h1 className="text-2xl font-black">{t("title")}</h1><p className="text-sm text-muted">{t("subtitle")}</p></div>
-        <Link href="/shopping/inventory"><Button variant="secondary" className="h-10 rounded-xl">Inventory</Button></Link>
+      <div className="relative">
+        <PhotoHero image="shopping" title={t("title")} subtitle={t("subtitle")} />
+        <Link
+          href="/shopping/inventory"
+          className="absolute right-4 bottom-4 sm:right-6 sm:bottom-6"
+        >
+          <Button variant="secondary" className="h-10 rounded-xl bg-white/95">
+            {t("inventoryLink")}
+          </Button>
+        </Link>
       </div>
-      {items.length === 0 && <Card><h2 className="font-bold">Your list is empty</h2><p className="mt-1 text-sm text-muted">Items you add will be saved to your MongoDB account.</p></Card>}
-      <ShoppingActions items={items.map((item) => ({
-        _id: item._id.toString(),
-        name: item.name,
-        quantity: item.quantity,
-        checked: item.checked,
-      }))} />
+      {items.length === 0 && (
+        <Card>
+          <h2 className="font-bold">{t("empty.title")}</h2>
+          <p className="mt-1 text-sm text-muted">{t("empty.body")}</p>
+        </Card>
+      )}
+      <ShoppingActions
+        items={items.map((item) => ({
+          _id: item._id.toString(),
+          name: item.name,
+          aisle: item.aisle ?? "other",
+          quantity: item.quantity,
+          unit: item.unit,
+          estimatedPrice:
+            item.estimatedPrice ??
+            (typeof item.ingredient === "object" && item.ingredient !== null
+              ? item.ingredient.estimatedPrice
+              : undefined) ??
+            priceByName.get(item.name.trim().toLocaleLowerCase()),
+          catalogPrice: item.catalogPrice,
+          catalogProductName: item.catalogProductName,
+          catalogSearchUrl: item.catalogSearchUrl,
+          catalogStore: item.catalogStore,
+          checked: item.checked,
+        }))}
+      />
     </div>
   );
 }

@@ -20,10 +20,13 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
     throw new Error("MONGODB_URI is not set. Copy .env.example to .env and add your Atlas URI.");
   }
 
-  cache.promise ??= mongoose.connect(uri, { bufferCommands: false }).catch((error) => {
-    cache.promise = null;
-    throw error;
-  });
+  // serverSelectionTimeoutMS: fail after 8 s instead of the default 30 s when Atlas is unreachable.
+  cache.promise ??= mongoose
+    .connect(uri, { bufferCommands: false, serverSelectionTimeoutMS: 8000 })
+    .catch((error) => {
+      cache.promise = null;
+      throw error;
+    });
 
   try {
     cache.conn = await cache.promise;

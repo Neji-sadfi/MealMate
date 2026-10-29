@@ -25,15 +25,19 @@ export default function ForgotPasswordPage() {
           event.preventDefault();
           setPending(true);
           setError("");
+          setSubmitted(false);
           const email = new FormData(event.currentTarget).get("email");
           const response = await fetch("/api/auth/forgot-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email }),
-          });
-          if (!response.ok) {
-            const result = (await response.json().catch(() => null)) as { error?: string } | null;
-            setError(result?.error ?? "Could not request a password reset.");
+          }).catch(() => null);
+          if (!response?.ok) {
+            const result = (await response?.json().catch(() => null)) as { error?: string } | null;
+            const key = result?.error;
+            setError(
+              t(`errors.${key === "invalidEmail" || key === "rateLimit" ? key : "unknown"}`),
+            );
           } else {
             setSubmitted(true);
           }
@@ -41,14 +45,24 @@ export default function ForgotPasswordPage() {
         }}
       >
         <Input name="email" type="email" label={t("email")} required />
-        <Button type="submit" fullWidth>
+        <Button type="submit" fullWidth disabled={pending}>
           {pending ? t("sending") : t("submit")}
         </Button>
       </form>
 
-      {submitted && <p role="status" className="rounded-input bg-success-bg px-4 py-3 text-sm text-success">{t("sent")}</p>}
-      {error && <p role="alert" className="rounded-input bg-warning-bg px-4 py-3 text-sm">{error}</p>}
-      <Link href="/login" className="text-center text-sm font-semibold text-primary">{t("backToLogin")}</Link>
+      {submitted && (
+        <p role="status" className="rounded-input bg-success-bg px-4 py-3 text-sm text-success">
+          {t("sent")}
+        </p>
+      )}
+      {error && (
+        <p role="alert" className="rounded-input bg-warning-bg px-4 py-3 text-sm">
+          {error}
+        </p>
+      )}
+      <Link href="/login" className="text-center text-sm font-semibold text-primary">
+        {t("backToLogin")}
+      </Link>
     </div>
   );
 }

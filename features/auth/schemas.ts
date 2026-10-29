@@ -45,5 +45,13 @@ export const registerSchema = z.object({
   weeklyBudget: requiredNumber(0, 100000),
 });
 
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1).max(100),
+    password: z.string().min(8).max(128),
+    confirmPassword: z.string(),
+  })
+  .refine((value) => value.password === value.confirmPassword, { path: ["confirmPassword"] });
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
