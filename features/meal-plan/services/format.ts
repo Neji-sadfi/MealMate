@@ -25,7 +25,3 @@ export function formatDayHeading(iso: string, locale: string): string {
 export function formatPantryList(names: string[], locale: string): string {
   return new Intl.ListFormat(locale, { style: "long", type: "conjunction" }).format(names);
 }
-
-export function dayNumber(iso: string): number {
-  return parseISODate(iso).getDate();
-}

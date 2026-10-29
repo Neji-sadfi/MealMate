@@ -86,12 +86,6 @@ export type MealPlanView = {
   meals: PlannedMeal[];
 };
 
-export type WeekStripDay = {
-  date: string;
-  weekday: Weekday;
-  hasMeals: boolean;
-};
-
 /** Home dashboard payload. Built server-side; the screen only renders it. */
 export type DashboardBudget = {
   total: number;
