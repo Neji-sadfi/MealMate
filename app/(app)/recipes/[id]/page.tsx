@@ -27,14 +27,15 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
   const isFavorite =
     userId && recipe ? Boolean(await Favorite.exists({ user: userId, recipe: recipe._id })) : false;
   const t = await getTranslations("pages.recipeDetail");
+  const tRecipes = await getTranslations("pages.recipes");
 
   if (!recipe) {
     return (
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
         <h1 className="text-2xl font-black">{t("title")}</h1>
-        <p className="text-sm text-muted">Recipe not found.</p>
+        <p className="text-sm text-muted">{t("notFound")}</p>
         <Link href="/recipes" className="text-sm font-semibold text-primary">
-          Back to recipes
+          {t("backToRecipes")}
         </Link>
       </div>
     );
@@ -69,11 +70,11 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
         href="/recipes"
         className="w-fit text-sm font-semibold text-primary transition-colors hover:text-primary/70"
       >
-        ← Back
+        ← {t("back")}
       </Link>
       <section className="rounded-card border border-border/70 bg-surface p-5 shadow-sm sm:p-7">
         <p className="text-xs font-bold tracking-[0.16em] text-primary uppercase">
-          {recipe.difficulty}
+          {tRecipes(`difficulty.${recipe.difficulty}`)}
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{recipe.title}</h1>
         <p className="mt-2 text-sm text-muted sm:text-base">{recipe.tagline}</p>
@@ -93,29 +94,29 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
       </Card>
       <Card className="grid grid-cols-2 gap-3 border border-border/70 text-sm shadow-sm sm:grid-cols-3 lg:grid-cols-4">
         <p className="rounded-xl bg-background p-3">
-          Servings: <strong>{recipe.servings}</strong>
+          {t("servings")}: <strong>{recipe.servings}</strong>
         </p>
         <p className="rounded-xl bg-background p-3">
-          Preparation: <strong>{recipe.prepTimeMinutes} min</strong>
+          {t("preparation")}: <strong>{recipe.prepTimeMinutes} min</strong>
         </p>
         <p className="rounded-xl bg-background p-3">
-          Calories: <strong>{recipe.nutrition.calories} kcal</strong>
+          {t("calories")}: <strong>{recipe.nutrition.calories} kcal</strong>
         </p>
         <p className="rounded-xl bg-background p-3">
-          Protein: <strong>{recipe.nutrition.protein} g</strong>
+          {t("protein")}: <strong>{recipe.nutrition.protein} g</strong>
         </p>
         <p className="rounded-xl bg-background p-3">
-          Carbs: <strong>{recipe.nutrition.carbs} g</strong>
+          {t("carbs")}: <strong>{recipe.nutrition.carbs} g</strong>
         </p>
         <p className="rounded-xl bg-background p-3">
-          Fat: <strong>{recipe.nutrition.fat} g</strong>
+          {t("fat")}: <strong>{recipe.nutrition.fat} g</strong>
         </p>
         <p className="rounded-xl bg-background p-3 sm:col-span-3 lg:col-span-1">
-          Cost / serving: <strong>{recipe.costPerServing}</strong>
+          {t("costPerServing")}: <strong>{recipe.costPerServing}</strong>
         </p>
       </Card>
       <Card className="border border-border/70 shadow-sm">
-        <h2 className="mb-3 text-lg font-bold">Ingredients</h2>
+        <h2 className="mb-3 text-lg font-bold">{t("ingredients")}</h2>
         <ul className="space-y-2 text-sm">
           {recipe.ingredients.map((ingredient, index) => (
             <li
@@ -131,7 +132,7 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
         </ul>
       </Card>
       <Card className="border border-border/70 shadow-sm">
-        <h2 className="mb-3 text-lg font-bold">Steps</h2>
+        <h2 className="mb-3 text-lg font-bold">{t("steps")}</h2>
         <ol className="space-y-3 text-sm">
           {recipe.steps.map((step) => (
             <li key={step.order} className="rounded-xl bg-background p-4">

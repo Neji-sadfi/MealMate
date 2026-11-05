@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { DIETS, DIFFICULTIES, UNITS } from "@/models/enums";
@@ -42,6 +43,9 @@ export type RecipeEditData = {
 
 export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
   const router = useRouter();
+  const t = useTranslations("pages.recipes.form");
+  const tRecipes = useTranslations("pages.recipes");
+  const tDiet = useTranslations("pages.profile.enums.diet");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [ingredients, setIngredients] = useState<IngredientDraft[]>(
@@ -103,8 +107,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
         }),
       });
       if (!response.ok) {
-        const result = (await response.json().catch(() => null)) as { error?: string } | null;
-        setError(result?.error ?? "Could not save the recipe.");
+        setError(t("saveError"));
         return;
       }
       if (!recipe) {
@@ -114,7 +117,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
       }
       router.refresh();
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
@@ -123,25 +126,20 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
   return (
     <details open={Boolean(recipe)} className="rounded-card bg-surface p-4">
       <summary className="cursor-pointer font-bold">
-        {recipe ? "Edit recipe" : "Create a recipe"}
+        {recipe ? t("editTitle") : t("createTitle")}
       </summary>
       <form onSubmit={submit} className="mt-4 flex flex-col gap-3">
         <Input
           name="title"
-          label="Recipe name"
+          label={t("name")}
           defaultValue={recipe?.title}
           required
           minLength={2}
           maxLength={120}
         />
-        <Input
-          name="tagline"
-          label="Short description"
-          defaultValue={recipe?.tagline}
-          maxLength={160}
-        />
+        <Input name="tagline" label={t("tagline")} defaultValue={recipe?.tagline} maxLength={160} />
         <label className="flex flex-col gap-1 text-sm font-medium">
-          Description
+          {t("description")}
           <textarea
             name="description"
             defaultValue={recipe?.description}
@@ -153,14 +151,14 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
         <Input
           name="imageUrl"
           type="url"
-          label="Recipe photo URL (optional)"
+          label={t("imageUrl")}
           defaultValue={recipe?.imageUrl}
           maxLength={2048}
           placeholder="https://example.com/recipe-photo.jpg"
         />
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1.5 text-sm font-semibold">
-            Difficulty
+            {t("difficulty")}
             <select
               name="difficulty"
               defaultValue={recipe?.difficulty ?? "easy"}
@@ -168,20 +166,20 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
             >
               {DIFFICULTIES.map((difficulty) => (
                 <option key={difficulty} value={difficulty}>
-                  {difficulty}
+                  {tRecipes(`difficulty.${difficulty}`)}
                 </option>
               ))}
             </select>
           </label>
           <Input
             name="tags"
-            label="Tags (comma separated)"
+            label={t("tags")}
             defaultValue={recipe?.tags.join(", ")}
-            placeholder="quick, vegetarian"
+            placeholder={t("tagsPlaceholder")}
           />
         </div>
         <label className="flex flex-col gap-1.5 text-sm font-semibold">
-          Diets
+          {t("diets")}
           <select
             name="diets"
             multiple
@@ -190,17 +188,15 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
           >
             {DIETS.map((diet) => (
               <option key={diet} value={diet}>
-                {diet.replaceAll("_", " ")}
+                {tDiet(diet)}
               </option>
             ))}
           </select>
-          <span className="text-xs font-normal text-muted">
-            Hold Ctrl (Windows) or Command (Mac) to choose more than one.
-          </span>
+          <span className="text-xs font-normal text-muted">{t("dietsHelp")}</span>
         </label>
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="font-semibold">Ingredients</h2>
+            <h2 className="font-semibold">{t("ingredients")}</h2>
             <Button
               type="button"
               variant="secondary"
@@ -211,14 +207,14 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                 ])
               }
             >
-              Add ingredient
+              {t("addIngredient")}
             </Button>
           </div>
           {ingredients.map((ingredient, index) => (
             <div key={index} className="rounded-xl border border-border p-3">
               <div className="grid grid-cols-2 gap-3">
                 <Input
-                  label="Ingredient"
+                  label={t("ingredient")}
                   value={ingredient.name}
                   onChange={(event) =>
                     setIngredients((current) =>
@@ -229,10 +225,10 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                   }
                   required
                   maxLength={120}
-                  placeholder="e.g. Tomato"
+                  placeholder={t("ingredientPlaceholder")}
                 />
                 <Input
-                  label="Quantity"
+                  label={t("quantity")}
                   type="number"
                   min="0"
                   step="any"
@@ -246,7 +242,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                   }
                 />
                 <label className="flex flex-col gap-1.5 text-sm font-semibold">
-                  Unit
+                  {t("unit")}
                   <select
                     value={ingredient.unit}
                     onChange={(event) =>
@@ -268,7 +264,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                   </select>
                 </label>
                 <Input
-                  label="Note (optional)"
+                  label={t("note")}
                   value={ingredient.note}
                   onChange={(event) =>
                     setIngredients((current) =>
@@ -278,7 +274,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                     )
                   }
                   maxLength={200}
-                  placeholder="e.g. finely chopped"
+                  placeholder={t("notePlaceholder")}
                 />
               </div>
               <Button
@@ -289,31 +285,29 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                   setIngredients((current) => current.filter((_, itemIndex) => itemIndex !== index))
                 }
               >
-                Remove ingredient
+                {t("removeIngredient")}
               </Button>
             </div>
           ))}
           {ingredients.length === 0 && (
-            <p className="text-sm text-muted">
-              Add the ingredients and their quantities for this recipe.
-            </p>
+            <p className="text-sm text-muted">{t("ingredientsEmpty")}</p>
           )}
         </section>
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="font-semibold">Preparation steps</h2>
+            <h2 className="font-semibold">{t("steps")}</h2>
             <Button
               type="button"
               variant="secondary"
               onClick={() => setSteps((current) => [...current, { title: "", description: "" }])}
             >
-              Add step
+              {t("addStep")}
             </Button>
           </div>
           {steps.map((step, index) => (
             <div key={index} className="rounded-xl border border-border p-3">
               <Input
-                label={`Step ${index + 1} title`}
+                label={t("stepTitle", { number: index + 1 })}
                 value={step.title}
                 onChange={(event) =>
                   setSteps((current) =>
@@ -324,10 +318,10 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                 }
                 required
                 maxLength={120}
-                placeholder="e.g. Prepare the vegetables"
+                placeholder={t("stepPlaceholder")}
               />
               <label className="mt-3 flex flex-col gap-1 text-sm font-medium">
-                Instructions
+                {t("instructions")}
                 <textarea
                   value={step.description}
                   onChange={(event) =>
@@ -341,7 +335,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                   maxLength={1000}
                   required
                   className="rounded-input border border-border bg-background p-3"
-                  placeholder="Describe what to do in this step"
+                  placeholder={t("instructionsPlaceholder")}
                 />
               </label>
               <Button
@@ -352,18 +346,16 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
                   setSteps((current) => current.filter((_, itemIndex) => itemIndex !== index))
                 }
               >
-                Remove step
+                {t("removeStep")}
               </Button>
             </div>
           ))}
-          {steps.length === 0 && (
-            <p className="text-sm text-muted">Add the preparation instructions in order.</p>
-          )}
+          {steps.length === 0 && <p className="text-sm text-muted">{t("stepsEmpty")}</p>}
         </section>
         <div className="grid grid-cols-2 gap-3">
           <Input
             name="prepTimeMinutes"
-            label="Minutes"
+            label={t("minutes")}
             type="number"
             min="1"
             defaultValue={recipe?.prepTimeMinutes ?? 20}
@@ -371,7 +363,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
           />
           <Input
             name="servings"
-            label="Servings"
+            label={t("servings")}
             type="number"
             min="1"
             defaultValue={recipe?.servings ?? 1}
@@ -379,7 +371,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
           />
           <Input
             name="costPerServing"
-            label="Cost / serving"
+            label={t("costPerServing")}
             type="number"
             min="0"
             step="any"
@@ -388,7 +380,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
           />
           <Input
             name="calories"
-            label="Calories"
+            label={t("calories")}
             type="number"
             min="0"
             defaultValue={recipe?.nutrition.calories ?? 0}
@@ -396,7 +388,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
           />
           <Input
             name="protein"
-            label="Protein (g)"
+            label={t("protein")}
             type="number"
             min="0"
             defaultValue={recipe?.nutrition.protein ?? 0}
@@ -404,7 +396,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
           />
           <Input
             name="carbs"
-            label="Carbs (g)"
+            label={t("carbs")}
             type="number"
             min="0"
             defaultValue={recipe?.nutrition.carbs ?? 0}
@@ -412,7 +404,7 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
           />
           <Input
             name="fat"
-            label="Fat (g)"
+            label={t("fat")}
             type="number"
             min="0"
             defaultValue={recipe?.nutrition.fat ?? 0}
@@ -420,10 +412,10 @@ export function RecipeCreateForm({ recipe }: { recipe?: RecipeEditData }) {
           />
         </div>
         <Button type="submit" fullWidth disabled={pending}>
-          {pending ? "Saving..." : recipe ? "Save changes" : "Save recipe"}
+          {pending ? t("saving") : recipe ? t("saveChanges") : t("save")}
         </Button>
         {error && (
-          <p role="alert" className="text-warning text-sm">
+          <p role="alert" className="text-sm text-warning">
             {error}
           </p>
         )}

@@ -44,7 +44,7 @@ export async function POST() {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const week = currentWeek();
   const meals = await Meal.find({ user: userId, date: { $gte: week.start, $lte: week.end } })
-    .populate("recipe", "ingredients")
+    .populate("recipe", "ingredients servings")
     .lean();
   if (meals.length === 0)
     return NextResponse.json({ error: "Add meals to your plan first" }, { status: 409 });
@@ -54,18 +54,23 @@ export async function POST() {
     { ingredientId: string; name: string; quantity: number; unit: Unit }
   >();
   for (const meal of meals) {
-    const recipe = meal.recipe as unknown as { ingredients: RecipeIngredient[] } | null;
+    const recipe = meal.recipe as unknown as {
+      ingredients: RecipeIngredient[];
+      servings?: number;
+    } | null;
+    // The quantities of a recipe are written for recipe.servings portions.
+    const scale = meal.servings / Math.max(1, recipe?.servings ?? 1);
     for (const entry of recipe?.ingredients ?? []) {
       if (entry.quantity === undefined) continue;
       const ingredientId = String((entry.ingredient as { _id?: unknown })?._id ?? entry.ingredient);
       const key = `${ingredientId}:${entry.unit}`;
       const existing = ingredients.get(key);
-      if (existing) existing.quantity += entry.quantity * meal.servings;
+      if (existing) existing.quantity += entry.quantity * scale;
       else
         ingredients.set(key, {
           ingredientId,
           name: entry.name,
-          quantity: entry.quantity * meal.servings,
+          quantity: entry.quantity * scale,
           unit: entry.unit,
         });
     }
@@ -101,7 +106,7 @@ export async function POST() {
     { user: userId, weekStart: week.start },
     {
       $set: { lastSyncedAt: new Date() },
-      $setOnInsert: { estimatedTotal: 0, completed: false, weekEnd: week.end },
+      $setOnInsert: { estimatedTotal: 0, completed: false },
     },
     { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   );
@@ -119,7 +124,7 @@ export async function POST() {
       list: list._id,
       ingredient: item.ingredientId,
       name: item.name,
-      quantity: item.quantity,
+      quantity: Math.round(item.quantity * 100) / 100,
       unit: item.unit,
       aisle: aisleById.get(item.ingredientId) ?? "other",
       estimatedPrice: priceById.get(item.ingredientId),

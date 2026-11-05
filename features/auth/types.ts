@@ -7,6 +7,7 @@ export type AuthErrorKey =
   | "emailTaken"
   | "passwordMismatch"
   | "invalidResetLink"
+  | "rateLimit"
   | "unknown";
 
 export type AuthFormState = {

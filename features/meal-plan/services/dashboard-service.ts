@@ -2,7 +2,9 @@
 // Own data (meal plan, meals, recipes) is authoritative; every read of another
 // member's collection (budget, shopping, inventory, sport) is wrapped in
 // try/catch with a typed fallback so their changes cannot crash this page.
+import { estimatedItemCost } from "@/features/shopping/services/cost";
 import { connectToDatabase } from "@/lib/db";
+import { dailyTargets, type DailyTargets } from "@/lib/nutrition-targets";
 import { Budget } from "@/models/Budget";
 import { Ingredient } from "@/models/Ingredient";
 import { Inventory } from "@/models/Inventory";
@@ -36,6 +38,9 @@ export class DashboardUnavailableError extends Error {
 
 type OwnData = {
   preferences: IUserPreferences | undefined;
+  targets: DailyTargets;
+  /** People the week is cooked for: the stats are shown per person. */
+  people: number;
   planned: PlannedMeal[];
 };
 
@@ -44,9 +49,11 @@ async function loadOwnData(userId: string, weekStart: Date): Promise<OwnData> {
   try {
     await connectToDatabase();
 
-    const preferences = await readPreferences(userId);
+    const user = await User.findById(userId).lean();
+    const preferences = user?.preferences;
+    const targets = dailyTargets(user);
     const plan = await MealPlan.findOne({ user: userId, weekStart }).lean();
-    if (!plan) return { preferences, planned: [] };
+    if (!plan) return { preferences, targets, people: 1, planned: [] };
 
     const meals = await Meal.find({ mealPlan: plan._id }).sort({ date: 1 }).lean();
     const recipeIds = [...new Set(meals.map((meal) => meal.recipe))];
@@ -75,16 +82,11 @@ async function loadOwnData(userId: string, weekStart: Date): Promise<OwnData> {
       });
     }
 
-    return { preferences, planned };
+    return { preferences, targets, people: Math.max(1, plan.people ?? 1), planned };
   } catch (error) {
     console.error("[meal-plan] dashboard data unavailable", error);
     throw new DashboardUnavailableError();
   }
-}
-
-async function readPreferences(userId: string): Promise<IUserPreferences | undefined> {
-  const user = await User.findById(userId).lean();
-  return user?.preferences;
 }
 
 export async function getDashboardData(
@@ -97,19 +99,16 @@ export async function getDashboardData(
   const todayIso = toISODate(now);
   const weekStart = mondayUtcOf(todayIso);
 
-  const { preferences, planned } = await loadOwnData(userId, weekStart);
-
-  const kcalTarget = preferences?.dailyCaloriesTarget ?? 2000;
-  const proteinTarget = preferences?.dailyProteinTarget ?? 130;
+  const { preferences, targets, people, planned } = await loadOwnData(userId, weekStart);
 
   const todayMeals = planned.filter((meal) => meal.date === todayIso);
   // Average over the days that actually have meals, not over the whole week.
   const divisor = Math.max(1, new Set(planned.map((meal) => meal.date)).size);
   const avgKcal = Math.round(
-    planned.reduce((sum, meal) => sum + meal.recipe.calories * meal.servings, 0) / divisor,
+    planned.reduce((sum, meal) => sum + meal.recipe.calories * meal.servings, 0) / divisor / people,
   );
   const avgProtein = Math.round(
-    planned.reduce((sum, meal) => sum + meal.recipe.protein * meal.servings, 0) / divisor,
+    planned.reduce((sum, meal) => sum + meal.recipe.protein * meal.servings, 0) / divisor / people,
   );
 
   // --- Member 4: budget for this week ---
@@ -143,8 +142,23 @@ export async function getDashboardData(
       .sort({ weekStart: -1, createdAt: -1 })
       .lean();
     if (list) {
-      const count = await ShoppingItem.countDocuments({ list: list._id, checked: false });
-      shopping = { count, estimatedTotal: list.estimatedTotal };
+      const items = await ShoppingItem.find({ list: list._id, checked: false })
+        .populate<{ ingredient: { estimatedPrice?: number } | null }>(
+          "ingredient",
+          "estimatedPrice",
+        )
+        .lean();
+      const total = items.reduce(
+        (sum, item) =>
+          sum +
+          (estimatedItemCost({
+            estimatedPrice: item.estimatedPrice ?? item.ingredient?.estimatedPrice,
+            quantity: item.quantity,
+            unit: item.unit,
+          }) ?? 0),
+        0,
+      );
+      shopping = { count: items.length, estimatedTotal: Math.round(total * 100) / 100 };
     }
   } catch {
     shopping = { count: 0, estimatedTotal: 0 };
@@ -200,7 +214,7 @@ export async function getDashboardData(
       remaining: Math.max(0, budgetTotal - used),
       currency: budgetCurrency,
     },
-    stats: { avgKcal, avgProtein, kcalTarget, proteinTarget },
+    stats: { avgKcal, avgProtein, kcalTarget: targets.kcal, proteinTarget: targets.protein },
     todayMeals,
     shopping,
     nearestExpiry,

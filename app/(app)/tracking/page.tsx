@@ -39,6 +39,7 @@ export default async function TrackingPage({
     ? await Promise.all([
         Meal.find({ user: userId, date: { $gte: start, $lt: end } })
           .populate("recipe", "nutrition")
+          .populate("mealPlan", "people")
           .lean(),
         Budget.find({ user: userId }).lean(),
         User.findById(userId).select("preferences.weeklyBudget preferences.currency").lean(),
@@ -49,10 +50,13 @@ export default async function TrackingPage({
   for (const meal of meals) {
     const recipe = meal.recipe as unknown as { nutrition: typeof totals } | null;
     if (!recipe?.nutrition) continue;
-    totals.calories += recipe.nutrition.calories * meal.servings;
-    totals.protein += recipe.nutrition.protein * meal.servings;
-    totals.carbs += recipe.nutrition.carbs * meal.servings;
-    totals.fat += recipe.nutrition.fat * meal.servings;
+    // Totals are for the user, not for everyone the meal was cooked for.
+    const plan = meal.mealPlan as unknown as { people?: number } | null;
+    const portions = meal.servings / Math.max(1, plan?.people ?? 1);
+    totals.calories += recipe.nutrition.calories * portions;
+    totals.protein += recipe.nutrition.protein * portions;
+    totals.carbs += recipe.nutrition.carbs * portions;
+    totals.fat += recipe.nutrition.fat * portions;
   }
 
   const expenses = budgets

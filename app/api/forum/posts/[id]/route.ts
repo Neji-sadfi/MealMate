@@ -43,7 +43,7 @@ export async function PUT(request: Request, { params }: Context) {
       { status: 400 },
     );
   const post = await ForumPost.findOneAndUpdate(
-    { _id: id, author: userId },
+    { _id: id, author: userId, status: "visible" },
     { $set: parsed.data },
     { returnDocument: "after", runValidators: true },
   ).populate("author", "name");

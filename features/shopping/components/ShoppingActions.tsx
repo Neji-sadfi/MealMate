@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { AISLES, type Aisle } from "@/models/enums";
+import { estimatedItemCost as estimatedCost } from "../services/cost";
 
 type ShoppingItem = {
   _id: string;
@@ -57,20 +58,6 @@ const STORE_URLS: Partial<Record<StoreId, string>> = {
   monoprix: "https://www.monoprix.tn",
   geant: "https://www.geant.tn",
 };
-
-function estimatedCost(item: ShoppingItem): number | null {
-  if (item.estimatedPrice === undefined) return null;
-  const amount = item.quantity ?? 1;
-  const scale =
-    item.unit === "g" || item.unit === "ml"
-      ? amount / 1000
-      : item.unit === "tbsp"
-        ? (amount * 15) / 1000
-        : item.unit === "tsp"
-          ? (amount * 5) / 1000
-          : amount;
-  return item.estimatedPrice * scale;
-}
 
 export function ShoppingActions({ items }: { items: ShoppingItem[] }) {
   const router = useRouter();

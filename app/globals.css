@@ -8,6 +8,7 @@
   --surface: #ffffff;
   --tint: #e8efdf;
   --warning-bg: #f7ecd7;
+  --warning: #8a5a00;
   --foreground: #1c2b23;
   --muted: #6b7570;
   --border: #e3e0d6;
@@ -23,6 +24,7 @@
   --color-surface: var(--surface);
   --color-tint: var(--tint);
   --color-warning-bg: var(--warning-bg);
+  --color-warning: var(--warning);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);

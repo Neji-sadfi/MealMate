@@ -4,6 +4,8 @@ import { recipeInputSchema } from "@/features/recipes/schemas";
 import { getCurrentAdminId } from "@/lib/admin";
 import { getCurrentUserId } from "@/lib/current-user";
 import { resolveRecipeIngredients } from "@/lib/recipe-ingredients";
+import { Favorite } from "@/models/Favorite";
+import { Meal } from "@/models/Meal";
 import { Recipe } from "@/models/Recipe";
 
 type Context = { params: Promise<{ id: string }> };
@@ -60,5 +62,6 @@ export async function DELETE(_: Request, { params }: Context) {
   const recipe = await Recipe.findOneAndDelete(filter);
   if (!recipe)
     return NextResponse.json({ error: "Recipe not found or not owned by you" }, { status: 404 });
+  await Promise.all([Favorite.deleteMany({ recipe: id }), Meal.deleteMany({ recipe: id })]);
   return NextResponse.json({ deleted: true, recipeId: id });
 }

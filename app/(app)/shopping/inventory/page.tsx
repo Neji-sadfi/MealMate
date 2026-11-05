@@ -22,16 +22,19 @@ export default async function InventoryPage() {
         .sort({ expiresAt: 1 })
         .lean()
     : [];
-  const items: InventoryItemView[] = rows.map((item) => {
-    const ingredient = item.ingredient as unknown as { name: string; aisle: string };
-    return {
-      id: item._id.toString(),
-      name: ingredient.name,
-      aisle: ingredient.aisle,
-      quantity: item.quantity,
-      unit: item.unit,
-      expiresAt: item.expiresAt?.toISOString(),
-    };
+  const items: InventoryItemView[] = rows.flatMap((item) => {
+    const ingredient = item.ingredient as unknown as { name: string; aisle: string } | null;
+    if (!ingredient) return [];
+    return [
+      {
+        id: item._id.toString(),
+        name: ingredient.name,
+        aisle: ingredient.aisle,
+        quantity: item.quantity,
+        unit: item.unit,
+        expiresAt: item.expiresAt?.toISOString(),
+      },
+    ];
   });
 
   return (

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -20,6 +21,7 @@ type AdminReport = {
 
 export function AdminReportActions({ report }: { report: AdminReport }) {
   const router = useRouter();
+  const t = useTranslations("pages.admin.actions");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
 
@@ -33,13 +35,12 @@ export function AdminReportActions({ report }: { report: AdminReport }) {
         body: JSON.stringify({ action }),
       });
       if (!response.ok) {
-        const result = (await response.json().catch(() => null)) as { error?: string } | null;
-        setError(result?.error ?? "Could not update this report.");
+        setError(t("reportError"));
         return;
       }
       router.refresh();
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
@@ -48,13 +49,13 @@ export function AdminReportActions({ report }: { report: AdminReport }) {
   return (
     <div className="flex flex-wrap gap-2">
       <Button disabled={pending || !report.post} onClick={() => review("hide")}>
-        Hide post
+        {t("hidePost")}
       </Button>
       <Button variant="secondary" disabled={pending} onClick={() => review("dismiss")}>
-        Dismiss report
+        {t("dismiss")}
       </Button>
       {error && (
-        <p role="alert" className="text-warning basis-full text-sm">
+        <p role="alert" className="basis-full text-sm text-warning">
           {error}
         </p>
       )}
@@ -64,24 +65,24 @@ export function AdminReportActions({ report }: { report: AdminReport }) {
 
 export function AdminRecipeCard({ recipe }: { recipe: RecipeEditData }) {
   const router = useRouter();
+  const t = useTranslations("pages.admin.actions");
   const [editing, setEditing] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
 
   async function remove() {
-    if (!window.confirm(`Delete "${recipe.title}" from the recipe catalogue?`)) return;
+    if (!window.confirm(t("deleteConfirm", { title: recipe.title }))) return;
     setPending(true);
     setError("");
     try {
       const response = await fetch(`/api/recipes/${recipe.id}`, { method: "DELETE" });
       if (!response.ok) {
-        const result = (await response.json().catch(() => null)) as { error?: string } | null;
-        setError(result?.error ?? "Could not delete this recipe.");
+        setError(t("recipeError"));
         return;
       }
       router.refresh();
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(t("networkError"));
     } finally {
       setPending(false);
     }
@@ -93,21 +94,24 @@ export function AdminRecipeCard({ recipe }: { recipe: RecipeEditData }) {
         <div>
           <h3 className="font-bold">{recipe.title}</h3>
           <p className="text-sm text-muted">
-            {recipe.ingredients.length} ingredients · {recipe.steps.length} steps
+            {t("recipeSummary", {
+              ingredients: recipe.ingredients.length,
+              steps: recipe.steps.length,
+            })}
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => setEditing((current) => !current)}>
-            {editing ? "Close" : "Edit"}
+            {editing ? t("close") : t("edit")}
           </Button>
           <Button variant="ghost" disabled={pending} onClick={remove}>
-            Delete
+            {t("delete")}
           </Button>
         </div>
       </div>
       {editing && <RecipeCreateForm key={recipe.id} recipe={recipe} />}
       {error && (
-        <p role="alert" className="text-warning text-sm">
+        <p role="alert" className="text-sm text-warning">
           {error}
         </p>
       )}

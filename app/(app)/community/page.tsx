@@ -73,7 +73,8 @@ export default async function CommunityPage() {
         </Card>
       ) : (
         posts.map((post) => {
-          const author = post.author as unknown as { _id: Types.ObjectId; name: string };
+          const author = post.author as unknown as { _id: Types.ObjectId; name: string } | null;
+          const authorName = author?.name ?? t("deletedMember");
           return (
             <Card
               key={post._id.toString()}
@@ -84,7 +85,7 @@ export default async function CommunityPage() {
                   aria-hidden
                   className="flex size-10 shrink-0 items-center justify-center rounded-full bg-tint text-sm font-bold text-primary"
                 >
-                  {author.name
+                  {authorName
                     .split(/\s+/)
                     .slice(0, 2)
                     .map((part) => part[0] ?? "")
@@ -92,7 +93,7 @@ export default async function CommunityPage() {
                     .toUpperCase()}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-bold">{author.name}</p>
+                  <p className="truncate text-sm font-bold">{authorName}</p>
                   <p className="text-xs text-muted">
                     {post.createdAt.toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US", {
                       dateStyle: "medium",
@@ -125,7 +126,7 @@ export default async function CommunityPage() {
                   }
                 }
                 userReaction={reactionByPost.get(post._id.toString())}
-                canManage={post.author._id.toString() === userId?.toString()}
+                canManage={author?._id.toString() === userId?.toString()}
                 isAdmin={Boolean(adminId)}
               />
             </Card>

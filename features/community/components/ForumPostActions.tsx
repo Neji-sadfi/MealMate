@@ -10,7 +10,7 @@ import type { ForumReactionType } from "@/models/ForumLike";
 type Comment = {
   _id: string;
   content: string;
-  author: { name: string };
+  author: { name: string } | null;
 };
 
 export function ForumPostActions({
@@ -276,7 +276,7 @@ export function ForumPostActions({
               className="flex items-start justify-between gap-2 rounded-input bg-background p-3"
             >
               <p className="text-sm">
-                <strong>{comment.author.name}:</strong> {comment.content}
+                <strong>{comment.author?.name ?? t("deletedMember")}:</strong> {comment.content}
               </p>
               {isAdmin && (
                 <Button
@@ -304,7 +304,7 @@ export function ForumPostActions({
         </div>
       )}
       {error && (
-        <p role="status" className="text-warning text-sm">
+        <p role="status" className="text-sm text-warning">
           {error}
         </p>
       )}

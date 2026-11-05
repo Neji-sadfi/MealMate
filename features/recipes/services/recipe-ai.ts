@@ -1,6 +1,6 @@
 import { generateText, Output } from "ai";
 import { generatedRecipeSchema, type RecipeAiRequest } from "@/features/recipes/ai-schemas";
-import { getGeminiModel } from "@/lib/ai";
+import { aiProviderOptions, getGeminiModel } from "@/lib/ai";
 import type { Locale } from "@/lib/i18n/config";
 import type { IUserPreferences } from "@/models/User";
 
@@ -94,6 +94,7 @@ export async function requestRecipeAi(
           `Safety: ${safetyInstructions}`,
         ].join(" "),
         prompt: recipePrompt(request, preferences, locale),
+        providerOptions: aiProviderOptions,
         maxOutputTokens: 1800,
         temperature: 0.6,
         abortSignal,
@@ -112,6 +113,7 @@ export async function requestRecipeAi(
         })),
         { role: "user", content: request.message },
       ],
+      providerOptions: aiProviderOptions,
       maxOutputTokens: 600,
       temperature: 0.5,
       abortSignal,
