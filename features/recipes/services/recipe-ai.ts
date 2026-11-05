@@ -1,7 +1,8 @@
 import { generateText, Output } from "ai";
-import { generatedRecipeSchema, type RecipeAiRequest } from "@/features/recipes/ai-schemas";
+import type { RecipeAiRequest } from "@/features/recipes/ai-schemas";
 import { aiProviderOptions, getGeminiModel } from "@/lib/ai";
 import type { Locale } from "@/lib/i18n/config";
+import { DIETS, UNITS } from "@/models/enums";
 import type { IUserPreferences } from "@/models/User";
 
 const DIET_LABELS: Record<IUserPreferences["diet"], string> = {
@@ -37,6 +38,17 @@ const safetyInstructions = [
   "If asked for medical dietary advice, briefly recommend consulting a qualified healthcare professional.",
 ].join(" ");
 
+const recipeJsonInstructions = [
+  "Return only one JSON object with this exact shape and camelCase property names:",
+  '{"title":"...","tagline":"...","description":"...","diets":[],"tags":["..."],"difficulty":"easy","prepTimeMinutes":20,"servings":2,"costPerServing":5,',
+  '"nutrition":{"calories":500,"protein":30,"carbs":50,"fat":15},',
+  '"ingredients":[{"name":"...","quantity":200,"unit":"g"}],',
+  '"steps":[{"order":1,"title":"...","description":"..."}]}.',
+  `diets may only contain: ${DIETS.join(", ")}.`,
+  `unit must be one of: ${UNITS.join(", ")}.`,
+  "difficulty must be easy, medium or hard. Use numbers, not numeric strings.",
+].join(" ");
+
 function recipePrompt(
   request: Extract<RecipeAiRequest, { mode: "generate" }>,
   preferences: IUserPreferences,
@@ -64,13 +76,19 @@ function chatSystemPrompt(preferences: IUserPreferences, locale: Locale) {
   ].join("\n\n");
 }
 
+function providerStatus(error: unknown): number | undefined {
+  if (typeof error !== "object" || error === null) return undefined;
+  if ("statusCode" in error && typeof error.statusCode === "number") return error.statusCode;
+  if ("status" in error && typeof error.status === "number") return error.status;
+  return undefined;
+}
+
 function aiErrorCode(error: unknown): string {
   if (error instanceof Error && error.message === "AI_NOT_CONFIGURED") return "AI_NOT_CONFIGURED";
   if (error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError"))
     return "AI_TIMEOUT";
 
-  const providerError = error as { statusCode?: number; status?: number };
-  const status = providerError.statusCode ?? providerError.status;
+  const status = providerStatus(error);
   if (status === 401 || status === 403) return "AI_KEY_INVALID";
   if (status === 429) return "AI_RATE_LIMITED";
   return "AI_PROVIDER_ERROR";
@@ -88,11 +106,9 @@ export async function requestRecipeAi(
     if (request.mode === "generate") {
       const { output } = await generateText({
         model,
-        output: Output.object({ schema: generatedRecipeSchema }),
-        system: [
-          "Return a valid recipe matching the provided schema.",
-          `Safety: ${safetyInstructions}`,
-        ].join(" "),
+        // Gemini rejects this schema as a response schema: the route validates the JSON instead.
+        output: Output.json({ name: "recipe", description: "One recipe as a JSON object." }),
+        system: [recipeJsonInstructions, `Safety: ${safetyInstructions}`].join(" "),
         prompt: recipePrompt(request, preferences, locale),
         providerOptions: aiProviderOptions,
         maxOutputTokens: 1800,
@@ -122,6 +138,11 @@ export async function requestRecipeAi(
     return { answer: text.trim() };
   } catch (error) {
     if (error instanceof Error && error.message.startsWith("AI_")) throw error;
+    console.error("recipe assistant provider request failed", {
+      mode: request.mode,
+      name: error instanceof Error ? error.name : "UnknownError",
+      status: providerStatus(error),
+    });
     throw new Error(aiErrorCode(error));
   }
 }

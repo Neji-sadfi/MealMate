@@ -5,11 +5,12 @@ import { createSerwistRoute } from "@serwist/turbopack";
 const revision =
   spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf-8" }).stdout?.trim() ||
   crypto.randomUUID();
+const offlinePageRevision = `${revision}-${crypto.randomUUID()}`;
 
 export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } = createSerwistRoute(
   {
     swSrc: "app/sw.ts",
-    additionalPrecacheEntries: [{ url: "/~offline", revision }],
+    additionalPrecacheEntries: [{ url: "/~offline", revision: offlinePageRevision }],
     useNativeEsbuild: true,
   },
 );

@@ -128,6 +128,7 @@ export default async function CommunityPage() {
                 userReaction={reactionByPost.get(post._id.toString())}
                 canManage={author?._id.toString() === userId?.toString()}
                 isAdmin={Boolean(adminId)}
+                currentUserId={userId?.toString()}
               />
             </Card>
           );

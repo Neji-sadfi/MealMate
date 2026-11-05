@@ -36,10 +36,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     );
   const post = await ForumPost.findOne({ _id: id, status: "visible" });
   if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 });
-  const [comment] = await Promise.all([
-    ForumComment.create({ post: post._id, author: userId, content: parsed.data.content }),
-    ForumPost.updateOne({ _id: post._id }, { $inc: { commentsCount: 1 } }),
-  ]);
+  const comment = await ForumComment.create({
+    post: post._id,
+    author: userId,
+    content: parsed.data.content,
+  });
+  await ForumPost.updateOne({ _id: post._id }, { $inc: { commentsCount: 1 } });
   await comment.populate("author", "name");
   return NextResponse.json(comment, { status: 201 });
 }

@@ -15,6 +15,8 @@ Rule-based generator from the profile (goal, level, days, duration, equipment), 
 The training studio generates a complete AI program using the existing Gemini configuration. The user reviews the warm-up, exercises, rest, form tips, and cool-down before confirming. The save endpoint writes the new plan and sessions for next week before deactivating the previous plan; existing sessions are retained.
 
 The preview uses `POST /api/sport-plans/generate`; confirmation submits the validated preview to `POST /api/sport-plans/save-generated`.
+Workout session details support editing the schedule, warm-up, exercises and cool-down, as well as deleting the session.
+Exercise photos are matched automatically against the French and English wger catalogue. Photos are only shown when a matching exercise and its license are available; the source and license are linked, and missing photos never block a workout.
 
 ## Folder layout
 

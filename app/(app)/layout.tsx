@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { OfflineStatusBanner } from "@/components/ui/OfflineStatusBanner";
 
 function initialsOf(name?: string | null) {
   if (!name) return "";
@@ -25,6 +26,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       />
       <BottomNav />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 pt-6 pb-28 sm:px-6 sm:pt-8 md:pb-10 lg:px-8">
+        <OfflineStatusBanner />
         {children}
       </main>
     </div>

@@ -10,7 +10,7 @@ import type { ForumReactionType } from "@/models/ForumLike";
 type Comment = {
   _id: string;
   content: string;
-  author: { name: string } | null;
+  author: { _id: string; name: string } | null;
 };
 
 export function ForumPostActions({
@@ -21,6 +21,7 @@ export function ForumPostActions({
   userReaction,
   canManage,
   isAdmin,
+  currentUserId,
 }: {
   postId: string;
   title: string;
@@ -29,6 +30,7 @@ export function ForumPostActions({
   userReaction?: ForumReactionType;
   canManage: boolean;
   isAdmin: boolean;
+  currentUserId?: string;
 }) {
   const router = useRouter();
   const t = useTranslations("pages.community.actions");
@@ -182,10 +184,13 @@ export function ForumPostActions({
   }
 
   async function deleteComment(commentId: string) {
+    if (!window.confirm(t("deleteCommentConfirm"))) return;
     setPending(true);
     setError("");
     try {
-      const response = await fetch(`/api/admin/comments/${commentId}`, { method: "DELETE" });
+      const response = await fetch(`/api/forum/posts/${postId}/comments/${commentId}`, {
+        method: "DELETE",
+      });
       if (!response.ok) {
         setError(t("deleteCommentError"));
         return;
@@ -265,7 +270,9 @@ export function ForumPostActions({
             rows={3}
             className="rounded-input border border-border bg-background p-2"
           />
-          <Button disabled={pending}>{t("saveChanges")}</Button>
+          <Button type="submit" disabled={pending}>
+            {t("saveChanges")}
+          </Button>
         </form>
       )}
       {showComments && (
@@ -278,7 +285,7 @@ export function ForumPostActions({
               <p className="text-sm">
                 <strong>{comment.author?.name ?? t("deletedMember")}:</strong> {comment.content}
               </p>
-              {isAdmin && (
+              {(isAdmin || (currentUserId && comment.author?._id === currentUserId)) && (
                 <Button
                   variant="ghost"
                   disabled={pending}
@@ -299,7 +306,9 @@ export function ForumPostActions({
               placeholder={t("commentPlaceholder")}
               className="rounded-input border border-border bg-background p-3"
             />
-            <Button disabled={pending}>{t("addComment")}</Button>
+            <Button type="submit" disabled={pending || !commentText.trim()}>
+              {t("addComment")}
+            </Button>
           </form>
         </div>
       )}

@@ -744,6 +744,7 @@
         "updateError": "Could not update this discussion.",
         "deleteError": "Could not delete this discussion.",
         "deleteCommentError": "Could not delete this comment.",
+        "deleteCommentConfirm": "Delete this comment?",
         "deleteConfirm": "Delete this discussion and its comments?",
         "networkError": "Could not reach the server. Please try again.",
         "deletedMember": "Deleted member"
@@ -867,6 +868,17 @@
         "save": "Save workout",
         "saving": "Saving...",
         "error": "Could not save the workout."
+      },
+      "exercisePhotos": {
+        "searching": "Finding a photo…",
+        "photoUnavailable": "No photo available",
+        "photosUnavailable": "Exercise photos are temporarily unavailable. Your workout is still available.",
+        "viewSource": "View the photo source for {name}",
+        "photoCredit": "Photo by {author}",
+        "rest": "Rest",
+        "sets": "sets",
+        "repetitions": "reps",
+        "tip": "Form tip"
       }
     },
     "workoutSession": {
@@ -888,12 +900,36 @@
         "skipped": "Skipped"
       },
       "actions": {
+        "edit": "Edit session",
+        "delete": "Delete session",
+        "deleteConfirm": "Delete “{name}”? This cannot be undone.",
+        "cancel": "Cancel editing",
+        "save": "Save changes",
+        "saving": "Saving…",
+        "name": "Session name",
+        "focus": "Focus",
+        "scheduledAt": "Date and time",
+        "durationMinutes": "Duration (minutes)",
+        "warmUp": "Warm-up",
+        "coolDown": "Cool-down",
+        "phaseMinutes": "Minutes",
+        "description": "Description",
+        "exercises": "Exercises",
+        "addExercise": "Add exercise",
+        "removeExercise": "Remove exercise",
+        "exerciseName": "Exercise name",
+        "sets": "Sets",
+        "measure": "Exercise measure",
+        "repetitions": "Repetitions",
+        "durationSeconds": "Duration (seconds)",
+        "restSeconds": "Rest (seconds)",
+        "tip": "Form tip",
+        "updateError": "Could not update this workout session.",
+        "deleteError": "Could not delete this workout session.",
+        "networkError": "Could not reach the server. Please try again.",
         "done": "Mark as done",
         "skip": "Skip",
-        "reopen": "Plan again",
-        "delete": "Delete",
-        "deleteConfirm": "Delete this session?",
-        "error": "Could not update this session."
+        "reopen": "Plan again"
       }
     },
     "admin": {
@@ -936,7 +972,8 @@
   },
   "offline": {
     "title": "You are offline",
-    "description": "This page is not available offline yet. Check your connection and try again."
+    "description": "This page is not available offline yet. Check your connection and try again.",
+    "appBanner": "You are offline. The current page stays visible, but updates require a connection."
   },
   "coach": {
     "title": "Mia, your coach",

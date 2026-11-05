@@ -64,6 +64,28 @@ export const workoutProgramSchema = z
     }
   });
 
+export const exercisePhotoRequestSchema = z.object({
+  names: z.array(z.string().trim().min(2).max(120)).min(1).max(56),
+});
+
+export const exercisePhotoSchema = z.object({
+  imageUrl: z.string().url(),
+  sourceUrl: z.string().url(),
+  author: z.string().min(1).max(120),
+  licenseName: z.string().min(1).max(120),
+  licenseUrl: z.string().url(),
+});
+
+export const exercisePhotosResponseSchema = z.object({
+  photos: z.array(
+    z.object({
+      name: z.string(),
+      photo: exercisePhotoSchema.nullable(),
+    }),
+  ),
+});
+
 export type WorkoutSettings = z.infer<typeof workoutSettingsSchema>;
 export type WorkoutProgram = z.infer<typeof workoutProgramSchema>;
 export type WorkoutSessionPreview = z.infer<typeof workoutSessionPreviewSchema>;
+export type ExercisePhoto = z.infer<typeof exercisePhotoSchema>;
