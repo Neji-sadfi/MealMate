@@ -62,6 +62,19 @@ function NavigationLinks({ layout }: { layout: "mobile" | "tablet" | "desktop" }
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 title={desktop ? t(item.key) : undefined}
+                onClick={(event) => {
+                  if (
+                    !navigator.onLine &&
+                    event.button === 0 &&
+                    !event.metaKey &&
+                    !event.ctrlKey &&
+                    !event.shiftKey &&
+                    !event.altKey
+                  ) {
+                    event.preventDefault();
+                    window.location.assign(item.href);
+                  }
+                }}
                 className={`flex h-full items-center justify-center font-semibold transition-all duration-200 ${
                   desktop
                     ? "gap-1.5 rounded-xl px-2.5 py-2 text-xs whitespace-nowrap xl:gap-2 xl:px-3 xl:text-sm"

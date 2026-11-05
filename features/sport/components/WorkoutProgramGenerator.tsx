@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { CheckCircle2, Dumbbell, LoaderCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { WorkoutExerciseList } from "@/features/sport/components/WorkoutExerciseList";
 import type { Equipment, SportGoal, SportLevel, Weekday } from "@/models/enums";
 import type { WorkoutProgram, WorkoutSettings } from "@/features/sport/schemas";
 
@@ -280,33 +281,7 @@ export function WorkoutProgramGenerator({ initialSettings }: Props) {
                   <p className="mt-1 text-sm text-muted">{session.warmUp.description}</p>
                 </div>
 
-                <ol className="mt-3 flex flex-col gap-2">
-                  {session.exercises.map((exercise, index) => (
-                    <li
-                      key={`${exercise.name}-${index}`}
-                      className="rounded-xl border border-border/60 p-3"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="font-semibold">
-                          {index + 1}. {exercise.name}
-                        </p>
-                        <span className="shrink-0 text-right text-xs text-muted">
-                          {exercise.sets} ×{" "}
-                          {exercise.repetitions
-                            ? exercise.repetitions
-                            : `${exercise.durationSeconds}s`}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs text-muted">
-                        {t("rest")}: {exercise.restSeconds}s
-                      </p>
-                      <p className="mt-2 text-sm leading-relaxed">
-                        <span className="font-semibold text-primary">{t("tip")}:</span>{" "}
-                        {exercise.tip}
-                      </p>
-                    </li>
-                  ))}
-                </ol>
+                <WorkoutExerciseList exercises={session.exercises} variant="preview" />
 
                 <div className="mt-3 rounded-xl bg-surface p-3">
                   <p className="text-sm font-bold">

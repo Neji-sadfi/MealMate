@@ -15,10 +15,11 @@ const cache: MongooseCache = (globalForMongoose.mongooseCache ??= { conn: null, 
 export async function connectToDatabase(): Promise<typeof mongoose> {
   if (cache.conn) return cache.conn;
 
-  const uri = process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017/mealmate_local";
-  if (!uri) {
-    throw new Error("MONGODB_URI is not set. Copy .env.example to .env and add your Atlas URI.");
+  const configuredUri = process.env.MONGODB_URI?.trim();
+  if (!configuredUri && process.env.NODE_ENV === "production") {
+    throw new Error("MONGODB_URI must be configured in the production environment.");
   }
+  const uri = configuredUri || "mongodb://127.0.0.1:27017/mealmate_local";
 
   // serverSelectionTimeoutMS: fail after 8 s instead of the default 30 s when Atlas is unreachable.
   cache.promise ??= mongoose

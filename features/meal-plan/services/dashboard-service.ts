@@ -39,6 +39,25 @@ type OwnData = {
   planned: PlannedMeal[];
 };
 
+function safeDatabaseErrorDetails(error: unknown) {
+  if (!(error instanceof Error)) return { name: "UnknownError" };
+  const details = error as Error & {
+    code?: string | number;
+    syscall?: string;
+    hostname?: string;
+  };
+  return {
+    name: details.name,
+    ...(details.code !== undefined ? { code: details.code } : {}),
+    ...(details.syscall ? { syscall: details.syscall } : {}),
+    ...(details.hostname ? { hostname: details.hostname } : {}),
+    message: details.message.replace(
+      /mongodb(?:\+srv)?:\/\/[^\s"'<>]+/gi,
+      "[redacted MongoDB URI]",
+    ),
+  };
+}
+
 /** Reads my own collections. A failure here means the dashboard cannot load. */
 async function loadOwnData(userId: string, weekStart: Date): Promise<OwnData> {
   try {
@@ -77,7 +96,7 @@ async function loadOwnData(userId: string, weekStart: Date): Promise<OwnData> {
 
     return { preferences, planned };
   } catch (error) {
-    console.error("[meal-plan] dashboard data unavailable", error);
+    console.error("[meal-plan] dashboard data unavailable", safeDatabaseErrorDetails(error));
     throw new DashboardUnavailableError();
   }
 }

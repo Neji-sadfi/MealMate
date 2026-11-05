@@ -16,6 +16,9 @@ function transport(): Transporter | null {
     port,
     secure: port === 465,
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD },
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 10_000,
   });
   return globalForMail.mailTransport;
 }

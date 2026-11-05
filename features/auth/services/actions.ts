@@ -32,6 +32,7 @@ export async function loginAction(
     await signIn("credentials", { ...parsed.data, redirectTo: "/" });
   } catch (error) {
     if (error instanceof AuthError) {
+      if (error.type !== "CredentialsSignin") console.error("login failed", error);
       return { error: error.type === "CredentialsSignin" ? "invalidCredentials" : "unknown" };
     }
     throw error;

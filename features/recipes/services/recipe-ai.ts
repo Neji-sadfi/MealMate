@@ -64,13 +64,19 @@ function chatSystemPrompt(preferences: IUserPreferences, locale: Locale) {
   ].join("\n\n");
 }
 
+function providerStatus(error: unknown): number | undefined {
+  if (typeof error !== "object" || error === null) return undefined;
+  if ("statusCode" in error && typeof error.statusCode === "number") return error.statusCode;
+  if ("status" in error && typeof error.status === "number") return error.status;
+  return undefined;
+}
+
 function aiErrorCode(error: unknown): string {
   if (error instanceof Error && error.message === "AI_NOT_CONFIGURED") return "AI_NOT_CONFIGURED";
   if (error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError"))
     return "AI_TIMEOUT";
 
-  const providerError = error as { statusCode?: number; status?: number };
-  const status = providerError.statusCode ?? providerError.status;
+  const status = providerStatus(error);
   if (status === 401 || status === 403) return "AI_KEY_INVALID";
   if (status === 429) return "AI_RATE_LIMITED";
   return "AI_PROVIDER_ERROR";
@@ -120,6 +126,11 @@ export async function requestRecipeAi(
     return { answer: text.trim() };
   } catch (error) {
     if (error instanceof Error && error.message.startsWith("AI_")) throw error;
+    console.error("recipe assistant provider request failed", {
+      mode: request.mode,
+      name: error instanceof Error ? error.name : "UnknownError",
+      status: providerStatus(error),
+    });
     throw new Error(aiErrorCode(error));
   }
 }

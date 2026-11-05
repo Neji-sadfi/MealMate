@@ -4,6 +4,8 @@ import { Types } from "mongoose";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/Card";
 import { getCurrentUserId } from "@/lib/current-user";
+import { WorkoutExerciseList } from "@/features/sport/components/WorkoutExerciseList";
+import { WorkoutSessionActions } from "@/features/sport/components/WorkoutSessionActions";
 import { WorkoutSession } from "@/models/WorkoutSession";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -57,19 +59,7 @@ export default async function WorkoutSessionPage({ params }: PageProps<"/sport/s
       )}
       <Card>
         <h2 className="mb-3 text-lg font-bold">Exercises</h2>
-        <ul className="space-y-2 text-sm">
-          {session.exercises.map((exercise, index) => (
-            <li key={`${exercise.name}-${index}`} className="rounded-xl bg-surface p-3">
-              <p className="font-semibold">{exercise.name}</p>
-              <p className="mt-1 text-muted">
-                {exercise.sets} sets{exercise.repetitions ? ` · ${exercise.repetitions} reps` : ""}
-                {exercise.durationSeconds ? ` · ${exercise.durationSeconds}s` : ""} ·{" "}
-                {exercise.restSeconds}s rest
-              </p>
-              {exercise.tip && <p className="mt-1 text-muted">{exercise.tip}</p>}
-            </li>
-          ))}
-        </ul>
+        <WorkoutExerciseList exercises={session.exercises} variant="detail" />
       </Card>
       {session.coolDown && (
         <Card>
@@ -77,6 +67,35 @@ export default async function WorkoutSessionPage({ params }: PageProps<"/sport/s
           <p className="mt-1 text-sm text-muted">{session.coolDown.description}</p>
         </Card>
       )}
+      <WorkoutSessionActions
+        session={{
+          id: session._id.toString(),
+          name: session.name,
+          focus: session.focus ?? "",
+          scheduledAt: session.scheduledAt.toISOString(),
+          durationMinutes: session.durationMinutes,
+          warmUp: session.warmUp
+            ? {
+                durationMinutes: session.warmUp.durationMinutes,
+                description: session.warmUp.description,
+              }
+            : null,
+          exercises: session.exercises.map((exercise) => ({
+            name: exercise.name,
+            sets: exercise.sets,
+            repetitions: exercise.repetitions,
+            durationSeconds: exercise.durationSeconds,
+            restSeconds: exercise.restSeconds,
+            tip: exercise.tip ?? "",
+          })),
+          coolDown: session.coolDown
+            ? {
+                durationMinutes: session.coolDown.durationMinutes,
+                description: session.coolDown.description,
+              }
+            : null,
+        }}
+      />
     </div>
   );
 }

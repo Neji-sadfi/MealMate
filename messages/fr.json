@@ -753,11 +753,51 @@
           "save": "Impossible d’enregistrer le programme sportif.",
           "network": "Serveur inaccessible. Veuillez réessayer."
         }
+      },
+      "exercisePhotos": {
+        "searching": "Recherche d’une photo…",
+        "photoUnavailable": "Aucune photo disponible",
+        "photosUnavailable": "Les photos des exercices sont temporairement indisponibles. Votre séance reste accessible.",
+        "viewSource": "Voir la source de la photo de {name}",
+        "photoCredit": "Photo de {author}",
+        "rest": "Repos",
+        "sets": "séries",
+        "repetitions": "rép.",
+        "tip": "Conseil de posture"
       }
     },
     "workoutSession": {
       "title": "Séance d’entraînement",
-      "subtitle": "Séance n° {id}"
+      "subtitle": "Séance n° {id}",
+      "actions": {
+        "edit": "Modifier la séance",
+        "delete": "Supprimer la séance",
+        "deleteConfirm": "Supprimer « {name} » ? Cette action est irréversible.",
+        "cancel": "Annuler la modification",
+        "save": "Enregistrer les modifications",
+        "saving": "Enregistrement…",
+        "name": "Nom de la séance",
+        "focus": "Objectif",
+        "scheduledAt": "Date et heure",
+        "durationMinutes": "Durée (minutes)",
+        "warmUp": "Échauffement",
+        "coolDown": "Retour au calme",
+        "phaseMinutes": "Minutes",
+        "description": "Description",
+        "exercises": "Exercices",
+        "addExercise": "Ajouter un exercice",
+        "removeExercise": "Supprimer l’exercice",
+        "exerciseName": "Nom de l’exercice",
+        "sets": "Séries",
+        "measure": "Mesure de l’exercice",
+        "repetitions": "Répétitions",
+        "durationSeconds": "Durée (secondes)",
+        "restSeconds": "Repos (secondes)",
+        "tip": "Conseil de posture",
+        "updateError": "Impossible de modifier cette séance.",
+        "deleteError": "Impossible de supprimer cette séance.",
+        "networkError": "Serveur inaccessible. Veuillez réessayer."
+      }
     },
     "admin": {
       "title": "Administration",
@@ -787,7 +827,8 @@
   },
   "offline": {
     "title": "Vous êtes hors ligne",
-    "description": "Cette page n’est pas encore disponible hors ligne. Vérifiez votre connexion et réessayez."
+    "description": "Cette page n’est pas encore disponible hors ligne. Vérifiez votre connexion et réessayez.",
+    "appBanner": "Vous êtes hors ligne. La page affichée reste visible, mais les mises à jour nécessitent une connexion."
   },
   "coach": {
     "title": "Mia, votre coach",

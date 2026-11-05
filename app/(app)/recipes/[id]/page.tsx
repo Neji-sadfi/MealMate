@@ -9,7 +9,6 @@ import {
   type RecipeEditData,
 } from "@/features/recipes/components/RecipeCreateForm";
 import { RecipeActions } from "@/features/recipes/components/RecipeActions";
-import { getCurrentAdminId } from "@/lib/admin";
 import { getCurrentUserId } from "@/lib/current-user";
 import { Favorite } from "@/models/Favorite";
 import { Recipe } from "@/models/Recipe";
@@ -23,7 +22,6 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
   const { id } = await params;
   const userId = await getCurrentUserId();
   const recipe = userId && Types.ObjectId.isValid(id) ? await Recipe.findById(id).lean() : null;
-  const adminId = userId ? await getCurrentAdminId() : null;
   const isFavorite =
     userId && recipe ? Boolean(await Favorite.exists({ user: userId, recipe: recipe._id })) : false;
   const t = await getTranslations("pages.recipeDetail");
@@ -40,7 +38,7 @@ export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[
     );
   }
 
-  const canManage = Boolean(adminId || recipe.createdBy?.toString() === userId?.toString());
+  const canManage = Boolean(userId);
   const editData: RecipeEditData = {
     id: recipe._id.toString(),
     title: recipe.title,

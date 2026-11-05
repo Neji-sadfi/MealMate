@@ -272,6 +272,7 @@ mealmate/
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `npm : ... scripts is disabled on this system`         | Run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` in PowerShell (see section 1).                                              |
 | `MissingSecret: Please define a secret`                | `AUTH_SECRET` is missing in `.env`. Generate one (section 4) and restart `npm run dev`.                                                                |
+| Dashboard unavailable on Vercel                        | Set `MONGODB_URI` in Vercel Project Settings for the deployed environment (Production or Preview), verify Atlas allows the deployment, then redeploy. |
 | `MongooseServerSelectionError` / cannot connect        | Check the `MONGODB_URI` in `.env`: no `< >`, correct password, correct cluster host. Ask Ala to check that `0.0.0.0/0` is in the Atlas IP Access List. |
 | `bad auth : authentication failed`                     | Wrong username or password in `MONGODB_URI`. Ask Ala to reset your database user's password.                                                           |
 | Login says "invalid credentials" with the demo account | Run `npm run db:seed`, then try again.                                                                                                                 |
