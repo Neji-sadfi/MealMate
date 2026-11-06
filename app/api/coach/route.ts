@@ -67,7 +67,6 @@ export async function POST(request: Request) {
         content: message.content,
       })),
       maxOutputTokens: 1024,
-      temperature: 0.7,
       abortSignal: AbortSignal.timeout(STREAM_TIMEOUT_MS),
       onError({ error }) {
         console.error("coach: stream interrupted", error);

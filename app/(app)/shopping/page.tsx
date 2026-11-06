@@ -9,6 +9,8 @@ import { ShoppingItem } from "@/models/ShoppingItem";
 import { ShoppingList } from "@/models/ShoppingList";
 import { PhotoHero } from "@/components/ui/PhotoHero";
 import { Ingredient } from "@/models/Ingredient";
+import { Budget } from "@/models/Budget";
+import { User } from "@/models/User";
 
 function currentWeekStart() {
   const date = new Date();
@@ -25,9 +27,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ShoppingPage() {
   const t = await getTranslations("pages.shopping");
   const userId = await getCurrentUserId();
-  const list = userId
-    ? await ShoppingList.findOne({ user: userId, weekStart: currentWeekStart() }).lean()
-    : null;
+  const [list, user, budget] = await Promise.all([
+    userId ? ShoppingList.findOne({ user: userId, weekStart: currentWeekStart() }).lean() : null,
+    userId
+      ? User.findById(userId).select("preferences.weeklyBudget preferences.currency").lean()
+      : null,
+    userId ? Budget.findOne({ user: userId, weekStart: currentWeekStart() }).lean() : null,
+  ]);
   const items = list
     ? await ShoppingItem.find({ list: list._id })
         .populate<{ ingredient: { estimatedPrice?: number } | null }>(
@@ -70,6 +76,11 @@ export default async function ShoppingPage() {
         </Card>
       )}
       <ShoppingActions
+        initialBudget={{
+          limit: budget?.limit ?? user?.preferences.weeklyBudget ?? 0,
+          spent: budget?.expenses.reduce((sum, expense) => sum + expense.amount, 0) ?? 0,
+          currency: budget?.currency ?? user?.preferences.currency ?? "TND",
+        }}
         items={items.map((item) => ({
           _id: item._id.toString(),
           name: item.name,
@@ -87,6 +98,7 @@ export default async function ShoppingPage() {
           catalogSearchUrl: item.catalogSearchUrl,
           catalogStore: item.catalogStore,
           checked: item.checked,
+          actualPrice: item.actualPrice,
         }))}
       />
     </div>

@@ -12,9 +12,9 @@
 
 Shopping list = meal plan minus stock, grouped by aisle, total vs budget, offline banner and last sync. Inventory sorted by expiry date. Owns the offline layer: `app/sw.ts` (Serwist) and `lib/offline/` (Dexie + pending action queue, document the conflict strategy, e.g. last write wins per item).
 
-The inventory lets members add stock, adjust quantities and record expiry dates; upcoming and expired items are highlighted. Budget entries are tracked separately in the nutrition/budget module and are currently entered manually.
+The inventory lets members add stock, adjust quantities and record expiry dates; upcoming and expired items are highlighted. When an item is marked as bought, members enter the total actually paid. That amount is saved to the weekly budget and nutrition/budget tracker; unmarking the item reverses its linked expense.
 
-The shopping screen estimates cost from saved reference prices (TND/kg, TND/litre, or TND/item), and labels them as estimates rather than store prices. Users can choose a Tunisian retailer. Only Carrefour Tunisia's public catalogue is currently queried in-app; this requires explicit consent, sends at most 12 unchecked item names, is rate-limited, and shows product prices separately because catalogue pack sizes may not match the list quantity. Other retailers remain generic estimates until a public, usable catalogue is verified.
+The shopping screen estimates cost from saved reference prices (TND/kg, TND/litre, or TND/item), and labels them as estimates rather than store prices. The estimate can prefill the purchase amount, but the member can adjust it to match the receipt. Géant Drive Tunis City is the only retailer shown. With explicit consent, generating a list automatically searches the public catalogue for up to 12 unchecked item names and saves confident matches to those list items. Search terms are sent to Géant; search pages are cached briefly and checks are rate-limited. Members can also manually search an existing list. Displayed catalogue prices are kept separate from estimated basket totals because a listed product's pack size may not match the requested quantity.
 
 ## Folder layout
 

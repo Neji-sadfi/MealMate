@@ -265,7 +265,9 @@ export function ForumPostActions({
             rows={3}
             className="rounded-input border border-border bg-background p-2"
           />
-          <Button disabled={pending}>{t("saveChanges")}</Button>
+          <Button type="submit" disabled={pending}>
+            {t("saveChanges")}
+          </Button>
         </form>
       )}
       {showComments && (
@@ -299,7 +301,9 @@ export function ForumPostActions({
               placeholder={t("commentPlaceholder")}
               className="rounded-input border border-border bg-background p-3"
             />
-            <Button disabled={pending}>{t("addComment")}</Button>
+            <Button type="submit" disabled={pending}>
+              {t("addComment")}
+            </Button>
           </form>
         </div>
       )}

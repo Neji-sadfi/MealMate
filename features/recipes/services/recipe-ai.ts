@@ -1,8 +1,9 @@
-import { generateText, Output } from "ai";
-import { generatedRecipeSchema, type RecipeAiRequest } from "@/features/recipes/ai-schemas";
+import { generateText } from "ai";
+import type { RecipeAiRequest } from "@/features/recipes/ai-schemas";
 import { getGeminiModel } from "@/lib/ai";
 import type { Locale } from "@/lib/i18n/config";
 import type { IUserPreferences } from "@/models/User";
+import { DIETS, UNITS } from "@/models/enums";
 
 const DIET_LABELS: Record<IUserPreferences["diet"], string> = {
   none: "No specific diet",
@@ -71,6 +72,29 @@ function providerStatus(error: unknown): number | undefined {
   return undefined;
 }
 
+function providerMessage(error: unknown): string | undefined {
+  if (typeof error !== "object" || error === null || !("responseBody" in error)) return undefined;
+  if (typeof error.responseBody !== "string") return undefined;
+
+  try {
+    const body: unknown = JSON.parse(error.responseBody);
+    if (typeof body !== "object" || body === null || !("error" in body)) return undefined;
+    const providerError = body.error;
+    if (
+      typeof providerError === "object" &&
+      providerError !== null &&
+      "message" in providerError &&
+      typeof providerError.message === "string"
+    ) {
+      return providerError.message.slice(0, 500);
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
+}
+
 function aiErrorCode(error: unknown): string {
   if (error instanceof Error && error.message === "AI_NOT_CONFIGURED") return "AI_NOT_CONFIGURED";
   if (error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError"))
@@ -92,20 +116,25 @@ export async function requestRecipeAi(
     const abortSignal = AbortSignal.timeout(45_000);
 
     if (request.mode === "generate") {
-      const { output } = await generateText({
+      const { text } = await generateText({
         model,
-        output: Output.object({ schema: generatedRecipeSchema }),
         system: [
-          "Return a valid recipe matching the provided schema.",
+          "Return only a raw JSON object, without markdown or code fences, matching the required recipe shape.",
+          "Include title, tagline, description, diets, tags, difficulty, prepTimeMinutes, servings, costPerServing, nutrition, ingredients, and steps.",
+          "Nutrition must include calories, protein, carbs, and fat. Each ingredient must include name, quantity, and unit, with note optional. Each step must include order, title, and description.",
+          `Use only these diet identifiers: ${DIETS.join(", ")}. Use only these ingredient units: ${UNITS.join(", ")}. Difficulty must be easy, medium, or hard.`,
           `Safety: ${safetyInstructions}`,
         ].join(" "),
         prompt: recipePrompt(request, preferences, locale),
         maxOutputTokens: 1800,
-        temperature: 0.6,
         abortSignal,
       });
-      if (!output) throw new Error("AI_INVALID_RESPONSE");
-      return { recipe: output };
+      try {
+        const recipe: unknown = JSON.parse(text);
+        return { recipe };
+      } catch {
+        throw new Error("AI_INVALID_RESPONSE");
+      }
     }
 
     const { text } = await generateText({
@@ -119,7 +148,6 @@ export async function requestRecipeAi(
         { role: "user", content: request.message },
       ],
       maxOutputTokens: 600,
-      temperature: 0.5,
       abortSignal,
     });
     if (!text.trim()) throw new Error("AI_INVALID_RESPONSE");
@@ -130,6 +158,7 @@ export async function requestRecipeAi(
       mode: request.mode,
       name: error instanceof Error ? error.name : "UnknownError",
       status: providerStatus(error),
+      providerMessage: providerMessage(error),
     });
     throw new Error(aiErrorCode(error));
   }

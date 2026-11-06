@@ -454,6 +454,28 @@
         "remaining": "{count, plural, one {# article restant} other {# articles restants}}",
         "complete": "Tout est dans votre panier"
       },
+      "budget": {
+        "title": "Budget courses de la semaine",
+        "spent": "Dépensé",
+        "limit": "Limite hebdomadaire",
+        "remaining": "Restant",
+        "progress": "{percent} % du budget hebdomadaire utilisé",
+        "addLimit": "Définissez une limite dans le suivi du budget.",
+        "noLimit": "Non défini",
+        "manage": "Gérer le budget"
+      },
+      "purchase": {
+        "title": "Enregistrer cet achat",
+        "priceLabel": "Prix payé (total pour cet article)",
+        "budgetHint": "Ce montant sera ajouté aux dépenses et au budget de la semaine.",
+        "estimateHint": "Estimation indicative : {amount}. Ajustez-la selon votre ticket.",
+        "confirm": "Marquer comme acheté",
+        "saving": "Enregistrement…",
+        "cancel": "Annuler",
+        "markBought": "Marquer comme acheté",
+        "paid": "Payé : {amount}",
+        "toBuy": "À acheter"
+      },
       "filters": {
         "label": "Filtrer la liste de courses",
         "all": "Tout",
@@ -484,29 +506,31 @@
       "generating": "Création de la liste…",
       "estimate": {
         "title": "Estimation de votre panier",
-        "description": "Choisissez une enseigne tunisienne et comparez les prix de référence aux produits du catalogue public.",
+        "description": "Comparez vos articles aux produits et prix des catégories Géant Drive Tunis City.",
         "total": "Total indicatif",
         "noPrice": "Indisponible",
-        "storeLabel": "Supermarché",
+        "storeLabel": "Enseigne",
         "partialNote": "{count, plural, one {# article est exclu faute de prix de référence.} other {# articles sont exclus faute de prix de référence.}}",
         "referenceNote": "{count, plural, one {Basé sur un prix de référence enregistré pour # article, pas sur le prix actuel de cette enseigne ; la date du prix enregistré n’est pas suivie.} other {Basé sur des prix de référence enregistrés pour # articles, pas sur les prix actuels de cette enseigne ; leur date n’est pas suivie.}}",
         "missingPrices": "Aucun prix de référence n’est enregistré pour cette liste. Ajoutez des prix pour estimer le panier."
       },
       "catalog": {
-        "search": "Consulter le catalogue Carrefour",
-        "productPrice": "prix catalogue",
-        "searching": "Consultation du catalogue…",
+        "search": "Rechercher les prix Géant",
+        "productPrice": "prix affiché",
+        "searching": "Recherche des produits Géant…",
+        "autoSearchLabel": "Ajouter les prix Géant Drive lors de la génération",
         "openStore": "Ouvrir le site officiel",
-        "noLink": "Aucun lien catalogue vérifié",
-        "unsupportedStore": "Aucun catalogue public exploitable n’est vérifié dans l’application pour cette enseigne : le total reste une estimation générique.",
-        "consent": "Envoyer les noms de 12 articles non cochés maximum au catalogue public en ligne de Carrefour Tunisie. MealMate n’enregistre pas ces termes de recherche.",
-        "completed": "Prix de référence du catalogue récupérés. Ils restent séparés de l’estimation du panier.",
-        "checkedAt": "Source : catalogue public en ligne Carrefour Tunisie · consulté le {date}.",
-        "matchingPrices": "{count, plural, one {Prix catalogue actuel pour # produit correspondant} other {Prix catalogue actuels pour # produits correspondants}}",
+        "consent": "Avec votre accord, jusqu’à 12 noms d’articles non cochés sont transmis au catalogue public de Géant Drive Tunis City lors de la génération. Vous pouvez aussi lancer une recherche manuelle ci-dessous.",
+        "scopeNote": "Après votre consentement, MealMate recherche chaque article dans le catalogue officiel de Géant. Seules les correspondances fiables sont enregistrées.",
+        "completed": "Recherche terminée. Les prix affichés par Géant restent séparés de l’estimation du panier.",
+        "noItemsToSearch": "La liste ne contient aucun article à rechercher.",
+        "consentNeeded": "Votre liste a été créée. Activez la recherche des prix Géant ci-dessus puis générez à nouveau la liste pour chercher les prix disponibles.",
+        "checkedAt": "Source : résultats de recherche Géant Drive Tunis City · consultés le {date}.",
+        "matchingPrices": "{count, plural, one {Prix Géant pour # produit correspondant} other {Prix Géant pour # produits correspondants}}",
         "limitNotice": "{count, plural, one {L’article restant n’est pas envoyé : une consultation est limitée à 12 articles.} other {Les # articles restants ne sont pas envoyés : une consultation est limitée à 12 articles.}}",
-        "partial": "{count, plural, one {Une recherche catalogue a échoué ; aucun prix n’a été inventé.} other {# recherches catalogue ont échoué ; aucun prix n’a été inventé.}}",
+        "partial": "{count, plural, one {# article n’a pas de correspondance fiable dans les résultats Géant.} other {# articles n’ont pas de correspondance fiable dans les résultats Géant.}}",
         "noMatch": "Aucune correspondance fiable",
-        "packPriceNote": "Ce sous-total compte un paquet par article correspondant ; les quantités des recettes peuvent différer. Vérifiez le format et la disponibilité sur le site de l’enseigne."
+        "packPriceNote": "Ce sont les prix affichés par Géant pour les produits correspondants, y compris les prix au poids lorsqu’ils sont indiqués. Ils ne constituent pas un total calculé du panier ; vérifiez le format et la disponibilité sur le site de l’enseigne."
       },
       "add": {
         "title": "Ajouter un article",
@@ -533,6 +557,7 @@
       "errors": {
         "add": "Impossible d’ajouter cet article.",
         "update": "Impossible de modifier cet article.",
+        "price": "Saisissez un prix d’achat valide.",
         "generate": "Impossible de générer la liste.",
         "catalog": "Impossible de consulter le catalogue de l’enseigne.",
         "network": "Serveur inaccessible. Veuillez réessayer."

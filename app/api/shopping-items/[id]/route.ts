@@ -2,17 +2,27 @@ import { NextResponse } from "next/server";
 import { Types } from "mongoose";
 import { z } from "zod";
 import { getCurrentUserId } from "@/lib/current-user";
+import { Budget } from "@/models/Budget";
 import { Ingredient } from "@/models/Ingredient";
 import { Inventory } from "@/models/Inventory";
 import { ShoppingItem } from "@/models/ShoppingItem";
 import { ShoppingList } from "@/models/ShoppingList";
+import { User } from "@/models/User";
 
 type Context = { params: Promise<{ id: string }> };
+function currentWeekStart(date = new Date()) {
+  const weekStart = new Date(date);
+  weekStart.setUTCDate(weekStart.getUTCDate() - ((weekStart.getUTCDay() + 6) % 7));
+  weekStart.setUTCHours(0, 0, 0, 0);
+  return weekStart;
+}
+
 const updateSchema = z
   .object({
     checked: z.boolean().optional(),
     quantity: z.number().min(0).optional(),
     name: z.string().trim().min(1).max(120).optional(),
+    purchasePrice: z.number().min(0).optional(),
   })
   .refine((value) => Object.keys(value).length > 0);
 
@@ -36,6 +46,10 @@ export async function PUT(request: Request, { params }: Context) {
     if (!currentItem) return NextResponse.json({ error: "Item not found" }, { status: 404 });
 
     if (parsed.data.checked && !currentItem.checked) {
+      if (parsed.data.purchasePrice === undefined) {
+        return NextResponse.json({ error: "Purchase price is required" }, { status: 400 });
+      }
+
       let ingredientId = currentItem.ingredient;
       if (!ingredientId) {
         const escapedName = currentItem.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -64,6 +78,8 @@ export async function PUT(request: Request, { params }: Context) {
       }
 
       const purchasedQuantity = parsed.data.quantity ?? currentItem.quantity ?? 1;
+      const purchaseWeekStart = currentWeekStart();
+      const purchaseExpenseId = new Types.ObjectId();
       const claimed = await ShoppingItem.findOneAndUpdate(
         {
           _id: id,
@@ -77,6 +93,9 @@ export async function PUT(request: Request, { params }: Context) {
             inventorySynced: true,
             inventoryQuantity: purchasedQuantity,
             ingredient: ingredientId,
+            actualPrice: parsed.data.purchasePrice,
+            purchaseExpenseId,
+            purchaseWeekStart,
             ...(parsed.data.quantity === undefined ? {} : { quantity: parsed.data.quantity }),
           },
         },
@@ -89,6 +108,7 @@ export async function PUT(request: Request, { params }: Context) {
         });
       }
 
+      let inventoryUpdated = false;
       try {
         await Inventory.findOneAndUpdate(
           { user: userId, ingredient: ingredientId, unit: currentItem.unit },
@@ -103,10 +123,64 @@ export async function PUT(request: Request, { params }: Context) {
             setDefaultsOnInsert: true,
           },
         );
+        inventoryUpdated = true;
+        const user = await User.findById(userId)
+          .select("preferences.weeklyBudget preferences.currency")
+          .lean();
+        await Budget.findOneAndUpdate(
+          { user: userId, weekStart: purchaseWeekStart },
+          {
+            $setOnInsert: {
+              user: userId,
+              weekStart: purchaseWeekStart,
+              limit: user?.preferences.weeklyBudget ?? 0,
+              currency: user?.preferences.currency ?? "TND",
+            },
+            $push: {
+              expenses: {
+                _id: purchaseExpenseId,
+                label: currentItem.name,
+                category:
+                  currentItem.aisle === "fruits_vegetables" ||
+                  currentItem.aisle === "fresh_protein" ||
+                  currentItem.aisle === "dairy"
+                    ? "fresh_products"
+                    : "grocery",
+                amount: parsed.data.purchasePrice,
+                date: new Date(),
+              },
+            },
+          },
+          { upsert: true, runValidators: true, setDefaultsOnInsert: true },
+        );
       } catch (error) {
+        if (inventoryUpdated) {
+          const inventory = await Inventory.findOneAndUpdate(
+            { user: userId, ingredient: ingredientId, unit: currentItem.unit },
+            [
+              {
+                $set: {
+                  quantity: {
+                    $max: [0, { $subtract: ["$quantity", purchasedQuantity] }],
+                  },
+                },
+              },
+            ],
+            { returnDocument: "after" },
+          );
+          if (inventory?.quantity === 0) await Inventory.deleteOne({ _id: inventory._id });
+        }
         await ShoppingItem.updateOne(
           { _id: id, inventorySynced: true },
-          { $set: { checked: false, inventorySynced: false }, $unset: { inventoryQuantity: 1 } },
+          {
+            $set: { checked: false, inventorySynced: false },
+            $unset: {
+              inventoryQuantity: 1,
+              actualPrice: 1,
+              purchaseExpenseId: 1,
+              purchaseWeekStart: 1,
+            },
+          },
         );
         throw error;
       }
@@ -119,13 +193,19 @@ export async function PUT(request: Request, { params }: Context) {
         { _id: id, list: { $in: lists }, checked: true, inventorySynced: true },
         {
           $set: { checked: false, inventorySynced: false },
-          $unset: { inventoryQuantity: 1 },
+          $unset: {
+            inventoryQuantity: 1,
+            actualPrice: 1,
+            purchaseExpenseId: 1,
+            purchaseWeekStart: 1,
+          },
         },
         { returnDocument: "after" },
       );
       if (!unclaimed)
         return NextResponse.json({ error: "Item changed; refresh and retry." }, { status: 409 });
 
+      let inventoryUpdated = false;
       try {
         const inventory = await Inventory.findOneAndUpdate(
           { user: userId, ingredient: currentItem.ingredient, unit: currentItem.unit },
@@ -140,8 +220,29 @@ export async function PUT(request: Request, { params }: Context) {
           ],
           { returnDocument: "after" },
         );
+        inventoryUpdated = Boolean(inventory);
         if (inventory?.quantity === 0) await Inventory.deleteOne({ _id: inventory._id });
+        if (currentItem.purchaseExpenseId && currentItem.purchaseWeekStart) {
+          await Budget.updateOne(
+            { user: userId, weekStart: currentItem.purchaseWeekStart },
+            { $pull: { expenses: { _id: currentItem.purchaseExpenseId } } },
+          );
+        }
       } catch (error) {
+        if (inventoryUpdated && currentItem.ingredient) {
+          await Inventory.findOneAndUpdate(
+            { user: userId, ingredient: currentItem.ingredient, unit: currentItem.unit },
+            {
+              $inc: { quantity: purchasedQuantity },
+              $setOnInsert: {
+                user: userId,
+                ingredient: currentItem.ingredient,
+                unit: currentItem.unit,
+              },
+            },
+            { upsert: true, runValidators: true, setDefaultsOnInsert: true },
+          );
+        }
         await ShoppingItem.updateOne(
           { _id: id, inventorySynced: false, checked: false },
           {
@@ -149,6 +250,9 @@ export async function PUT(request: Request, { params }: Context) {
               checked: true,
               inventorySynced: true,
               inventoryQuantity: purchasedQuantity,
+              actualPrice: currentItem.actualPrice,
+              purchaseExpenseId: currentItem.purchaseExpenseId,
+              purchaseWeekStart: currentItem.purchaseWeekStart,
             },
           },
         );
@@ -159,7 +263,7 @@ export async function PUT(request: Request, { params }: Context) {
 
     const sameState = await ShoppingItem.findOneAndUpdate(
       { _id: id, list: { $in: lists } },
-      { $set: parsed.data },
+      { $set: { checked: parsed.data.checked } },
       { returnDocument: "after", runValidators: true },
     );
     return sameState

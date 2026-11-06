@@ -150,7 +150,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ---
 
-`GEMINI_API_KEY` enables the recipe assistant, diet coach and workout generator through the Google provider for Vercel AI SDK. Create a key in Google AI Studio. `GEMINI_MODEL` is optional and defaults to `gemini-2.5-flash`. These variables are server-only; never prefix them with `NEXT_PUBLIC_`.
+`GEMINI_API_KEY` enables the recipe assistant, diet coach and workout generator through the Google provider for Vercel AI SDK. Create a key in Google AI Studio. `GEMINI_MODEL` is optional and defaults to `gemini-3.6-flash`. These variables are server-only; never prefix them with `NEXT_PUBLIC_`.
 
 ## 5. Deploy on Vercel
 
@@ -187,6 +187,8 @@ The local demo account is also an administrator. After signing in, use the **Adm
 Tip: press **F12**, then **Ctrl + Shift + M** to see the app in phone size (the app is mobile-first).
 
 Stop the app with **Ctrl + C** in the terminal. After changing `.env`, always restart `npm run dev`.
+
+The local Next.js launcher uses Node's system certificate store when the installed Node version supports it. If HTTPS requests still report certificate errors, make sure your organization's trusted root certificate is installed in Windows and restart the app; do not disable TLS verification.
 
 ### Useful scripts
 
@@ -272,7 +274,7 @@ mealmate/
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `npm : ... scripts is disabled on this system`         | Run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` in PowerShell (see section 1).                                              |
 | `MissingSecret: Please define a secret`                | `AUTH_SECRET` is missing in `.env`. Generate one (section 4) and restart `npm run dev`.                                                                |
-| Dashboard unavailable on Vercel                        | Set `MONGODB_URI` in Vercel Project Settings for the deployed environment (Production or Preview), verify Atlas allows the deployment, then redeploy. |
+| Dashboard unavailable on Vercel                        | Set `MONGODB_URI` in Vercel Project Settings for the deployed environment (Production or Preview), verify Atlas allows the deployment, then redeploy.  |
 | `MongooseServerSelectionError` / cannot connect        | Check the `MONGODB_URI` in `.env`: no `< >`, correct password, correct cluster host. Ask Ala to check that `0.0.0.0/0` is in the Atlas IP Access List. |
 | `bad auth : authentication failed`                     | Wrong username or password in `MONGODB_URI`. Ask Ala to reset your database user's password.                                                           |
 | Login says "invalid credentials" with the demo account | Run `npm run db:seed`, then try again.                                                                                                                 |

@@ -454,6 +454,28 @@
         "remaining": "{count, plural, one {# item left} other {# items left}}",
         "complete": "Everything is in your basket"
       },
+      "budget": {
+        "title": "Weekly food budget",
+        "spent": "Spent",
+        "limit": "Weekly limit",
+        "remaining": "Left",
+        "progress": "{percent}% of your weekly budget used",
+        "addLimit": "Set a weekly limit in budget tracking.",
+        "noLimit": "Not set",
+        "manage": "Manage budget"
+      },
+      "purchase": {
+        "title": "Record this purchase",
+        "priceLabel": "What did you pay? (total for this item)",
+        "budgetHint": "This amount is added to your weekly spending and budget tracker.",
+        "estimateHint": "Reference estimate: {amount}. Adjust it to match your receipt.",
+        "confirm": "Mark as bought",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "markBought": "Mark as bought",
+        "paid": "Paid {amount}",
+        "toBuy": "To buy"
+      },
       "filters": {
         "label": "Filter shopping list",
         "all": "All",
@@ -482,30 +504,32 @@
       },
       "estimate": {
         "title": "Your basket estimate",
-        "description": "Choose a Tunisian supermarket and compare reference prices with public catalogue listings.",
+        "description": "Compare your items with products and prices from Géant Drive Tunis City categories.",
         "total": "Indicative total",
         "noPrice": "Not available",
-        "storeLabel": "Supermarket",
+        "storeLabel": "Store",
         "partialNote": "{count, plural, one {# item is excluded because it has no reference price.} other {# items are excluded because they have no reference prices.}}",
         "noPrice": "No price",
         "referenceNote": "{count, plural, one {Based on a saved reference price for # item, not this store's live price; saved-price dates are not tracked.} other {Based on saved reference prices for # items, not this store's live prices; saved-price dates are not tracked.}}",
         "missingPrices": "No reference prices are saved for this list yet. Add prices to items to estimate your basket."
       },
       "catalog": {
-        "search": "Check Carrefour catalogue",
-        "productPrice": "catalogue price",
-        "searching": "Checking catalogue…",
+        "search": "Search Géant prices",
+        "productPrice": "listed price",
+        "searching": "Searching Géant products…",
+        "autoSearchLabel": "Add Géant Drive prices when generating the list",
         "openStore": "Open official site",
-        "noLink": "No verified catalogue link yet",
-        "unsupportedStore": "An in-app public price catalogue is not verified for this store yet, so the total remains a generic estimate.",
-        "consent": "Send the names of up to 12 unchecked items to Carrefour Tunisia's public online catalogue. These search terms are not saved by MealMate.",
-        "completed": "Catalogue references loaded. They are shown separately from the basket estimate.",
-        "checkedAt": "Source: Carrefour Tunisia public online catalogue · checked {date}.",
-        "matchingPrices": "{count, plural, one {Live catalogue price for # matched product} other {Live catalogue prices for # matched products}}",
+        "consent": "With your consent, up to 12 unchecked item names are sent to Géant Drive Tunis City's public catalogue when you generate a list. You can also search manually below.",
+        "scopeNote": "MealMate searches the official Géant catalogue for each item after you give consent. Only confident product matches are saved.",
+        "completed": "Search complete. Géant's displayed prices are shown separately from the basket estimate.",
+        "noItemsToSearch": "The list has no items to search.",
+        "consentNeeded": "Your list was created. Enable Géant price search above and generate the list again to look up available prices.",
+        "checkedAt": "Source: Géant Drive Tunis City search results · checked {date}.",
+        "matchingPrices": "{count, plural, one {Géant price for # matched product} other {Géant prices for # matched products}}",
         "limitNotice": "{count, plural, one {The remaining item is not sent because one catalogue request is limited to 12 items.} other {The remaining # items are not sent because one catalogue request is limited to 12 items.}}",
-        "partial": "{count, plural, one {One catalogue lookup failed; no price was invented for it.} other {# catalogue lookups failed; no prices were invented for them.}}",
+        "partial": "{count, plural, one {# item did not have a confident match in Géant search results.} other {# items did not have confident matches in Géant search results.}}",
         "noMatch": "No confident product match",
-        "packPriceNote": "This subtotal assumes one listed product pack per matched item; recipe quantities may differ. Confirm pack size and availability on the retailer's site."
+        "packPriceNote": "These are the prices displayed by Géant for the matched products, including per-weight pricing where shown. They are not a calculated basket total; confirm pack size and availability on the retailer's site."
       },
       "add": {
         "title": "Add an item",
@@ -532,6 +556,7 @@
       "errors": {
         "add": "Could not add the shopping item.",
         "update": "Could not update the shopping item.",
+        "price": "Enter a valid purchase price.",
         "generate": "Could not generate the list.",
         "catalog": "Could not check the retailer catalogue.",
         "network": "Could not reach the server. Please try again."

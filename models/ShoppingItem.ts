@@ -13,10 +13,14 @@ export interface IShoppingItem {
   /** Indicative TND price per kg, litre or item; never a live retailer quote. */
   estimatedPrice?: number;
   catalogPrice?: number;
+  catalogPriceLabel?: string;
   catalogProductName?: string;
   catalogSearchUrl?: string;
   catalogStore?: string;
   catalogCheckedAt?: Date;
+  actualPrice?: number;
+  purchaseExpenseId?: Types.ObjectId;
+  purchaseWeekStart?: Date;
   checked: boolean;
   inventorySynced: boolean;
   inventoryQuantity?: number;
@@ -35,10 +39,14 @@ const shoppingItemSchema = new Schema<IShoppingItem>(
     aisle: { type: String, enum: AISLES, default: "other" },
     estimatedPrice: { type: Number, min: 0 },
     catalogPrice: { type: Number, min: 0 },
+    catalogPriceLabel: String,
     catalogProductName: String,
     catalogSearchUrl: String,
     catalogStore: String,
     catalogCheckedAt: Date,
+    actualPrice: { type: Number, min: 0 },
+    purchaseExpenseId: Schema.Types.ObjectId,
+    purchaseWeekStart: Date,
     checked: { type: Boolean, default: false },
     inventorySynced: { type: Boolean, default: false },
     inventoryQuantity: { type: Number, min: 0 },

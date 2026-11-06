@@ -22,7 +22,7 @@ To enable the feature locally, add a Google AI Studio API key to the server's `.
 GEMINI_API_KEY="your-google-ai-studio-api-key"
 ```
 
-The key must stay on the server, must never be exposed to client code, and must not be committed. The app uses Google's provider for Vercel AI SDK, with `gemini-2.5-flash` by default; `GEMINI_MODEL` can optionally select another supported model. Before a request, users must acknowledge that their prompt and saved dietary preferences are sent to Google. AI nutrition and cost values are estimates only; this assistant is not for medical advice. Verify product labels and allergen/cross-contamination risks.
+The key must stay on the server, must never be exposed to client code, and must not be committed. The app uses Google's provider for Vercel AI SDK, with `gemini-3.6-flash` by default; `GEMINI_MODEL` can optionally select another supported model. Before a request, users must acknowledge that their prompt and saved dietary preferences are sent to Google. AI nutrition and cost values are estimates only; this assistant is not for medical advice. Verify product labels and allergen/cross-contamination risks.
 
 ## Folder layout
 

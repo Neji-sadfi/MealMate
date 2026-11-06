@@ -4,10 +4,7 @@ import { z } from "zod";
 import { getLocale } from "next-intl/server";
 import { getCurrentUserId } from "@/lib/current-user";
 import { getGeminiModel } from "@/lib/ai";
-import {
-  workoutProgramSchema,
-  workoutSettingsSchema,
-} from "@/features/sport/schemas";
+import { workoutProgramSchema, workoutSettingsSchema } from "@/features/sport/schemas";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -140,7 +137,7 @@ export async function POST(request: Request) {
         `Return exactly one session for each selected day: ${settings.days.join(", ")}.`,
         `Respect the goal ${settings.goal}, level ${settings.level}, equipment ${settings.equipment}, and limit every session to about ${settings.sessionDurationMinutes} minutes.`,
         "Include a warm-up, 3 to 8 exercises, and a cool-down in every session.",
-        "Return only this JSON shape: {\"sessions\":[{\"day\":\"mon\",\"name\":\"...\",\"focus\":\"...\",\"warmUp\":{\"durationMinutes\":5,\"description\":\"...\"},\"exercises\":[{\"name\":\"...\",\"sets\":3,\"repetitions\":10,\"restSeconds\":60,\"tip\":\"...\"}],\"coolDown\":{\"durationMinutes\":5,\"description\":\"...\"}]}].",
+        'Return only this JSON shape: {"sessions":[{"day":"mon","name":"...","focus":"...","warmUp":{"durationMinutes":5,"description":"..."},"exercises":[{"name":"...","sets":3,"repetitions":10,"restSeconds":60,"tip":"..."}],"coolDown":{"durationMinutes":5,"description":"..."}]}].',
         "Use camelCase property names exactly as shown. Do not add a program, schedule, goal, level or equipment wrapper. Use numbers, not numeric strings. Each exercise must have exactly one of repetitions or durationSeconds.",
         "Keep the work and rest realistic for the requested total duration. Do not prescribe extreme volume, diagnose conditions, or provide medical advice.",
       ].join(" "),
@@ -152,7 +149,6 @@ export async function POST(request: Request) {
         equipment: settings.equipment,
       }),
       maxOutputTokens: 4096,
-      temperature: 0.6,
       abortSignal: AbortSignal.timeout(45_000),
     });
 
