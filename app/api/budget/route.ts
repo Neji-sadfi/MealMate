@@ -34,28 +34,45 @@ export async function POST(request: Request) {
   const userId = await getCurrentUserId();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body: unknown = await request.json().catch(() => null);
-  const parsed = z.object({
-    limit: z.number().min(0).optional(),
-    expense: z.object({
-      label: z.string().trim().min(1).max(120),
-      category: z.enum(["fresh_products", "grocery", "eating_out", "other"]).default("other"),
-      amount: z.number().min(0),
-      date: z.coerce.date().optional(),
-    }).optional(),
-  }).refine((value) => value.limit !== undefined || value.expense !== undefined).safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid budget update", issues: parsed.error.issues }, { status: 400 });
+  const parsed = z
+    .object({
+      limit: z.number().min(0).optional(),
+      expense: z
+        .object({
+          label: z.string().trim().min(1).max(120),
+          category: z.enum(["fresh_products", "grocery", "eating_out", "other"]).default("other"),
+          amount: z.number().min(0),
+          date: z.coerce.date().optional(),
+        })
+        .optional(),
+    })
+    .refine((value) => value.limit !== undefined || value.expense !== undefined)
+    .safeParse(body);
+  if (!parsed.success)
+    return NextResponse.json(
+      { error: "Invalid budget update", issues: parsed.error.issues },
+      { status: 400 },
+    );
 
   const week = currentWeekStart();
-  const user = await User.findById(userId).select("preferences.currency").lean();
+  const user = await User.findById(userId)
+    .select("preferences.weeklyBudget preferences.currency")
+    .lean();
   const update: Record<string, unknown> = {
-    $setOnInsert: { user: userId, weekStart: week, currency: user?.preferences.currency ?? "TND", ...(parsed.data.limit === undefined ? { limit: 0 } : {}) },
+    $setOnInsert: {
+      user: userId,
+      weekStart: week,
+      currency: user?.preferences.currency ?? "TND",
+      ...(parsed.data.limit === undefined ? { limit: user?.preferences.weeklyBudget ?? 0 } : {}),
+    },
   };
   if (parsed.data.limit !== undefined) update.$set = { limit: parsed.data.limit };
   if (parsed.data.expense) update.$push = { expenses: parsed.data.expense };
-  const budget = await Budget.findOneAndUpdate(
-    { user: userId, weekStart: week },
-    update,
-    { upsert: true, returnDocument: "after", runValidators: true, setDefaultsOnInsert: true },
-  );
+  const budget = await Budget.findOneAndUpdate({ user: userId, weekStart: week }, update, {
+    upsert: true,
+    returnDocument: "after",
+    runValidators: true,
+    setDefaultsOnInsert: true,
+  });
   return NextResponse.json(budget);
 }

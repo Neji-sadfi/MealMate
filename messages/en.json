@@ -58,7 +58,8 @@
       "allergiesHelp": "Separate multiple allergies with commas. Enter None if you have no allergies.",
       "submit": "Create my account",
       "haveAccount": "Already have an account?",
-      "signIn": "Sign in"
+      "signIn": "Sign in",
+      "dietPlaceholder": "Select your diet"
     },
     "forgotPassword": {
       "title": "Forgot password",
@@ -114,7 +115,8 @@
       "emailTaken": "An account already exists with this email.",
       "passwordMismatch": "The two passwords do not match.",
       "invalidResetLink": "This reset link is invalid or has expired.",
-      "unknown": "Something went wrong. Please try again."
+      "unknown": "Something went wrong. Please try again.",
+      "rateLimit": "Too many attempts. Please wait a few minutes and try again."
     }
   },
   "pages": {
@@ -213,7 +215,8 @@
         "level": "Level",
         "sessionDuration": "Session length",
         "equipment": "Equipment",
-        "availableDays": "Available days"
+        "availableDays": "Available days",
+        "dailyTargets": "Daily targets"
       },
       "units": {
         "cm": "cm",
@@ -276,6 +279,29 @@
           "sat": "Sat",
           "sun": "Sun"
         }
+      },
+      "dailyTargetsValue": "{kcal} kcal · {protein} g protein",
+      "edit": {
+        "open": "Edit my profile",
+        "name": "First and last name",
+        "age": "Age",
+        "heightCm": "Height (cm)",
+        "weightKg": "Weight (kg)",
+        "occupation": "Occupation",
+        "city": "City",
+        "listPlaceholder": "Separate with commas",
+        "weeklyBudget": "Weekly food budget ({currency})",
+        "caloriesTarget": "Daily calories target",
+        "proteinTarget": "Daily protein target (g)",
+        "targetsHelp": "Leave empty to let MealMate estimate them from your profile.",
+        "sessionDuration": "Session length (minutes)",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "saved": "Your profile has been updated.",
+        "errors": {
+          "invalidInput": "Please check the highlighted fields.",
+          "unknown": "Could not save your profile. Please try again."
+        }
       }
     },
     "recipes": {
@@ -324,6 +350,70 @@
         "invalidRecipe": "The AI could not create a valid recipe. Try different ingredients or preferences.",
         "invalidInput": "Please check your request and try again.",
         "unknownError": "Something went wrong. Please try again."
+      },
+      "filters": {
+        "search": "Search",
+        "diet": "Diet",
+        "difficulty": "Difficulty",
+        "any": "Any",
+        "maxCalories": "Max kcal / serving",
+        "minProtein": "Min protein (g)",
+        "maxCost": "Max cost / serving",
+        "maxTime": "Max prep time (min)",
+        "submit": "Search recipes"
+      },
+      "difficulty": {
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+      },
+      "noResults": {
+        "title": "No matching recipes",
+        "body": "Try adjusting your search or filters, or create a new recipe."
+      },
+      "summary": "{kcal} kcal · {protein} g protein · {cost} / serving",
+      "form": {
+        "createTitle": "Create a recipe",
+        "editTitle": "Edit recipe",
+        "name": "Recipe name",
+        "tagline": "Short description",
+        "description": "Description",
+        "imageUrl": "Recipe photo URL (optional)",
+        "difficulty": "Difficulty",
+        "tags": "Tags (comma separated)",
+        "tagsPlaceholder": "quick, vegetarian",
+        "diets": "Diets",
+        "dietsHelp": "Hold Ctrl (Windows) or Command (Mac) to choose more than one.",
+        "ingredients": "Ingredients",
+        "addIngredient": "Add ingredient",
+        "ingredient": "Ingredient",
+        "ingredientPlaceholder": "e.g. Tomato",
+        "quantity": "Quantity",
+        "unit": "Unit",
+        "note": "Note (optional)",
+        "notePlaceholder": "e.g. finely chopped",
+        "removeIngredient": "Remove ingredient",
+        "ingredientsEmpty": "Add the ingredients and their quantities for this recipe.",
+        "steps": "Preparation steps",
+        "addStep": "Add step",
+        "stepTitle": "Step {number} title",
+        "stepPlaceholder": "e.g. Prepare the vegetables",
+        "instructions": "Instructions",
+        "instructionsPlaceholder": "Describe what to do in this step",
+        "removeStep": "Remove step",
+        "stepsEmpty": "Add the preparation instructions in order.",
+        "minutes": "Minutes",
+        "servings": "Servings",
+        "costPerServing": "Cost / serving",
+        "calories": "Calories",
+        "protein": "Protein (g)",
+        "carbs": "Carbs (g)",
+        "fat": "Fat (g)",
+        "save": "Save recipe",
+        "saveChanges": "Save changes",
+        "saving": "Saving...",
+        "saveError": "Could not save the recipe.",
+        "networkError": "Could not reach the server. Please try again."
       }
     },
     "recipeDetail": {
@@ -341,7 +431,19 @@
         "shareError": "Could not share this recipe or copy its link.",
         "shared": "Recipe shared.",
         "linkCopied": "Recipe link copied."
-      }
+      },
+      "notFound": "Recipe not found.",
+      "backToRecipes": "Back to recipes",
+      "back": "Back",
+      "servings": "Servings",
+      "preparation": "Preparation",
+      "calories": "Calories",
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fat": "Fat",
+      "costPerServing": "Cost / serving",
+      "ingredients": "Ingredients",
+      "steps": "Steps"
     },
     "mealPlan": {
       "title": "My meal plan",
@@ -508,8 +610,9 @@
         "total": "Indicative total",
         "noPrice": "Not available",
         "storeLabel": "Store",
-        "partialNote": "{count, plural, one {# item is excluded because it has no reference price.} other {# items are excluded because they have no reference prices.}}",
         "noPrice": "No price",
+        "storeLabel": "Supermarket",
+        "partialNote": "{count, plural, one {# item is excluded because it has no reference price.} other {# items are excluded because they have no reference prices.}}",
         "referenceNote": "{count, plural, one {Based on a saved reference price for # item, not this store's live price; saved-price dates are not tracked.} other {Based on saved reference prices for # items, not this store's live prices; saved-price dates are not tracked.}}",
         "missingPrices": "No reference prices are saved for this list yet. Add prices to items to estimate your basket."
       },
@@ -668,9 +771,12 @@
         "updateError": "Could not update this discussion.",
         "deleteError": "Could not delete this discussion.",
         "deleteCommentError": "Could not delete this comment.",
+        "deleteCommentConfirm": "Delete this comment?",
         "deleteConfirm": "Delete this discussion and its comments?",
-        "networkError": "Could not reach the server. Please try again."
-      }
+        "networkError": "Could not reach the server. Please try again.",
+        "deletedMember": "Deleted member"
+      },
+      "deletedMember": "Deleted member"
     },
     "tracking": {
       "title": "Nutrition & budget",
@@ -776,6 +882,20 @@
           "network": "Could not reach the server. Please try again."
         }
       },
+      "empty": {
+        "title": "No workout sessions scheduled",
+        "body": "Generate a program or schedule a workout to see your sessions here."
+      },
+      "create": {
+        "title": "Schedule a workout",
+        "name": "Workout name",
+        "focus": "Focus",
+        "date": "Date and time",
+        "duration": "Duration (minutes)",
+        "save": "Save workout",
+        "saving": "Saving...",
+        "error": "Could not save the workout."
+      },
       "exercisePhotos": {
         "searching": "Finding a photo…",
         "photoUnavailable": "No photo available",
@@ -791,6 +911,21 @@
     "workoutSession": {
       "title": "Workout session",
       "subtitle": "Session #{id}",
+      "notFound": "Session not found.",
+      "back": "Back to sport",
+      "focus": "Focus",
+      "warmUp": "Warm-up",
+      "coolDown": "Cool-down",
+      "exercises": "Exercises",
+      "minutes": "{count} minutes",
+      "sets": "{count} sets",
+      "reps": "{count} reps",
+      "rest": "{seconds}s rest",
+      "status": {
+        "planned": "Planned",
+        "done": "Done",
+        "skipped": "Skipped"
+      },
       "actions": {
         "edit": "Edit session",
         "delete": "Delete session",
@@ -818,7 +953,10 @@
         "tip": "Form tip",
         "updateError": "Could not update this workout session.",
         "deleteError": "Could not delete this workout session.",
-        "networkError": "Could not reach the server. Please try again."
+        "networkError": "Could not reach the server. Please try again.",
+        "done": "Mark as done",
+        "skip": "Skip",
+        "reopen": "Plan again"
       }
     },
     "admin": {
@@ -844,6 +982,18 @@
         "offensive": "Offensive content",
         "medical_misinformation": "Medical misinformation",
         "other": "Other"
+      },
+      "actions": {
+        "hidePost": "Hide post",
+        "dismiss": "Dismiss report",
+        "edit": "Edit",
+        "close": "Close",
+        "delete": "Delete",
+        "deleteConfirm": "Delete \"{title}\" from the recipe catalogue?",
+        "recipeSummary": "{ingredients} ingredients · {steps} steps",
+        "reportError": "Could not update this report.",
+        "recipeError": "Could not delete this recipe.",
+        "networkError": "Could not reach the server. Please try again."
       }
     }
   },

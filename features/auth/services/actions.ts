@@ -1,13 +1,14 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/lib/auth";
 import { getCurrentUserId } from "@/lib/current-user";
 import { isRateLimited } from "@/lib/rate-limit";
 import { User } from "@/models/User";
-import { loginSchema, registerSchema, resetPasswordSchema } from "../schemas";
+import { loginSchema, profileFormSchema, registerSchema, resetPasswordSchema } from "../schemas";
 import type { AuthFormState } from "../types";
 import { deleteUserData } from "./account";
 import { sendVerificationEmail } from "./emails";
@@ -25,6 +26,10 @@ export async function loginAction(
   const parsed = loginSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { error: "invalidInput", fieldErrors: fieldErrorsOf(parsed.error.issues) };
+  }
+  // Slows down password guessing on one account.
+  if (isRateLimited(`login:${parsed.data.email}`, 10, 15 * 60 * 1000)) {
+    return { error: "rateLimit" };
   }
 
   try {
@@ -102,6 +107,72 @@ export async function resetPasswordAction(
     return { error: "unknown" };
   }
   redirect("/login?reset=1");
+}
+
+export type ProfileFormState = {
+  saved?: boolean;
+  error?: "invalidInput" | "unknown";
+  fieldErrors?: Record<string, true>;
+};
+
+export async function updateProfileAction(
+  _prev: ProfileFormState,
+  formData: FormData,
+): Promise<ProfileFormState> {
+  const userId = await getCurrentUserId();
+  if (!userId) redirect("/login");
+
+  const parsed = profileFormSchema.safeParse({
+    ...Object.fromEntries(formData),
+    availableDays: formData.getAll("availableDays"),
+  });
+  if (!parsed.success) {
+    return {
+      error: "invalidInput",
+      fieldErrors: Object.fromEntries(parsed.error.issues.map((issue) => [issue.path[0], true])),
+    };
+  }
+
+  const {
+    name,
+    occupation,
+    city,
+    age,
+    heightCm,
+    weightKg,
+    dailyCaloriesTarget,
+    dailyProteinTarget,
+    ...preferences
+  } = parsed.data;
+  const update: Record<string, unknown> = { name, occupation, city };
+  for (const [key, value] of Object.entries(preferences)) update[`preferences.${key}`] = value;
+
+  // A field left empty removes the value instead of keeping the old one.
+  const clearable = {
+    age,
+    heightCm,
+    weightKg,
+    "preferences.dailyCaloriesTarget": dailyCaloriesTarget,
+    "preferences.dailyProteinTarget": dailyProteinTarget,
+  };
+  const cleared: Record<string, 1> = {};
+  for (const [key, value] of Object.entries(clearable)) {
+    if (value === undefined) cleared[key] = 1;
+    else update[key] = value;
+  }
+
+  try {
+    await User.updateOne(
+      { _id: userId },
+      { $set: update, ...(Object.keys(cleared).length > 0 ? { $unset: cleared } : {}) },
+      { runValidators: true },
+    );
+  } catch (error) {
+    console.error("update profile failed", error);
+    return { error: "unknown" };
+  }
+  revalidatePath("/profile");
+  return { saved: true };
 }
 
 export type DeleteAccountState = { error?: "invalidPassword" | "unknown" };

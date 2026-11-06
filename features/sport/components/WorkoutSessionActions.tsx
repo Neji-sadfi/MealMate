@@ -7,6 +7,7 @@ import { LoaderCircle, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
+import type { WorkoutStatus } from "@/models/enums";
 
 type PhaseDraft = { durationMinutes: string; description: string };
 type ExerciseDraft = {
@@ -20,6 +21,7 @@ type ExerciseDraft = {
 
 type SessionData = {
   id: string;
+  status: WorkoutStatus;
   name: string;
   focus: string;
   scheduledAt: string;
@@ -83,6 +85,27 @@ export function WorkoutSessionActions({ session }: { session: SessionData }) {
     );
   }
 
+  async function setStatus(status: WorkoutStatus) {
+    setPending(true);
+    setError("");
+    try {
+      const response = await fetch(`/api/workout-sessions/${session.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) {
+        setError(t("updateError"));
+        return;
+      }
+      router.refresh();
+    } catch {
+      setError(t("networkError"));
+    } finally {
+      setPending(false);
+    }
+  }
+
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
@@ -94,7 +117,8 @@ export function WorkoutSessionActions({ session }: { session: SessionData }) {
         body: JSON.stringify({
           name,
           focus,
-          scheduledAt,
+          // datetime-local has no timezone: send the instant the user picked.
+          scheduledAt: new Date(scheduledAt).toISOString(),
           durationMinutes: Number(durationMinutes),
           warmUp: warmUp.description.trim()
             ? {
@@ -156,6 +180,24 @@ export function WorkoutSessionActions({ session }: { session: SessionData }) {
   return (
     <Card className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-2">
+        {session.status === "planned" ? (
+          <>
+            <Button disabled={pending} onClick={() => void setStatus("done")}>
+              {t("done")}
+            </Button>
+            <Button
+              variant="secondary"
+              disabled={pending}
+              onClick={() => void setStatus("skipped")}
+            >
+              {t("skip")}
+            </Button>
+          </>
+        ) : (
+          <Button variant="secondary" disabled={pending} onClick={() => void setStatus("planned")}>
+            {t("reopen")}
+          </Button>
+        )}
         <Button
           variant="secondary"
           disabled={pending}

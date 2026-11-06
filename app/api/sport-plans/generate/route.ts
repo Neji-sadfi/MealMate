@@ -3,9 +3,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getLocale } from "next-intl/server";
 import { getCurrentUserId } from "@/lib/current-user";
-import { getGeminiModel } from "@/lib/ai";
-import { workoutProgramSchema, workoutSettingsSchema } from "@/features/sport/schemas";
-
+import { aiProviderOptions, getGeminiModel } from "@/lib/ai";
+import {
+  workoutProgramSchema,
+  workoutSettingsSchema,
+} from "@/features/sport/schemas";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
@@ -148,6 +150,7 @@ export async function POST(request: Request) {
         sessionDurationMinutes: settings.sessionDurationMinutes,
         equipment: settings.equipment,
       }),
+      providerOptions: aiProviderOptions,
       maxOutputTokens: 4096,
       abortSignal: AbortSignal.timeout(45_000),
     });

@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
 import { recipeInputSchema } from "@/features/recipes/schemas";
+import { getCurrentAdminId } from "@/lib/admin";
 import { getCurrentUserId } from "@/lib/current-user";
 import { resolveRecipeIngredients } from "@/lib/recipe-ingredients";
+import { Favorite } from "@/models/Favorite";
+import { Meal } from "@/models/Meal";
 import { Recipe } from "@/models/Recipe";
 
 type Context = { params: Promise<{ id: string }> };
@@ -33,14 +36,16 @@ export async function PUT(request: Request, { params }: Context) {
       { status: 400 },
     );
   }
+  const adminId = await getCurrentAdminId();
+  const filter = adminId ? { _id: id } : { _id: id, createdBy: userId };
   const ingredients = await resolveRecipeIngredients(parsed.data.ingredients);
   const recipe = await Recipe.findOneAndUpdate(
-    { _id: id },
+    filter,
     { $set: { ...parsed.data, ingredients } },
     { returnDocument: "after", runValidators: true },
   );
   if (!recipe) {
-    return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
+    return NextResponse.json({ error: "Recipe not found or not owned by you" }, { status: 404 });
   }
   return NextResponse.json(recipe);
 }
@@ -52,7 +57,11 @@ export async function DELETE(_: Request, { params }: Context) {
   if (!Types.ObjectId.isValid(id))
     return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
 
-  const recipe = await Recipe.findOneAndDelete({ _id: id });
-  if (!recipe) return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
+  const adminId = await getCurrentAdminId();
+  const filter = adminId ? { _id: id } : { _id: id, createdBy: userId };
+  const recipe = await Recipe.findOneAndDelete(filter);
+  if (!recipe)
+    return NextResponse.json({ error: "Recipe not found or not owned by you" }, { status: 404 });
+  await Promise.all([Favorite.deleteMany({ recipe: id }), Meal.deleteMany({ recipe: id })]);
   return NextResponse.json({ deleted: true, recipeId: id });
 }

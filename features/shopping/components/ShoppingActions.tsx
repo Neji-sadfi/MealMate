@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { AISLES, type Aisle } from "@/models/enums";
+import { estimatedItemCost as estimatedCost } from "../services/cost";
 
 type ShoppingItem = {
   _id: string;
@@ -57,7 +58,6 @@ type CatalogMatch = {
 } | null;
 
 const GEANT_STORE_URL = "https://www.geantdrive.tn/tunis-city/";
-
 function estimatedCost(item: ShoppingItem): number | null {
   if (item.estimatedPrice === undefined) return null;
   const amount = item.quantity ?? 1;
@@ -79,6 +79,7 @@ export function ShoppingActions({
   items: ShoppingItem[];
   initialBudget: BudgetSummary;
 }) {
+export function ShoppingActions({ items }: { items: ShoppingItem[] }) {
   const router = useRouter();
   const t = useTranslations("pages.shopping");
   const [error, setError] = useState("");

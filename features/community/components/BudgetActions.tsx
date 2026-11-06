@@ -25,22 +25,27 @@ export function BudgetActions({ currentLimit }: { currentLimit: number }) {
       setPending(false);
       return;
     }
-    const response = await fetch("/api/budget", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        limit: Number(data.get("limit")),
-        expense: label ? { label, category: data.get("category"), amount } : undefined,
-      }),
-    });
-    if (!response.ok) {
-      const result = (await response.json().catch(() => null)) as { error?: string } | null;
-      setError(result?.error ?? t("error"));
+    try {
+      const response = await fetch("/api/budget", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          limit: Number(data.get("limit")),
+          expense: label ? { label, category: data.get("category"), amount } : undefined,
+        }),
+      });
+      if (!response.ok) {
+        const result = (await response.json().catch(() => null)) as { error?: string } | null;
+        setError(result?.error ?? t("error"));
+        return;
+      }
+      form.reset();
+      router.refresh();
+    } catch {
+      setError(t("error"));
+    } finally {
       setPending(false);
-      return;
     }
-    setPending(false);
-    router.refresh();
   }
 
   return (
@@ -77,7 +82,7 @@ export function BudgetActions({ currentLimit }: { currentLimit: number }) {
         {pending ? t("saving") : t("save")}
       </Button>
       {error && (
-        <p role="alert" className="text-warning text-sm sm:col-span-2">
+        <p role="alert" className="text-sm text-warning sm:col-span-2">
           {error}
         </p>
       )}

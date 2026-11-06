@@ -3,6 +3,7 @@ import { getLocale } from "next-intl/server";
 import { generatedRecipeSchema, recipeAiRequestSchema } from "@/features/recipes/ai-schemas";
 import { requestRecipeAi } from "@/features/recipes/services/recipe-ai";
 import { getCurrentUserId } from "@/lib/current-user";
+import { isRateLimited } from "@/lib/rate-limit";
 import { User } from "@/models/User";
 
 export const maxDuration = 60;
@@ -11,6 +12,9 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   const userId = await getCurrentUserId();
   if (!userId) return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  if (isRateLimited(`recipe-ai:${userId.toString()}`, 6, 60_000)) {
+    return NextResponse.json({ error: "AI_RATE_LIMITED" }, { status: 429 });
+  }
 
   const body: unknown = await request.json().catch(() => null);
   const parsed = recipeAiRequestSchema.safeParse(body);

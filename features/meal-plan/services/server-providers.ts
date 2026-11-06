@@ -30,9 +30,21 @@ export async function listRecipeSnapshots(): Promise<RecipeSnapshot[]> {
 export async function listPantryNames(userId: string): Promise<string[]> {
   try {
     await connectToDatabase();
-    const stocked = await Inventory.find({ user: userId }).limit(100).lean();
+    const stocked = await Inventory.find({
+      user: userId,
+      quantity: { $gt: 0 },
+      $or: [
+        { expiresAt: { $exists: false } },
+        { expiresAt: null },
+        { expiresAt: { $gte: new Date() } },
+      ],
+    })
+      .limit(100)
+      .lean();
     if (stocked.length === 0) return [];
-    const ingredients = await Ingredient.find({ _id: { $in: stocked.map((item) => item.ingredient) } })
+    const ingredients = await Ingredient.find({
+      _id: { $in: stocked.map((item) => item.ingredient) },
+    })
       .select("name")
       .lean();
     return [...new Set(ingredients.map((ingredient) => ingredient.name))].sort();

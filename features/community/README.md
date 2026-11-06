@@ -6,7 +6,7 @@
 
 - **Screens:** Community forum, Nutrition & budget
 - **Routes:** `/community`, `/tracking`
-- **API:** `GET/POST /api/forum/posts`, `PUT/DELETE /api/forum/posts/[id]`, `GET/POST /api/forum/posts/[id]/comments`, `POST /api/forum/posts/[id]/reports`, `POST /api/forum/posts/[id]/likes`, `DELETE /api/admin/comments/[id]`, `PATCH /api/admin/reports/[id]`, `GET /api/stats/nutrition`, `GET/POST /api/budget`
+- **API:** `GET/POST /api/forum/posts`, `PUT/DELETE /api/forum/posts/[id]`, `GET/POST /api/forum/posts/[id]/comments`, `POST /api/forum/posts/[id]/reports`, `POST /api/forum/posts/[id]/likes`, `DELETE /api/forum/posts/[id]/comments/[commentId]` (author or admin), `PATCH /api/admin/reports/[id]`, `GET /api/stats/nutrition`, `GET/POST /api/budget`
 - **Models:** `ForumPost`, `ForumComment`, `ForumLike`, `ForumReport`, `Notification`
 - **Shared UI to deliver (via reviewed PR into `components/ui`):** `Card`, `StatCard`, `InfoBanner`
 

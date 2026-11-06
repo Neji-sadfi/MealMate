@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
+import { dailyTargets } from "@/lib/nutrition-targets";
 import { Recipe } from "@/models/Recipe";
 import { User } from "@/models/User";
 import { generatePlanSchema } from "@/features/meal-plan/schemas";
@@ -9,6 +10,7 @@ import {
   mealPlanErrorResponse,
   replacePlanMeals,
 } from "@/features/meal-plan/services/meal-plan-service";
+import { isoOfUtc, mondayUtcOf } from "@/features/meal-plan/services/plan-dates";
 import { listPantryNames } from "@/features/meal-plan/services/server-providers";
 
 // POST /api/meal-plans/generate
@@ -33,26 +35,30 @@ export async function POST(request: Request) {
     const user = await User.findById(userId).lean();
     const recipes = await Recipe.find({}).lean();
     const inventoryNames = await listPantryNames(userId); // Member 4 data, try/catch inside
+    const targets = dailyTargets(user);
+    const weekStart = isoOfUtc(mondayUtcOf(parsed.data.weekStart));
 
     const { meals, warnings } = generatePlan({
-      weekStart: parsed.data.weekStart,
-      recipes: recipes.map(
-        (recipe): GeneratorRecipe => ({
-          id: recipe._id.toString(),
-          title: recipe.title,
-          imageUrl: recipe.imageUrl ?? undefined,
-          calories: recipe.nutrition.calories,
-          protein: recipe.nutrition.protein,
-          cost: recipe.costPerServing,
-          diets: [...recipe.diets],
-          ingredientNames: recipe.ingredients.map((ingredient) => ingredient.name),
-        }),
-      ),
+      weekStart,
+      recipes: recipes.map((recipe): GeneratorRecipe => ({
+        id: recipe._id.toString(),
+        title: recipe.title,
+        imageUrl: recipe.imageUrl ?? undefined,
+        calories: recipe.nutrition.calories,
+        protein: recipe.nutrition.protein,
+        cost: recipe.costPerServing,
+        diets: [...recipe.diets],
+        ingredientNames: recipe.ingredients.map((ingredient) => ingredient.name),
+      })),
       preferences: {
         diet: user?.preferences?.diet ?? "none",
-        allergies: user?.preferences?.allergies ?? [],
-        kcalTarget: user?.preferences?.dailyCaloriesTarget ?? 2000,
-        proteinTarget: user?.preferences?.dailyProteinTarget ?? 130,
+        // An intolerance excludes a recipe just like an allergy does.
+        allergies: [
+          ...(user?.preferences?.allergies ?? []),
+          ...(user?.preferences?.intolerances ?? []),
+        ],
+        kcalTarget: targets.kcal,
+        proteinTarget: targets.protein,
         weeklyBudget: user?.preferences?.weeklyBudget ?? 0,
       },
       extraBudget: parsed.data.extraBudget,
@@ -64,7 +70,7 @@ export async function POST(request: Request) {
 
     const plan = await replacePlanMeals(
       userId,
-      parsed.data.weekStart,
+      weekStart,
       meals.map((meal) => ({
         date: meal.date,
         type: meal.type,

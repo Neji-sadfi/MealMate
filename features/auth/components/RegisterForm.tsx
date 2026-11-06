@@ -10,6 +10,7 @@ import { registerAction } from "../services/actions";
 
 export function RegisterForm() {
   const t = useTranslations("auth");
+  const tDiet = useTranslations("pages.profile.enums.diet");
   const [state, formAction, pending] = useActionState(registerAction, {});
 
   return (
@@ -73,11 +74,11 @@ export function RegisterForm() {
             defaultValue=""
           >
             <option value="" disabled>
-              Select your diet
+              {t("register.dietPlaceholder")}
             </option>
             {DIETS.map((diet) => (
               <option key={diet} value={diet}>
-                {diet.replaceAll("_", " ")}
+                {tDiet(diet)}
               </option>
             ))}
           </select>

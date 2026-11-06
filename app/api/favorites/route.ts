@@ -8,8 +8,11 @@ import { Recipe } from "@/models/Recipe";
 export async function GET() {
   const userId = await getCurrentUserId();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const favorites = await Favorite.find({ user: userId }).populate("recipe").sort({ createdAt: -1 }).lean();
-  return NextResponse.json(favorites.map((favorite) => favorite.recipe));
+  const favorites = await Favorite.find({ user: userId })
+    .populate("recipe")
+    .sort({ createdAt: -1 })
+    .lean();
+  return NextResponse.json(favorites.map((favorite) => favorite.recipe).filter(Boolean));
 }
 
 export async function POST(request: Request) {
