@@ -4,7 +4,6 @@ import { aiProviderOptions, getGeminiModel } from "@/lib/ai";
 import type { Locale } from "@/lib/i18n/config";
 import { DIETS, UNITS } from "@/models/enums";
 import type { IUserPreferences } from "@/models/User";
-import { DIETS, UNITS } from "@/models/enums";
 
 const DIET_LABELS: Record<IUserPreferences["diet"], string> = {
   none: "No specific diet",
