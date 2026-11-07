@@ -58,7 +58,8 @@
       "allergiesHelp": "Séparez les allergies par des virgules. Saisissez « aucune » si vous n’en avez pas.",
       "submit": "Créer mon compte",
       "haveAccount": "Vous avez déjà un compte ?",
-      "signIn": "Se connecter"
+      "signIn": "Se connecter",
+      "dietPlaceholder": "Choisissez votre régime"
     },
     "forgotPassword": {
       "title": "Mot de passe oublié",
@@ -114,7 +115,8 @@
       "emailTaken": "Un compte utilise déjà cette adresse e-mail.",
       "passwordMismatch": "Les deux mots de passe ne correspondent pas.",
       "invalidResetLink": "Ce lien de réinitialisation est invalide ou expiré.",
-      "unknown": "Une erreur est survenue. Veuillez réessayer."
+      "unknown": "Une erreur est survenue. Veuillez réessayer.",
+      "rateLimit": "Trop de tentatives. Patientez quelques minutes puis réessayez."
     }
   },
   "pages": {
@@ -213,7 +215,8 @@
         "level": "Niveau",
         "sessionDuration": "Durée de séance",
         "equipment": "Équipement",
-        "availableDays": "Jours disponibles"
+        "availableDays": "Jours disponibles",
+        "dailyTargets": "Objectifs quotidiens"
       },
       "units": {
         "cm": "cm",
@@ -276,6 +279,29 @@
           "sat": "Sam",
           "sun": "Dim"
         }
+      },
+      "dailyTargetsValue": "{kcal} kcal · {protein} g de protéines",
+      "edit": {
+        "open": "Modifier mon profil",
+        "name": "Nom et prénom",
+        "age": "Âge",
+        "heightCm": "Taille (cm)",
+        "weightKg": "Poids (kg)",
+        "occupation": "Profession",
+        "city": "Ville",
+        "listPlaceholder": "Séparez par des virgules",
+        "weeklyBudget": "Budget alimentaire hebdomadaire ({currency})",
+        "caloriesTarget": "Objectif de calories par jour",
+        "proteinTarget": "Objectif de protéines par jour (g)",
+        "targetsHelp": "Laissez vide pour que MealMate les estime à partir de votre profil.",
+        "sessionDuration": "Durée d'une séance (minutes)",
+        "save": "Enregistrer",
+        "saving": "Enregistrement...",
+        "saved": "Votre profil a été mis à jour.",
+        "errors": {
+          "invalidInput": "Vérifiez les champs signalés.",
+          "unknown": "Impossible d'enregistrer votre profil. Veuillez réessayer."
+        }
       }
     },
     "recipes": {
@@ -326,6 +352,70 @@
         "invalidRecipe": "L’IA n’a pas pu créer une recette valide. Essayez d’autres ingrédients ou préférences.",
         "invalidInput": "Vérifiez votre demande et réessayez.",
         "unknownError": "Une erreur est survenue. Veuillez réessayer."
+      },
+      "filters": {
+        "search": "Rechercher",
+        "diet": "Régime",
+        "difficulty": "Difficulté",
+        "any": "Tous",
+        "maxCalories": "Kcal max / portion",
+        "minProtein": "Protéines min (g)",
+        "maxCost": "Coût max / portion",
+        "maxTime": "Préparation max (min)",
+        "submit": "Rechercher des recettes"
+      },
+      "difficulty": {
+        "easy": "Facile",
+        "medium": "Moyenne",
+        "hard": "Difficile"
+      },
+      "noResults": {
+        "title": "Aucune recette trouvée",
+        "body": "Modifiez votre recherche ou vos filtres, ou créez une nouvelle recette."
+      },
+      "summary": "{kcal} kcal · {protein} g de protéines · {cost} / portion",
+      "form": {
+        "createTitle": "Créer une recette",
+        "editTitle": "Modifier la recette",
+        "name": "Nom de la recette",
+        "tagline": "Description courte",
+        "description": "Description",
+        "imageUrl": "URL de la photo (facultatif)",
+        "difficulty": "Difficulté",
+        "tags": "Tags (séparés par des virgules)",
+        "tagsPlaceholder": "rapide, végétarien",
+        "diets": "Régimes",
+        "dietsHelp": "Maintenez Ctrl (Windows) ou Commande (Mac) pour en choisir plusieurs.",
+        "ingredients": "Ingrédients",
+        "addIngredient": "Ajouter un ingrédient",
+        "ingredient": "Ingrédient",
+        "ingredientPlaceholder": "ex. Tomate",
+        "quantity": "Quantité",
+        "unit": "Unité",
+        "note": "Note (facultatif)",
+        "notePlaceholder": "ex. finement haché",
+        "removeIngredient": "Retirer l'ingrédient",
+        "ingredientsEmpty": "Ajoutez les ingrédients et leurs quantités.",
+        "steps": "Étapes de préparation",
+        "addStep": "Ajouter une étape",
+        "stepTitle": "Titre de l'étape {number}",
+        "stepPlaceholder": "ex. Préparer les légumes",
+        "instructions": "Instructions",
+        "instructionsPlaceholder": "Décrivez ce qu'il faut faire à cette étape",
+        "removeStep": "Retirer l'étape",
+        "stepsEmpty": "Ajoutez les étapes dans l'ordre.",
+        "minutes": "Minutes",
+        "servings": "Portions",
+        "costPerServing": "Coût / portion",
+        "calories": "Calories",
+        "protein": "Protéines (g)",
+        "carbs": "Glucides (g)",
+        "fat": "Lipides (g)",
+        "save": "Enregistrer la recette",
+        "saveChanges": "Enregistrer",
+        "saving": "Enregistrement...",
+        "saveError": "Impossible d'enregistrer la recette.",
+        "networkError": "Serveur injoignable. Veuillez réessayer."
       }
     },
     "recipeDetail": {
@@ -343,7 +433,19 @@
         "shareError": "Impossible de partager la recette ou de copier son lien.",
         "shared": "Recette partagée.",
         "linkCopied": "Lien de la recette copié."
-      }
+      },
+      "notFound": "Recette introuvable.",
+      "backToRecipes": "Retour aux recettes",
+      "back": "Retour",
+      "servings": "Portions",
+      "preparation": "Préparation",
+      "calories": "Calories",
+      "protein": "Protéines",
+      "carbs": "Glucides",
+      "fat": "Lipides",
+      "costPerServing": "Coût / portion",
+      "ingredients": "Ingrédients",
+      "steps": "Étapes"
     },
     "mealPlan": {
       "title": "Mon planning repas",
@@ -669,9 +771,12 @@
         "updateError": "Impossible de modifier cette discussion.",
         "deleteError": "Impossible de supprimer cette discussion.",
         "deleteCommentError": "Impossible de supprimer ce commentaire.",
+        "deleteCommentConfirm": "Supprimer ce commentaire ?",
         "deleteConfirm": "Supprimer cette discussion et ses commentaires ?",
-        "networkError": "Serveur inaccessible. Veuillez réessayer."
-      }
+        "networkError": "Serveur inaccessible. Veuillez réessayer.",
+        "deletedMember": "Membre supprimé"
+      },
+      "deletedMember": "Membre supprimé"
     },
     "tracking": {
       "title": "Nutrition et budget",
@@ -779,6 +884,20 @@
           "network": "Serveur inaccessible. Veuillez réessayer."
         }
       },
+      "empty": {
+        "title": "Aucune séance prévue",
+        "body": "Générez un programme ou planifiez une séance pour la voir ici."
+      },
+      "create": {
+        "title": "Planifier une séance",
+        "name": "Nom de la séance",
+        "focus": "Objectif de la séance",
+        "date": "Date et heure",
+        "duration": "Durée (minutes)",
+        "save": "Enregistrer la séance",
+        "saving": "Enregistrement...",
+        "error": "Impossible d'enregistrer la séance."
+      },
       "exercisePhotos": {
         "searching": "Recherche d’une photo…",
         "photoUnavailable": "Aucune photo disponible",
@@ -794,6 +913,21 @@
     "workoutSession": {
       "title": "Séance d’entraînement",
       "subtitle": "Séance n° {id}",
+      "notFound": "Séance introuvable.",
+      "back": "Retour au sport",
+      "focus": "Objectif",
+      "warmUp": "Échauffement",
+      "coolDown": "Retour au calme",
+      "exercises": "Exercices",
+      "minutes": "{count} minutes",
+      "sets": "{count} séries",
+      "reps": "{count} répétitions",
+      "rest": "{seconds} s de repos",
+      "status": {
+        "planned": "Prévue",
+        "done": "Terminée",
+        "skipped": "Ignorée"
+      },
       "actions": {
         "edit": "Modifier la séance",
         "delete": "Supprimer la séance",
@@ -821,7 +955,10 @@
         "tip": "Conseil de posture",
         "updateError": "Impossible de modifier cette séance.",
         "deleteError": "Impossible de supprimer cette séance.",
-        "networkError": "Serveur inaccessible. Veuillez réessayer."
+        "networkError": "Serveur inaccessible. Veuillez réessayer.",
+        "done": "Marquer comme terminée",
+        "skip": "Ignorer",
+        "reopen": "Replanifier"
       }
     },
     "admin": {
@@ -847,6 +984,18 @@
         "offensive": "Contenu offensant",
         "medical_misinformation": "Désinformation médicale",
         "other": "Autre"
+      },
+      "actions": {
+        "hidePost": "Masquer la publication",
+        "dismiss": "Ignorer le signalement",
+        "edit": "Modifier",
+        "close": "Fermer",
+        "delete": "Supprimer",
+        "deleteConfirm": "Supprimer « {title} » du catalogue ?",
+        "recipeSummary": "{ingredients} ingrédients · {steps} étapes",
+        "reportError": "Impossible de mettre à jour ce signalement.",
+        "recipeError": "Impossible de supprimer cette recette.",
+        "networkError": "Serveur injoignable. Veuillez réessayer."
       }
     }
   },

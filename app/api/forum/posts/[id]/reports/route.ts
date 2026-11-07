@@ -23,7 +23,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       { error: "Invalid report", issues: parsed.error.issues },
       { status: 400 },
     );
-  if (!(await ForumPost.exists({ _id: id })))
+  if (!(await ForumPost.exists({ _id: id, status: "visible" })))
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   let report;
   try {

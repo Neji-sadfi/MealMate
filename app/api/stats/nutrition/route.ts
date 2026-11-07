@@ -23,6 +23,7 @@ export async function GET(request: Request) {
   const [meals, budgets, user] = await Promise.all([
     Meal.find({ user: userId, date: { $gte: range.start, $lt: range.end } })
       .populate("recipe", "nutrition")
+      .populate("mealPlan", "people")
       .lean(),
     Budget.find({ user: userId }).lean(),
     User.findById(userId).select("preferences.weeklyBudget preferences.currency").lean(),
@@ -31,10 +32,12 @@ export async function GET(request: Request) {
   for (const meal of meals) {
     const recipe = meal.recipe as unknown as { nutrition: typeof nutrition } | null;
     if (!recipe?.nutrition) continue;
-    nutrition.calories += recipe.nutrition.calories * meal.servings;
-    nutrition.protein += recipe.nutrition.protein * meal.servings;
-    nutrition.carbs += recipe.nutrition.carbs * meal.servings;
-    nutrition.fat += recipe.nutrition.fat * meal.servings;
+    const plan = meal.mealPlan as unknown as { people?: number } | null;
+    const portions = meal.servings / Math.max(1, plan?.people ?? 1);
+    nutrition.calories += recipe.nutrition.calories * portions;
+    nutrition.protein += recipe.nutrition.protein * portions;
+    nutrition.carbs += recipe.nutrition.carbs * portions;
+    nutrition.fat += recipe.nutrition.fat * portions;
   }
   const budgetSpent = budgets.reduce(
     (sum, budget) =>

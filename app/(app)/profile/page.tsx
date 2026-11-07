@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/Card";
 import { CoachAvatar } from "@/features/coach/components/CoachAvatar";
+import { ProfileEditForm } from "@/features/auth/components/ProfileEditForm";
 import { ProfileView } from "@/features/auth/components/ProfileView";
 import { SignOutButton } from "@/features/auth/components/SignOutButton";
 import { VerifyEmailBanner } from "@/features/auth/components/VerifyEmailBanner";
@@ -49,7 +50,21 @@ export default async function ProfilePage() {
       </Link>
 
       {user ? (
-        <ProfileView user={user} avatarUrl={avatarUrl} />
+        <>
+          <ProfileView user={user} avatarUrl={avatarUrl} />
+          <ProfileEditForm
+            user={{
+              name: user.name,
+              email: user.email,
+              city: user.city,
+              occupation: user.occupation,
+              age: user.age,
+              heightCm: user.heightCm,
+              weightKg: user.weightKg,
+              preferences: user.preferences,
+            }}
+          />
+        </>
       ) : (
         <Card>
           <p className="text-sm text-muted">{t("loadError")}</p>

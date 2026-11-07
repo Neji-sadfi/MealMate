@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Types } from "mongoose";
 import { z } from "zod";
 import { getCurrentUserId } from "@/lib/current-user";
 import { Ingredient } from "@/models/Ingredient";
@@ -27,10 +28,19 @@ export async function POST(request: Request) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body: unknown = await request.json().catch(() => null);
   const parsed = itemSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid inventory item", issues: parsed.error.issues }, { status: 400 });
+  if (!parsed.success)
+    return NextResponse.json(
+      { error: "Invalid inventory item", issues: parsed.error.issues },
+      { status: 400 },
+    );
 
   const ingredient = await Ingredient.findOneAndUpdate(
-    { name: { $regex: `^${parsed.data.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" } },
+    {
+      name: {
+        $regex: `^${parsed.data.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+        $options: "i",
+      },
+    },
     { $setOnInsert: { name: parsed.data.name, aisle: "other", defaultUnit: parsed.data.unit } },
     { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   );
@@ -50,8 +60,14 @@ export async function PUT(request: Request) {
   const userId = await getCurrentUserId();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body: unknown = await request.json().catch(() => null);
-  const parsed = z.object({ id: z.string(), quantity: z.number().min(0) }).safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid inventory update", issues: parsed.error.issues }, { status: 400 });
+  const parsed = z
+    .object({ id: z.string().refine(Types.ObjectId.isValid), quantity: z.number().min(0) })
+    .safeParse(body);
+  if (!parsed.success)
+    return NextResponse.json(
+      { error: "Invalid inventory update", issues: parsed.error.issues },
+      { status: 400 },
+    );
 
   const item = await Inventory.findOneAndUpdate(
     { _id: parsed.data.id, user: userId },
@@ -66,8 +82,9 @@ export async function DELETE(request: Request) {
   const userId = await getCurrentUserId();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body: unknown = await request.json().catch(() => null);
-  const parsed = z.object({ id: z.string() }).safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid inventory item id" }, { status: 400 });
+  const parsed = z.object({ id: z.string().refine(Types.ObjectId.isValid) }).safeParse(body);
+  if (!parsed.success)
+    return NextResponse.json({ error: "Invalid inventory item id" }, { status: 400 });
   const item = await Inventory.findOneAndDelete({ _id: parsed.data.id, user: userId });
   if (!item) return NextResponse.json({ error: "Inventory item not found" }, { status: 404 });
   return NextResponse.json({ deleted: true, itemId: parsed.data.id });

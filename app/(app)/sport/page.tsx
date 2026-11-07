@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/Card";
 import { getCurrentUserId } from "@/lib/current-user";
 import { WorkoutCreateForm } from "@/features/sport/components/WorkoutCreateForm";
@@ -18,6 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SportPage() {
   const t = await getTranslations("pages.sport");
+  const tSession = await getTranslations("pages.workoutSession");
+  const locale = await getLocale();
   const userId = await getCurrentUserId();
   const user = userId ? await User.findById(userId).select("preferences").lean() : null;
   const preferences = user?.preferences;
@@ -46,10 +48,8 @@ export default async function SportPage() {
       <WorkoutCreateForm />
       {sessions.length === 0 ? (
         <Card>
-          <h2 className="font-bold">No workout sessions scheduled</h2>
-          <p className="mt-1 text-sm text-muted">
-            Create a sport plan to see sessions saved to your account.
-          </p>
+          <h2 className="font-bold">{t("empty.title")}</h2>
+          <p className="mt-1 text-sm text-muted">{t("empty.body")}</p>
         </Card>
       ) : (
         sessions.map((session) => (
@@ -61,11 +61,11 @@ export default async function SportPage() {
             <Card className="flex flex-col gap-2">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-lg font-bold">{session.name}</h2>
-                <span className="text-xs text-muted capitalize">{session.status}</span>
+                <span className="text-xs text-muted">{tSession(`status.${session.status}`)}</span>
               </div>
               <p className="text-sm text-muted">
-                {session.durationMinutes} minutes ·{" "}
-                {new Date(session.scheduledAt).toLocaleDateString()}
+                {tSession("minutes", { count: session.durationMinutes })} ·{" "}
+                {new Date(session.scheduledAt).toLocaleDateString(locale)}
               </p>
               {session.focus && <p className="text-sm text-muted">{session.focus}</p>}
             </Card>

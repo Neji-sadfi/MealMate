@@ -2,13 +2,14 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Activity, Dumbbell, Ruler, Salad, Wallet, Weight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { dailyTargets } from "@/lib/nutrition-targets";
 import { WEEKDAYS } from "@/models/enums";
 import type { IUser } from "@/models/User";
 import { AvatarEditor } from "./AvatarEditor";
 
 export type ProfileUser = Pick<
   IUser,
-  "name" | "email" | "city" | "occupation" | "heightCm" | "weightKg" | "preferences"
+  "name" | "email" | "city" | "occupation" | "age" | "heightCm" | "weightKg" | "preferences"
 >;
 
 function initialsOf(name: string): string {
@@ -71,6 +72,7 @@ export function ProfileView({
   const bmi = bmiOf(user.heightCm, user.weightKg);
   const subtitle = [user.occupation, user.city].filter(Boolean).join(" · ");
   const notSet = t("notSet");
+  const targets = dailyTargets(user);
 
   return (
     <div className="flex flex-col gap-4">
@@ -130,6 +132,9 @@ export function ProfileView({
           <dl>
             <Row label={t("fields.diet")}>{t(`enums.diet.${prefs.diet}`)}</Row>
             <Row label={t("fields.goal")}>{t(`enums.goal.${prefs.goal}`)}</Row>
+            <Row label={t("fields.dailyTargets")}>
+              {t("dailyTargetsValue", { kcal: targets.kcal, protein: targets.protein })}
+            </Row>
             <Row label={t("fields.allergies")}>
               {prefs.allergies.length ? (
                 <span className="flex flex-wrap justify-end gap-2">

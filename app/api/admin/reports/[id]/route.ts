@@ -43,5 +43,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     { _id: report._id },
     { $set: { status: "dismissed", reviewedBy: adminId } },
   );
+  await ForumPost.updateOne(
+    { _id: report.post, reportsCount: { $gt: 0 } },
+    { $inc: { reportsCount: -1 } },
+  );
   return NextResponse.json({ status: "dismissed", reportId: report._id.toString() });
 }

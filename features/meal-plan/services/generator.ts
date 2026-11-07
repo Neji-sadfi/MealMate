@@ -74,6 +74,8 @@ export function generatePlan(input: GeneratorInput): GeneratedPlan {
   // the calories of every slot.
   const servings = Math.max(1, input.people ?? GENERATE_DEFAULTS.people);
   const budget = Math.max(0, input.preferences.weeklyBudget + extraBudget);
+  // A weekly budget of 0 means "not set", not "nothing to spend".
+  const hasBudget = input.preferences.weeklyBudget > 0;
   const warnings: GeneratorWarning[] = [];
 
   // 1. Exclude recipes that break the diet or the allergies.
@@ -91,8 +93,10 @@ export function generatePlan(input: GeneratorInput): GeneratedPlan {
     return { meals: [], warnings: [{ code: "noValidRecipes" }] };
   }
 
+  // Fewer meals keep the main ones: dinner alone, or lunch and dinner.
   const types: MealType[] =
-    mealsPerDay >= 4 ? [...MAIN_MEAL_TYPES, "snack"] : MAIN_MEAL_TYPES.slice(0, mealsPerDay);
+    mealsPerDay >= 4 ? [...MAIN_MEAL_TYPES, "snack"] : MAIN_MEAL_TYPES.slice(3 - mealsPerDay);
+  const totalShare = types.reduce((sum, type) => sum + SLOT_KCAL_SHARE[type], 0);
   const dates = Array.from({ length: days }, (_, index) =>
     toISODate(addDays(parseISODate(input.weekStart), index)),
   );
@@ -100,7 +104,7 @@ export function generatePlan(input: GeneratorInput): GeneratedPlan {
   const inventory = new Set((input.inventoryNames ?? []).map((name) => name.trim().toLowerCase()));
   const usage = new Map<string, number>();
   const meals: GeneratedMeal[] = [];
-  let remaining = budget;
+  let remaining = hasBudget ? budget : Number.POSITIVE_INFINITY;
   let exceededBudget = false;
   let reused = false;
 
@@ -112,7 +116,12 @@ export function generatePlan(input: GeneratorInput): GeneratedPlan {
     return stocked / recipe.ingredientNames.length;
   }
 
-  function take(counts: Map<string, number>, recipe: GeneratorRecipe, date: string, type: MealType) {
+  function take(
+    counts: Map<string, number>,
+    recipe: GeneratorRecipe,
+    date: string,
+    type: MealType,
+  ) {
     const nextCount = (counts.get(recipe.id) ?? 0) + 1;
     counts.set(recipe.id, nextCount);
     if (nextCount > 2) reused = true;
@@ -130,7 +139,8 @@ export function generatePlan(input: GeneratorInput): GeneratedPlan {
   //    and no recipe is used more than twice a week.
   for (const date of dates) {
     for (const type of types) {
-      const slotKcal = input.preferences.kcalTarget * SLOT_KCAL_SHARE[type] * servings;
+      // recipe.calories is per serving, so the slot is compared for one person.
+      const slotKcal = (input.preferences.kcalTarget * SLOT_KCAL_SHARE[type]) / totalShare;
       const fresh = valid.filter((recipe) => (usage.get(recipe.id) ?? 0) < 2);
       const affordable = fresh.filter((recipe) => costOf(recipe) * servings <= remaining);
       const pool = affordable.length > 0 ? affordable : fresh.length > 0 ? fresh : valid;
@@ -174,7 +184,7 @@ export function generatePlan(input: GeneratorInput): GeneratedPlan {
   const totalKcal = meals.reduce((sum, meal) => sum + meal.recipe.calories * meal.servings, 0);
   const kcalTarget = input.preferences.kcalTarget * days * servings;
 
-  if (totalCost > budget) {
+  if (hasBudget && totalCost > budget) {
     warnings.push({ code: "overBudget", cost: totalCost, budget: roundMoney(budget) });
   }
   if (kcalTarget > 0 && Math.abs(totalKcal - kcalTarget) > kcalTarget * 0.2) {

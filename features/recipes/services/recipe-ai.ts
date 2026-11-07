@@ -1,7 +1,8 @@
-import { generateText } from "ai";
+import { generateText, Output } from "ai";
 import type { RecipeAiRequest } from "@/features/recipes/ai-schemas";
-import { getGeminiModel } from "@/lib/ai";
+import { aiProviderOptions, getGeminiModel } from "@/lib/ai";
 import type { Locale } from "@/lib/i18n/config";
+import { DIETS, UNITS } from "@/models/enums";
 import type { IUserPreferences } from "@/models/User";
 import { DIETS, UNITS } from "@/models/enums";
 
@@ -36,6 +37,17 @@ const safetyInstructions = [
   "Respect every listed allergy and intolerance strictly. Remind users to verify product labels and cross-contamination risks.",
   "Never claim nutrition or price figures are exact; clearly describe them as estimates.",
   "If asked for medical dietary advice, briefly recommend consulting a qualified healthcare professional.",
+].join(" ");
+
+const recipeJsonInstructions = [
+  "Return only one JSON object with this exact shape and camelCase property names:",
+  '{"title":"...","tagline":"...","description":"...","diets":[],"tags":["..."],"difficulty":"easy","prepTimeMinutes":20,"servings":2,"costPerServing":5,',
+  '"nutrition":{"calories":500,"protein":30,"carbs":50,"fat":15},',
+  '"ingredients":[{"name":"...","quantity":200,"unit":"g"}],',
+  '"steps":[{"order":1,"title":"...","description":"..."}]}.',
+  `diets may only contain: ${DIETS.join(", ")}.`,
+  `unit must be one of: ${UNITS.join(", ")}.`,
+  "difficulty must be easy, medium or hard. Use numbers, not numeric strings.",
 ].join(" ");
 
 function recipePrompt(
@@ -126,6 +138,7 @@ export async function requestRecipeAi(
           `Safety: ${safetyInstructions}`,
         ].join(" "),
         prompt: recipePrompt(request, preferences, locale),
+        providerOptions: aiProviderOptions,
         maxOutputTokens: 1800,
         abortSignal,
       });
@@ -147,6 +160,7 @@ export async function requestRecipeAi(
         })),
         { role: "user", content: request.message },
       ],
+      providerOptions: aiProviderOptions,
       maxOutputTokens: 600,
       abortSignal,
     });

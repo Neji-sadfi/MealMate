@@ -16,18 +16,25 @@ export async function registerUser(input: RegisterInput): Promise<RegisterResult
   }
 
   const passwordHash = await bcrypt.hash(input.password, 10);
-  const user = await User.create({
-    name: input.name,
-    email: input.email,
-    passwordHash,
-    heightCm: input.heightCm,
-    weightKg: input.weightKg,
-    preferences: {
-      diet: input.diet,
-      allergies: input.allergies,
-      weeklyBudget: input.weeklyBudget,
-    },
-  });
+  let user;
+  try {
+    user = await User.create({
+      name: input.name,
+      email: input.email,
+      passwordHash,
+      heightCm: input.heightCm,
+      weightKg: input.weightKg,
+      preferences: {
+        diet: input.diet,
+        allergies: input.allergies,
+        weeklyBudget: input.weeklyBudget,
+      },
+    });
+  } catch (error) {
+    // Two sign-ups at the same time: the unique index lets only one through.
+    if ((error as { code?: number }).code === 11000) return { ok: false, error: "emailTaken" };
+    throw error;
+  }
 
   // The account works right away; a failed email must not block the sign-up.
   try {

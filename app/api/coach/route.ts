@@ -4,7 +4,7 @@ import { z } from "zod";
 import { getLocale } from "next-intl/server";
 import { saveCoachExchange } from "@/features/coach/services/history";
 import { getCurrentUserId } from "@/lib/current-user";
-import { getGeminiModel } from "@/lib/ai";
+import { aiProviderOptions, getGeminiModel } from "@/lib/ai";
 import { buildCoachSystemPrompt } from "@/lib/coach/prompt";
 import { User } from "@/models/User";
 
@@ -66,6 +66,7 @@ export async function POST(request: Request) {
         role: message.role,
         content: message.content,
       })),
+      providerOptions: aiProviderOptions,
       maxOutputTokens: 1024,
       abortSignal: AbortSignal.timeout(STREAM_TIMEOUT_MS),
       onError({ error }) {

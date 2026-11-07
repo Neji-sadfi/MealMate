@@ -21,9 +21,10 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   }
   const uri = configuredUri || "mongodb://127.0.0.1:27017/mealmate_local";
 
-  // serverSelectionTimeoutMS: fail after 8 s instead of the default 30 s when Atlas is unreachable.
+  // serverSelectionTimeoutMS: fail after 15 s instead of the default 30 s when Atlas is unreachable,
+  // while leaving a slow connection enough time for the first request.
   cache.promise ??= mongoose
-    .connect(uri, { bufferCommands: false, serverSelectionTimeoutMS: 8000 })
+    .connect(uri, { bufferCommands: false, serverSelectionTimeoutMS: 15_000 })
     .catch((error) => {
       cache.promise = null;
       throw error;

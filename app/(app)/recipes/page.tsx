@@ -23,6 +23,7 @@ export default async function RecipesPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const t = await getTranslations("pages.recipes");
+  const tDiet = await getTranslations("pages.profile.enums.diet");
   const userId = await getCurrentUserId();
   const query = await searchParams;
   const favouritesMode = query.view === "favourites";
@@ -73,7 +74,7 @@ export default async function RecipesPage({
             className="grid grid-cols-2 gap-3 rounded-card border border-border/70 bg-surface p-4 shadow-sm sm:grid-cols-3 lg:grid-cols-4"
           >
             <label className="col-span-2 flex flex-col gap-1 text-sm font-medium sm:col-span-3 lg:col-span-4">
-              Search
+              {t("filters.search")}
               <input
                 name="search"
                 defaultValue={query.search as string | undefined}
@@ -81,31 +82,31 @@ export default async function RecipesPage({
               />
             </label>
             <label className="flex flex-col gap-1 text-sm font-medium">
-              Diet
+              {t("filters.diet")}
               <select
                 name="diet"
                 defaultValue={query.diet as string | undefined}
                 className="h-11 rounded-input border border-border bg-background px-3"
               >
-                <option value="">Any</option>
+                <option value="">{t("filters.any")}</option>
                 {DIETS.map((diet) => (
                   <option key={diet} value={diet}>
-                    {diet}
+                    {tDiet(diet)}
                   </option>
                 ))}
               </select>
             </label>
             <label className="flex flex-col gap-1 text-sm font-medium">
-              Difficulty
+              {t("filters.difficulty")}
               <select
                 name="difficulty"
                 defaultValue={query.difficulty as string | undefined}
                 className="h-11 rounded-input border border-border bg-background px-3"
               >
-                <option value="">Any</option>
+                <option value="">{t("filters.any")}</option>
                 {DIFFICULTIES.map((difficulty) => (
                   <option key={difficulty} value={difficulty}>
-                    {difficulty}
+                    {t(`difficulty.${difficulty}`)}
                   </option>
                 ))}
               </select>
@@ -114,7 +115,7 @@ export default async function RecipesPage({
               name="maxCalories"
               type="number"
               min="0"
-              placeholder="Max kcal / serving"
+              placeholder={t("filters.maxCalories")}
               defaultValue={query.maxCalories as string | undefined}
               className="h-11 rounded-input border border-border bg-background px-3 text-sm"
             />
@@ -122,7 +123,7 @@ export default async function RecipesPage({
               name="minProtein"
               type="number"
               min="0"
-              placeholder="Min protein (g)"
+              placeholder={t("filters.minProtein")}
               defaultValue={query.minProtein as string | undefined}
               className="h-11 rounded-input border border-border bg-background px-3 text-sm"
             />
@@ -131,7 +132,7 @@ export default async function RecipesPage({
               type="number"
               min="0"
               step="0.01"
-              placeholder="Max cost / serving"
+              placeholder={t("filters.maxCost")}
               defaultValue={query.maxCost as string | undefined}
               className="h-11 rounded-input border border-border bg-background px-3 text-sm"
             />
@@ -139,7 +140,7 @@ export default async function RecipesPage({
               name="maxTime"
               type="number"
               min="0"
-              placeholder="Max prep time (min)"
+              placeholder={t("filters.maxTime")}
               defaultValue={query.maxTime as string | undefined}
               className="h-11 rounded-input border border-border bg-background px-3 text-sm"
             />
@@ -147,7 +148,7 @@ export default async function RecipesPage({
               type="submit"
               className="col-span-2 rounded-full bg-primary px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-primary/90 sm:col-span-3 lg:col-span-4"
             >
-              Search recipes
+              {t("filters.submit")}
             </button>
           </form>
         </>
@@ -156,12 +157,10 @@ export default async function RecipesPage({
       {recipes.length === 0 ? (
         <Card>
           <h2 className="font-bold">
-            {favouritesMode ? t("favouritesEmptyTitle") : "No matching recipes"}
+            {favouritesMode ? t("favouritesEmptyTitle") : t("noResults.title")}
           </h2>
           <p className="mt-1 text-sm text-muted">
-            {favouritesMode
-              ? t("favouritesEmptyBody")
-              : "Try adjusting your search or filters, or create a new recipe."}
+            {favouritesMode ? t("favouritesEmptyBody") : t("noResults.body")}
           </p>
         </Card>
       ) : (
@@ -176,7 +175,7 @@ export default async function RecipesPage({
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-xs tracking-wide text-muted uppercase">
-                      {recipe.difficulty}
+                      {t(`difficulty.${recipe.difficulty}`)}
                     </p>
                     <h2 className="text-lg font-bold">{recipe.title}</h2>
                   </div>
@@ -186,8 +185,11 @@ export default async function RecipesPage({
                 </div>
                 <p className="text-sm text-muted">{recipe.tagline}</p>
                 <p className="text-xs text-muted">
-                  {recipe.nutrition.calories} kcal · {recipe.nutrition.protein}g protein ·{" "}
-                  {recipe.costPerServing} / serving
+                  {t("summary", {
+                    kcal: recipe.nutrition.calories,
+                    protein: recipe.nutrition.protein,
+                    cost: recipe.costPerServing,
+                  })}
                 </p>
                 <div className="mt-auto flex flex-wrap gap-2 pt-2">
                   {recipe.tags.map((tag) => (

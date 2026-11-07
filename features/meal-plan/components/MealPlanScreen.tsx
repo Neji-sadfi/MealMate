@@ -526,7 +526,7 @@ export function MealPlanScreen({
               type: dialog.type,
               recipeId: recipe.id,
               time: timeForType(dialog.type),
-              servings: 1,
+              servings: plan.people,
             });
             setDialog(null);
           }}

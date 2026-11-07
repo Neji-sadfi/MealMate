@@ -63,6 +63,13 @@ export async function POST(request: Request) {
       );
       if (activated.matchedCount !== 1)
         throw new Error("Generated workout plan could not be activated.");
+      // The old program is replaced: its upcoming sessions must not stay on the calendar.
+      await WorkoutSession.deleteMany({
+        user: userId,
+        status: "planned",
+        scheduledAt: { $gte: new Date() },
+        sportPlan: { $in: previousPlans.map((previous) => previous._id) },
+      }).catch((error) => console.error("could not remove the old planned sessions", error));
       return NextResponse.json(
         { planId: plan._id.toString(), sessionCount: createdSessions.length },
         { status: 201 },
