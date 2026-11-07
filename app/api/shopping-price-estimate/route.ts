@@ -48,6 +48,23 @@ type CatalogProduct = {
   searchUrl: string;
 };
 
+function getErrorDetails(error: unknown) {
+  if (!(error instanceof Error)) return { name: "UnknownError" };
+
+  const cause = error.cause;
+  const causeDetails =
+    cause instanceof Error
+      ? {
+          name: cause.name,
+          message: cause.message,
+          code:
+            "code" in cause && typeof cause.code === "string" ? cause.code : undefined,
+        }
+      : undefined;
+
+  return { name: error.name, message: error.message, cause: causeDetails };
+}
+
 function isRateLimited(userId: string): boolean {
   const now = Date.now();
   const recent = (hits.get(userId) ?? []).filter((hit) => now - hit < WINDOW_MS);
@@ -280,7 +297,7 @@ export async function POST(request: Request) {
   for (const result of lookups) {
     if (result.status === "rejected") {
       console.error("Géant Drive product search failed", {
-        name: result.reason instanceof Error ? result.reason.name : "UnknownError",
+        ...getErrorDetails(result.reason),
       });
       continue;
     }

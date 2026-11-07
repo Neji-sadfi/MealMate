@@ -1,6 +1,7 @@
 // Owner: Member 3 (meal planning)
 import { Schema, model, models, type Model, type Types } from "mongoose";
 import { MEAL_TYPES, type MealType } from "./enums";
+import { Recipe } from "./Recipe";
 
 export interface IMeal {
   mealPlan: Types.ObjectId;
@@ -19,7 +20,7 @@ const mealSchema = new Schema<IMeal>(
   {
     mealPlan: { type: Schema.Types.ObjectId, ref: "MealPlan", required: true },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    recipe: { type: Schema.Types.ObjectId, ref: "Recipe", required: true },
+    recipe: { type: Schema.Types.ObjectId, ref: () => Recipe, required: true },
     date: { type: Date, required: true },
     type: { type: String, enum: MEAL_TYPES, required: true },
     time: { type: String, match: /^\d{2}:\d{2}$/ },

@@ -1,5 +1,6 @@
 // Owner: Member 2 (recipes)
 import { Schema, model, models, type Model, type Types } from "mongoose";
+import { Recipe } from "./Recipe";
 
 export interface IFavorite {
   user: Types.ObjectId;
@@ -11,7 +12,7 @@ export interface IFavorite {
 const favoriteSchema = new Schema<IFavorite>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    recipe: { type: Schema.Types.ObjectId, ref: "Recipe", required: true },
+    recipe: { type: Schema.Types.ObjectId, ref: () => Recipe, required: true },
   },
   { timestamps: true },
 );
