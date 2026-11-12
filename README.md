@@ -4,6 +4,8 @@ MealMate is a mobile-first **Progressive Web App** for planning meals, managing 
 
 Student team project · Next.js · TypeScript · MongoDB · English and French UI
 
+**Live demo:** [mealmate-kohl.vercel.app](https://mealmate-kohl.vercel.app)
+
 ---
 
 ## Team and modules
