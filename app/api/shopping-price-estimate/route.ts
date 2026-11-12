@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
+import { fetch as undiciFetch } from "undici";
 import { z } from "zod";
 import { getCurrentUserId } from "@/lib/current-user";
+import { geantDriveDispatcher } from "@/lib/geant-drive-tls";
 import { ShoppingItem } from "@/models/ShoppingItem";
 import { ShoppingList } from "@/models/ShoppingList";
 
@@ -135,10 +137,10 @@ async function fetchStorePage(url: string): Promise<string> {
   const pending = pendingPages.get(url);
   if (pending) return pending;
 
-  const request = fetch(url, {
+  const request = undiciFetch(url, {
+    dispatcher: geantDriveDispatcher,
     headers: { Accept: "text/html" },
     signal: AbortSignal.timeout(10_000),
-    cache: "no-store",
   }).then(async (response) => {
     if (!response.ok) throw new Error(`Géant Drive returned ${response.status}`);
     const html = await response.text();
